@@ -6,19 +6,6 @@ const watch_online_link = document.getElementById("watch-online-link");
 const result_container = document.getElementById("result");
 const go_button = document.getElementById("go");
 
-// window.titles = new Map();
-// for (const title_line of title_lines) {
-// 	const parsed = parse_title_line(title_line);
-// 	if (titles.get(parsed.title)) {
-// 		// console.log("Collision!", titles.get(parsed.title), "and", parsed);
-// 		if (parsed.parenthetical !== titles.get(parsed.title).parenthetical) {
-// 			// console.log("listed differently!", titles.get(parsed.title), "and", parsed);
-// 			console.log("listed differently!", parsed.title, titles.get(parsed.title).parenthetical, "vs", parsed.parenthetical);
-// 		}
-// 	}
-// 	titles.set(parsed.title, parsed);
-// }
-
 function parse_title_line(title_line) {
 	// parse e.g.
 		// "Witch Hunt: (1994, 1999 TV & 2019)"
@@ -112,7 +99,6 @@ const display_result = (title_line) => {
 		heading_level += 1;
 	}
 
-
 	instance_output.textContent = `(${instance_text})`;
 
 	watch_online_link.href = "https://google.com/search?q=" + encodeURIComponent(`${display_text} (watch online)`);
@@ -120,6 +106,7 @@ const display_result = (title_line) => {
 	result_container.hidden = false;
 
 	fitty(".scale-to-fit-width", { maxSize: 200 });
+	// TODO: make sure fitty gets cleaned up
 };
 
 const main = async () => {
@@ -135,6 +122,22 @@ const main = async () => {
 
 		display_result(title_line);
 	};
+
+	// TODO: remove duplicate movie listings
+	// also look for two vs 2 etc.
+	// window.titles = new Map();
+	// for (const title_line of title_lines) {
+	// 	const parsed = parse_title_line(title_line);
+	// 	if (titles.get(parsed.title)) {
+	// 		// console.log("Collision!", titles.get(parsed.title), "and", parsed);
+	// 		if (parsed.parenthetical !== titles.get(parsed.title).parenthetical) {
+	// 			// console.log("listed differently!", titles.get(parsed.title), "and", parsed);
+	// 			console.log("listed differently!", parsed.title, titles.get(parsed.title).parenthetical, "vs", parsed.parenthetical);
+	// 		}
+	// 	}
+	// 	titles.set(parsed.title, parsed);
+	// }
+
 };
 
 main();
