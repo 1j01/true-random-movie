@@ -86,8 +86,6 @@ const display_result = (title_line) => {
 	var instance_index = ~~(Math.random() * instances.length);
 	var instance_text = instances[instance_index];
 
-	var display_text = `${title} (${instance_text})`;
-
 	title_output.innerHTML = "";
 	let heading_level = 2;
 	for (const title_part of title.split(/:\s/g)) {
@@ -102,7 +100,9 @@ const display_result = (title_line) => {
 
 	instance_output.textContent = `(${instance_text})`;
 
-	watch_online_link.href = "https://google.com/search?q=" + encodeURIComponent(`${display_text} (watch online)`);
+	watch_online_link.href = `https://google.com/search?q=${encodeURIComponent(
+		`${title} (${instance_text.replace(/\sTV$/, "")}) (watch online)`
+	)}`;
 
 	result_container.hidden = false;
 
