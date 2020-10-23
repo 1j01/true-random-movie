@@ -114,6 +114,8 @@ const display_result = (title_line) => {
 
 let title_lines;
 
+// TODO: handle wrapping
+// TODO: use pool of elements to avoid garbage collection churn?
 let animating = false;
 window.item_els = [];
 let item_els_by_index = {};
@@ -125,6 +127,9 @@ const renderGrandeRoulette = () => {
 		if (!item_els_by_index[index]) {
 			const item_el = document.createElement("div");
 			item_el.className = "grande-roulette-item";
+			item_el.style.background = `hsl(${index / title_lines.length}turn, 80%, 50%)`;
+			// item_el.style.background = `hsl(${index ** 1.1}turn, 80%, 50%)`;
+			// item_el.style.background = `hsl(${index ** 0.1}turn, 80%, 50%)`;
 			item_el.textContent = title_lines[index];
 			item_el.virtualListIndex = index;
 
@@ -159,8 +164,12 @@ const main = async () => {
 
 	title_lines = text.split(/\r?\n/g);
 
+	renderGrandeRoulette();
+
 	go_button.onclick = () => {
-		animate();
+		if (!animating) {
+			animate();
+		}
 
 		const index = Math.floor(Math.random() * title_lines.length);
 		const title_line = title_lines[index];
