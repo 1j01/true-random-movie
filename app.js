@@ -74,7 +74,7 @@ function parse_title_line(title_line) {
 	var open_paren_index = title_line.lastIndexOf("(");
 	var title = title_line.slice(0, open_paren_index);
 	var parenthetical = title_line.slice(open_paren_index+1, -1);
-	console.log({title, parenthetical});
+	// console.log({title, parenthetical});
 
 	title = title.trim();
 	if (title.lastIndexOf(":") === title.length - 1) {
