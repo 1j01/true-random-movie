@@ -72,7 +72,7 @@ function parse_title_line(title_line) {
 		title = title.slice(0, -1);
 	}
 
-	const instances = parenthetical.split(/[,&]\s*/g);
+	const instances = parenthetical.split(/[,&]\s*/g).map((str) => str.trim());
 
 	return { title, parenthetical, instances };
 }
