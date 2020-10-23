@@ -5,6 +5,8 @@ const instance_output = document.getElementById("instance-output");
 const watch_online_link = document.getElementById("watch-online-link");
 const result_container = document.getElementById("result");
 const go_button = document.getElementById("go");
+const grande_roulette_ticker = document.getElementById("grande-roulette-ticker");
+const grande_roulette_items = document.getElementById("grande-roulette-items");
 
 function parse_title_line(title_line) {
 	// parse e.g.
@@ -110,14 +112,54 @@ const display_result = (title_line) => {
 	// TODO: make sure fitty gets cleaned up
 };
 
+let title_lines;
+
+let animating = false;
+window.item_els = [];
+let item_els_by_index = {};
+let index_position = 0;
+const renderGrandeRoulette = () => {
+	const min_visible_index = Math.floor(index_position - 50);
+	const max_visible_index = Math.floor(index_position + 50);
+	for (let index = min_visible_index; index < max_visible_index; index += 1) {
+		if (!item_els_by_index[index]) {
+			const item_el = document.createElement("div");
+			item_el.className = "grande-roulette-item";
+			item_el.textContent = title_lines[index];
+			item_el.dataset.index = index;
+
+			item_els_by_index[index] = item_el;
+			item_els.push(item_el);
+			grande_roulette_items.append(item_el);
+		}
+	}
+	for (const item_el of item_els) {
+		const index = item_el.dataset.index;
+		if (index < min_visible_index || index > max_visible_index) {
+			item_el.remove();
+			delete item_els_by_index[index];
+			item_els.splice(item_els.indexOf(item_el), 1);
+		}
+	}
+};
+const animate = () => {
+	requestAnimationFrame(animate);
+	animating = true;
+	renderGrandeRoulette();
+
+	index_position += 0.2;
+};
+
 const main = async () => {
 	const response = await fetch("movies.txt");
 	// const response = await fetch("test-subtitles.txt");
 	const text = await response.text();
 
-	const title_lines = text.split(/\r?\n/g);
+	title_lines = text.split(/\r?\n/g);
 
 	go_button.onclick = () => {
+		animate();
+
 		const index = Math.floor(Math.random() * title_lines.length);
 		const title_line = title_lines[index];
 
