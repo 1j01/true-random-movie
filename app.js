@@ -126,7 +126,7 @@ const renderGrandeRoulette = () => {
 			const item_el = document.createElement("div");
 			item_el.className = "grande-roulette-item";
 			item_el.textContent = title_lines[index];
-			item_el.dataset.index = index;
+			item_el.virtualListIndex = index;
 
 			item_els_by_index[index] = item_el;
 			item_els.push(item_el);
@@ -134,11 +134,13 @@ const renderGrandeRoulette = () => {
 		}
 	}
 	for (const item_el of item_els) {
-		const index = item_el.dataset.index;
+		const index = item_el.virtualListIndex;
 		if (index < min_visible_index || index > max_visible_index) {
 			item_el.remove();
 			delete item_els_by_index[index];
 			item_els.splice(item_els.indexOf(item_el), 1);
+		} else {
+			item_el.style.transform = `translateY(calc(${index_position - index} * var(--item-height)))`;
 		}
 	}
 };
