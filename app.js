@@ -1,3 +1,4 @@
+import fitty from "./lib/fitty.module.js";
 
 const title_output = document.getElementById("title-output");
 const instance_output = document.getElementById("instance-output");
@@ -17,7 +18,6 @@ const go_button = document.getElementById("go");
 // 	}
 // 	titles.set(parsed.title, parsed);
 // }
-
 
 function parse_title_line(title_line) {
 	// parse e.g.
@@ -101,21 +101,28 @@ const display_result = (title_line) => {
 	title_output.innerHTML = "";
 	let heading_level = 2;
 	for (const title_part of title.split(/:\s/g)) {
+		const scale_wrapper = document.createElement("div");
 		const heading = document.createElement(`h${heading_level}`);
 		heading.textContent = title_part;
-		title_output.append(heading);
+		heading.classList.add("scale-to-fit-width");
+		scale_wrapper.append(heading);
+		title_output.append(scale_wrapper);
 		heading_level += 1;
 	}
+
 
 	instance_output.textContent = `(${instance_text})`;
 
 	watch_online_link.href = "https://google.com/search?q=" + encodeURIComponent(`${display_text} (watch online)`);
 
 	result_container.hidden = false;
+
+	fitty(".scale-to-fit-width", { maxSize: 200 });
 };
 
 const main = async () => {
 	const response = await fetch("movies.txt");
+	// const response = await fetch("test-subtitles.txt");
 	const text = await response.text();
 
 	const title_lines = text.split(/\r?\n/g);

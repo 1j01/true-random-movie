@@ -36,8 +36,14 @@
 			color: gray;
 			margin-bottom: 1em;
 		}
+		#result {
+			display: flex;
+			flex-direction: column;
+		}
 		#title-output {
 			margin-top: 1em;
+			max-width: 50em;
+			align-self: center;
 		}
 	</style>
 </head>
@@ -59,7 +65,7 @@
 			<a id="watch-online-link">watch online</a>
 		</div>
 	</div>
-	<script src="app.js"></script>
+	<script src="app.js" type="module"></script>
 </body>
 
 </html>
