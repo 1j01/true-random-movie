@@ -74,7 +74,7 @@ function parse_title_line(title_line) {
 
 	var open_paren_index = title_line.lastIndexOf("(");
 	var title = title_line.slice(0, open_paren_index);
-	var parenthetical = title_line.slice(open_paren_index+1, -1);
+	var parenthetical = title_line.slice(open_paren_index + 1, -1);
 	// console.log({title, parenthetical});
 
 	title = title.trim();
@@ -84,14 +84,14 @@ function parse_title_line(title_line) {
 
 	const instances = parenthetical.split(/[,&]\s*/g);
 
-	return {title, parenthetical, instances};
+	return { title, parenthetical, instances };
 }
 
-const display_result = (title_line)=> {
+const display_result = (title_line) => {
 
 	window.console && console.log(title_line);
-	var {title, parenthetical, instances} = parse_title_line(title_line);
-	window.console && console.log({title, parenthetical, instances});
+	var { title, parenthetical, instances } = parse_title_line(title_line);
+	window.console && console.log({ title, parenthetical, instances });
 
 	var instance_index = ~~(Math.random() * instances.length);
 	var instance_text = instances[instance_index];
@@ -114,13 +114,13 @@ const display_result = (title_line)=> {
 	result_container.hidden = false;
 };
 
-const main = async ()=> {
+const main = async () => {
 	const response = await fetch("movies.txt");
 	const text = await response.text();
 
 	const title_lines = text.split(/\r?\n/g);
 
-	go_button.onclick = ()=> {
+	go_button.onclick = () => {
 		const index = Math.floor(Math.random() * title_lines.length);
 		const title_line = title_lines[index];
 
