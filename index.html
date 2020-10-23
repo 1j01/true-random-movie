@@ -10,18 +10,31 @@
 		#title-output h2 {
 			font-variant: small-caps;
 			font-size: 3em;
+			margin: 0;
 		}
 		#title-output h3 {
 			font-size: 2em;
+			margin: 0;
 		}
 		#title-output h4 {
 			font-size: 1.5em;
+			margin: 0;
 		}
 		#title-output h5 {
 			font-size: 1.2em;
+			margin: 0;
 		}
 		#title-output h6 {
 			font-size: 1em;
+			margin: 0;
+		}
+		#instance-output {
+			font-size: 2em;
+			color: gray;
+			margin-bottom: 1em;
+		}
+		#title-output {
+			margin-top: 1em;
 		}
 	</style>
 </head>
@@ -37,6 +50,7 @@
 		<button id="go" autofocus>Random Movie</button>
 		<div id="result" hidden>
 			<div id="title-output"></div>
+			<div id="instance-output"></div>
 			<a id="watch-online-link">watch online</a>
 		</div>
 	</div>

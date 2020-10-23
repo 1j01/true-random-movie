@@ -1,5 +1,6 @@
 
 const title_output = document.getElementById("title-output");
+const instance_output = document.getElementById("instance-output");
 const watch_online_link = document.getElementById("watch-online-link");
 const result_container = document.getElementById("result");
 const go_button = document.getElementById("go");
@@ -99,12 +100,14 @@ const display_result = (title_line)=> {
 
 	title_output.innerHTML = "";
 	let heading_level = 2;
-	for (const title_part of title.split(/:\s/g).concat([instance_text])) {
+	for (const title_part of title.split(/:\s/g)) {
 		const heading = document.createElement(`h${heading_level}`);
 		heading.textContent = title_part;
 		title_output.append(heading);
 		heading_level += 1;
 	}
+
+	instance_output.textContent = `(${instance_text})`;
 
 	watch_online_link.href = "https://google.com/search?q=" + encodeURIComponent(`${display_text} (watch online)`);
 
