@@ -97,7 +97,14 @@ const display_result = (title_line)=> {
 
 	var display_text = `${title} (${instance_text})`;
 
-	title_output.textContent = display_text;
+	title_output.innerHTML = "";
+	let heading_level = 2;
+	for (const title_part of title.split(/:\s/g).concat([instance_text])) {
+		const heading = document.createElement(`h${heading_level}`);
+		heading.textContent = title_part;
+		title_output.append(heading);
+		heading_level += 1;
+	}
 
 	watch_online_link.href = "https://google.com/search?q=" + encodeURIComponent(`${display_text} (watch online)`);
 
