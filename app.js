@@ -48,6 +48,7 @@ function parse_title_line(title_line) {
 		// "Five Children and It (film) (2004)"
 		// "Death on the Nile (1978 and 2004 television movie)"
 		// "Exponát roku 1827 (2008) Czech"
+		// "Nation and Destiny series (1992: 2002)"
 		// "Jagadamba (TBD)"
 		// "Kuni Mulgi Deta Ka Mulgi (TBA)"
 		// "Foodfight! (unreleased)"
