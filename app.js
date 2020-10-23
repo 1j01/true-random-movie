@@ -38,6 +38,8 @@ function parse_title_line(title_line) {
 			// parentheses in title which is just a number
 		// "(Untitled) (2009)"
 			// (entirely parenthesized title)
+		// "The Fabulous Journey of Mr. Bilbo Baggins, The Hobbit, Across the Wild Land, Through the Dark Forest, Beyond the Misty Mountains. There and Back Again (1985)"
+			// really long...
 
 	// don't need to parse, because not included in movies.txt (either cleaned up, missed, or deleted):
 		// "Aabroo, 1943 & 1968"
@@ -46,6 +48,7 @@ function parse_title_line(title_line) {
 		// "The Betrayed (1993) * (2008)" weird
 		// "Calendar Girls (2015 film) (2015)"
 		// "Dance of the Dead (2007 film) (2008)" haha
+		// "The Hobbit (1977 & The Hobbit (1985 film))"
 		// "Aadi (2002 & 2005"
 		// "The Bridge of San Luis Rey]]: (1929, 1944 & 2004)"
 		// "Die Hard with a Vengeance (1998]"
