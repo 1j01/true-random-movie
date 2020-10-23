@@ -8,6 +8,10 @@ const go_button = document.getElementById("go");
 const grande_roulette_ticker = document.getElementById("grande-roulette-ticker");
 const grande_roulette_items = document.getElementById("grande-roulette-items");
 
+function mod(n, m) {
+	return ((n % m) + m) % m;
+}
+
 function parse_title_line(title_line) {
 	// parse e.g.
 		// "Witch Hunt: (1994, 1999 TV & 2019)"
@@ -114,7 +118,7 @@ const display_result = (title_line) => {
 
 let title_lines;
 
-// TODO: handle wrapping
+// TODO: handle wrapping...
 // TODO: use pool of elements to avoid garbage collection churn?
 let animating = false;
 window.item_els = [];
@@ -123,7 +127,8 @@ let index_position = 0;
 const renderGrandeRoulette = () => {
 	const min_visible_index = Math.floor(index_position - 50);
 	const max_visible_index = Math.floor(index_position + 50);
-	for (let index = min_visible_index; index < max_visible_index; index += 1) {
+	for (let i = min_visible_index; i < max_visible_index; i += 1) {
+		const index = mod(i, title_lines.length);
 		if (!item_els_by_index[index]) {
 			const item_el = document.createElement("div");
 			item_el.className = "grande-roulette-item";
@@ -140,13 +145,15 @@ const renderGrandeRoulette = () => {
 	}
 	for (const item_el of item_els) {
 		const index = item_el.virtualListIndex;
-		if (index < min_visible_index || index > max_visible_index) {
-			item_el.remove();
-			delete item_els_by_index[index];
-			item_els.splice(item_els.indexOf(item_el), 1);
-		} else {
-			item_el.style.transform = `translateY(calc(${index_position - index} * var(--item-height)))`;
-		}
+		// console.log(index_position - index);
+		const y = ((index_position - index) < -1000) ? index_position - index + title_lines.length - 1 : index_position - index;
+		// if (index < min_visible_index || index > max_visible_index) {
+		// 	item_el.remove();
+		// 	delete item_els_by_index[index];
+		// 	item_els.splice(item_els.indexOf(item_el), 1);
+		// } else {
+		item_el.style.transform = `translateY(calc(${y} * var(--item-height)))`;
+		// }
 	}
 };
 const animate = () => {
@@ -154,7 +161,8 @@ const animate = () => {
 	animating = true;
 	renderGrandeRoulette();
 
-	index_position += 0.2;
+	// index_position += 0.2;
+	index_position = Math.sin(Date.now() / 500) * 5;
 };
 
 const main = async () => {
