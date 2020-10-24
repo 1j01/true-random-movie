@@ -118,7 +118,7 @@ const display_result = (title_line) => {
 	// TODO: make sure fitty gets cleaned up
 };
 
-let title_lines;
+window.title_lines = [];
 
 // TODO: handle wrapping...
 // TODO: use pool of elements to avoid garbage collection churn?
@@ -147,24 +147,40 @@ const renderGrandeRoulette = () => {
 	}
 	for (const item_el of item_els) {
 		const index = item_el.virtualListIndex;
-		// console.log(index_position - index);
-		const y = ((index_position - index) < -1000) ? index_position - index + title_lines.length : index_position - index;
-		if (y > 80 || y < -80) {
+		const p = mod(index_position, title_lines.length);
+		// console.log(p - index);
+		const y = p - index + ((p - index) < -1000) * title_lines.length;
+		// if (y > 50 || y < -50) {
+		// TODO
+		if (false) {
 			item_el.remove();
 			delete item_els_by_index[index];
-			item_els.splice(item_els.indexOf(item_el), 1);
+			const item_els_index = item_els.indexOf(item_el);
+			if (item_els_index > -1) {
+				item_els.splice(item_els_index, 1);
+			} else {
+				console.error(item_els_index);
+			}
 		} else {
-			item_el.style.transform = `translateY(calc(${y} * var(--item-height)))`;
+			const transform = `translateY(calc(${y.toFixed(5)} * var(--item-height)))`;
+			item_el.dataset.transform = transform;
+			item_el.style.transform = transform;
+			if (item_el.style.transform !== transform) {
+				console.log(transform);
+				item_el.hidden = true;
+			}
 		}
+		// console.log(item_el.style.transform);
 	}
 };
+window.index_position_base = 0;
 const animate = () => {
 	requestAnimationFrame(animate);
 	animating = true;
 	renderGrandeRoulette();
 
 	// index_position += 0.2;
-	index_position = Math.sin(Date.now() / 500) * 5;
+	index_position = Math.sin(Date.now() / 500) * 5 + index_position_base;
 };
 
 const main = async () => {
