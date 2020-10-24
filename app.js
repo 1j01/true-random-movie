@@ -148,7 +148,7 @@ const renderGrandeRoulette = () => {
 	for (const item_el of item_els) {
 		const index = item_el.virtualListIndex;
 		// console.log(index_position - index);
-		const y = ((index_position - index) < -1000) ? index_position - index + title_lines.length - 1 : index_position - index;
+		const y = ((index_position - index) < -1000) ? index_position - index + title_lines.length : index_position - index;
 		// if (index < min_visible_index || index > max_visible_index) {
 		// 	item_el.remove();
 		// 	delete item_els_by_index[index];
@@ -172,7 +172,7 @@ const main = async () => {
 	// const response = await fetch("test-subtitles.txt");
 	const text = await response.text();
 
-	title_lines = text.split(/\r?\n/g);
+	title_lines = text.trim().split(/\r?\n/g);
 
 	renderGrandeRoulette();
 
