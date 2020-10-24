@@ -149,13 +149,13 @@ const renderGrandeRoulette = () => {
 		const index = item_el.virtualListIndex;
 		// console.log(index_position - index);
 		const y = ((index_position - index) < -1000) ? index_position - index + title_lines.length : index_position - index;
-		// if (index < min_visible_index || index > max_visible_index) {
-		// 	item_el.remove();
-		// 	delete item_els_by_index[index];
-		// 	item_els.splice(item_els.indexOf(item_el), 1);
-		// } else {
-		item_el.style.transform = `translateY(calc(${y} * var(--item-height)))`;
-		// }
+		if (y > 80 || y < -80) {
+			item_el.remove();
+			delete item_els_by_index[index];
+			item_els.splice(item_els.indexOf(item_el), 1);
+		} else {
+			item_el.style.transform = `translateY(calc(${y} * var(--item-height)))`;
+		}
 	}
 };
 const animate = () => {
