@@ -149,7 +149,17 @@ const renderGrandeRoulette = () => {
 		const index = item_el.virtualListIndex;
 		const p = mod(index_position, title_lines.length);
 		// console.log(p - index);
-		const y = p - index + ((p - index) < -1000) * title_lines.length;
+		let y = p - index;
+		item_el.textContent = y.toFixed(0);
+		if (p - index < -1000) {
+			y += title_lines.length;
+			item_el.style.background = `hsl(0.5turn, 80%, 50%)`;
+		} else if (p - index > 1000) {
+			y += title_lines.length;
+			item_el.style.background = `hsl(0turn, 80%, 50%)`;
+		} else {
+			item_el.style.background = `hsl(0.25turn, 80%, 50%)`;
+		}
 		// if (y > 50 || y < -50) {
 		// TODO
 		if (false) {
