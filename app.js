@@ -118,11 +118,11 @@ const display_result = (title_line) => {
 	// TODO: make sure fitty gets cleaned up
 };
 
-window.title_lines = [];
+let title_lines;
 
 // TODO: use pool of elements to avoid garbage collection churn?
 let animating = false;
-window.item_els = [];
+const item_els = [];
 let item_els_by_index = {};
 let index_position = 0;
 const renderGrandeRoulette = () => {
@@ -147,24 +147,14 @@ const renderGrandeRoulette = () => {
 			grande_roulette_items.append(item_el);
 		}
 	}
-	// for (const item_el of item_els) {
 	// have to iterate backwards because items can be removed during iteration
 	for (let i = item_els.length - 1; i >= 0; i--) {
 		const item_el = item_els[i];
 		const index = item_el.virtualListIndex;
 		let y = mod(index_position - index, title_lines.length);
-		// item_el.textContent = `${y.toFixed(0)} | ${index} | ${title_lines[index]}`;
-		if (y > 1000) {
+		if (y > visible_range) {
 			y -= title_lines.length;
-			// item_el.style.background = `yellow`;
-		} else {
-			// item_el.style.background = `blue`;
 		}
-		// if (y > visible_range || y < -visible_range) {
-		// 	item_el.style.background = `red`;
-		// } else {
-		// 	item_el.style.background = `green`;
-		// }
 		if (y > visible_range || y < -visible_range) {
 			item_el.remove();
 			delete item_els_by_index[index];
@@ -175,25 +165,17 @@ const renderGrandeRoulette = () => {
 				console.error(item_els_index);
 			}
 		} else {
-			const transform = `translateY(calc(${y.toFixed(5)} * var(--item-height)))`;
-			item_el.dataset.transform = transform;
-			item_el.style.transform = transform;
-			if (item_el.style.transform !== transform) {
-				console.log(transform);
-				item_el.hidden = true;
-			}
+			item_el.style.transform = `translateY(calc(${y.toFixed(5)} * var(--item-height)))`;
 		}
-		// console.log(item_el.style.transform);
 	}
 };
-window.index_position_base = 0;
 const animate = () => {
 	requestAnimationFrame(animate);
 	animating = true;
 	renderGrandeRoulette();
 
 	// index_position += 0.2;
-	index_position = Math.sin(Date.now() / 500) * 5 + index_position_base;
+	index_position = Math.sin(Date.now() / 500) * 5;
 };
 
 const main = async () => {
