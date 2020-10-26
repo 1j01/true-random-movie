@@ -137,7 +137,7 @@ const renderGrandeRoulette = () => {
 			item_el.style.background = `hsl(${index / title_lines.length}turn, 80%, 50%)`;
 			// item_el.style.background = `hsl(${index ** 1.1}turn, 80%, 50%)`;
 			// item_el.style.background = `hsl(${index ** 0.1}turn, 80%, 50%)`;
-			item_el.textContent = title_lines[index];
+			item_el.textContent = title_lines[index].replace(/([!?.,]):/g, "$1");
 			item_el.virtualListIndex = index;
 
 			item_els_by_index[index] = item_el;
