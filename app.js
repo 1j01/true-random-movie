@@ -256,6 +256,42 @@ const main = async () => {
 	
 	window.addEventListener("resize", renderGrandeRoulette);
 
+	grande_roulette_items.style.touchAction = "none";
+	grande_roulette_items.addEventListener("pointerdown", (event) => {
+		spin_velocity = 0;
+		const item_height = parseFloat(getComputedStyle(grande_roulette_items).getPropertyValue("--item-height"));
+		const start_y = event.clientY;
+		const start_spin_position = spin_position;
+		let y_velocity_energy = 0;
+		let last_event_time = performance.now();
+		let last_event_y = start_y;
+		const onPointerMove = (event) => {
+			const new_y = event.clientY;
+			const new_time = performance.now();
+			spin_position = start_spin_position + (new_y - start_y) / item_height;
+			if (!animating) {
+				animate();
+			}
+			// this is not really a good way of doing this
+			y_velocity_energy *= 0.2;
+			y_velocity_energy += (new_y - last_event_y) * (new_time - last_event_time);
+			last_event_time = new_time;
+			last_event_y = new_y;
+		};
+		const onPointerUp = () => {
+			grande_roulette_items.removeEventListener("pointermove", onPointerMove);
+			grande_roulette_items.removeEventListener("pointerup", onPointerUp);
+			grande_roulette_items.removeEventListener("pointercancel", onPointerUp);
+			spin_velocity = y_velocity_energy / 1000;
+			if (!animating) {
+				animate();
+			}
+		};
+		grande_roulette_items.addEventListener("pointermove", onPointerMove);
+		grande_roulette_items.addEventListener("pointerup", onPointerUp);
+		grande_roulette_items.addEventListener("pointercancel", onPointerUp);
+	});
+
 	go_button.onclick = () => {
 		if (!animating) {
 			spin_velocity = 50 + Math.random() * 50;
