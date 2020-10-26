@@ -120,6 +120,17 @@
 			transform-origin: 0% 50%;
 			z-index: 1;
 		}
+		#grande-roulette-center {
+			position: absolute;
+			top: 50%;
+			right: calc(50% - 5px);
+			width: 100px; 
+			height: 0; 
+			border-bottom: 1px solid black;
+			transform: translateY(-50%);
+			transform-origin: 0% 50%;
+			z-index: 2;
+		}
 	</style>
 </head>
 
@@ -139,6 +150,7 @@
 		</div>
 		<div id="grande-roulette">
 			<div id="grande-roulette-ticker"></div>
+			<div id="grande-roulette-center"></div>
 			<div id="grande-roulette-items"></div>
 		</div>
 		</div>
