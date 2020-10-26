@@ -211,8 +211,8 @@ const animate = () => {
 	if (
 		// UGH TODO HANDLE WRAPPING
 		(last_spin_position > spin_position) ?
-			((mod(spin_position, 1) - 0.5) < 1 / 4) :
-			((mod(spin_position, 1) - 0.5) > -1 / 4)
+			((mod(spin_position, 1) - 0.5) < 1 / 8) :
+			((mod(spin_position, 1) - 0.5) > -1 / 8)
 	) {
 		// if (Math.abs(ticker_rotation_deg - (mod(spin_position, 1) - 0.5)) < 25) {
 		if (Math.abs(ticker_rotation_deg) < 25) {
