@@ -12,12 +12,28 @@ function mod(n, m) {
 	return ((n % m) + m) % m;
 }
 /**
+ * Returns a pseudo-random number generator function that returns 0 to 1 like Math.random()
+ */
+function sfc32(a, b, c, d) {
+	return function () {
+		a >>>= 0; b >>>= 0; c >>>= 0; d >>>= 0;
+		var t = (a + b) | 0;
+		a = b ^ b >>> 9;
+		b = c + (c << 3) | 0;
+		c = (c << 21 | c >>> 11);
+		d = d + 1 | 0;
+		t = t + d | 0;
+		c = c + t | 0;
+		return (t >>> 0) / 4294967296;
+	}
+}
+/**
  * Shuffles array in place. ES6 version
  * @param {Array} a items An array containing the items.
  */
-function shuffle(a) {
+function shuffle(a, random = Math.random) {
 	for (let i = a.length - 1; i > 0; i--) {
-		const j = Math.floor(Math.random() * (i + 1));
+		const j = Math.floor(random() * (i + 1));
 		[a[i], a[j]] = [a[j], a[i]];
 	}
 	return a;
@@ -200,7 +216,8 @@ const main = async () => {
 	for (let i = 0; i < original_indexes.length; i++) {
 		original_indexes[i] = i;
 	}
-	shuffle(original_indexes);
+	const prng = sfc32(1, 2, 3, 4);
+	shuffle(original_indexes, prng);
 
 	title_lines = [];
 	for (let i = 0; i < original_indexes.length; i++) {
