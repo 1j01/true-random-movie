@@ -11,6 +11,17 @@ const grande_roulette_items = document.getElementById("grande-roulette-items");
 function mod(n, m) {
 	return ((n % m) + m) % m;
 }
+/**
+ * Shuffles array in place. ES6 version
+ * @param {Array} a items An array containing the items.
+ */
+function shuffle(a) {
+	for (let i = a.length - 1; i > 0; i--) {
+		const j = Math.floor(Math.random() * (i + 1));
+		[a[i], a[j]] = [a[j], a[i]];
+	}
+	return a;
+}
 
 function parse_title_line(title_line) {
 	// parse e.g.
@@ -119,6 +130,7 @@ const display_result = (title_line) => {
 };
 
 let title_lines;
+let original_indexes;
 
 // TODO: use pool of elements to avoid garbage collection churn?
 let animating = false;
@@ -128,7 +140,6 @@ let index_position = 0;
 const renderGrandeRoulette = () => {
 	const item_height = parseFloat(getComputedStyle(grande_roulette_items).getPropertyValue("--item-height"));
 	const visible_range = Math.ceil(grande_roulette_items.offsetHeight / item_height);
-	// console.log(visible_range);
 	const min_visible_index = Math.floor(index_position - visible_range / 2);
 	const max_visible_index = Math.ceil(index_position + visible_range / 2 + 1);
 	for (let i = min_visible_index; i < max_visible_index; i += 1) {
@@ -136,7 +147,7 @@ const renderGrandeRoulette = () => {
 		if (!item_els_by_index[index]) {
 			const item_el = document.createElement("div");
 			item_el.className = "grande-roulette-item";
-			item_el.style.background = `hsl(${index / title_lines.length}turn, 80%, 50%)`;
+			item_el.style.background = `hsl(${original_indexes[index] / title_lines.length}turn, 80%, 50%)`;
 			// item_el.style.background = `hsl(${index ** 1.1}turn, 80%, 50%)`;
 			// item_el.style.background = `hsl(${index ** 0.1}turn, 80%, 50%)`;
 			item_el.textContent = title_lines[index].replace(/([!?.,]):/g, "$1");
@@ -175,7 +186,7 @@ const animate = () => {
 	renderGrandeRoulette();
 
 	// index_position += 0.2;
-	index_position = Math.sin(Date.now() / 500) * 5;
+	index_position = Math.sin(Date.now() / 5000) * 50;
 };
 
 const main = async () => {
@@ -183,7 +194,18 @@ const main = async () => {
 	// const response = await fetch("test-subtitles.txt");
 	const text = await response.text();
 
-	title_lines = text.trim().split(/\r?\n/g);
+	const original_title_lines = text.trim().split(/\r?\n/g);
+
+	original_indexes = new Int32Array(original_title_lines.length);
+	for (let i = 0; i < original_indexes.length; i++) {
+		original_indexes[i] = i;
+	}
+	shuffle(original_indexes);
+
+	title_lines = [];
+	for (let i = 0; i < original_indexes.length; i++) {
+		title_lines[i] = original_title_lines[original_indexes[i]];
+	}
 
 	renderGrandeRoulette();
 	
