@@ -217,7 +217,8 @@ const animate = () => {
 	// ticker_rotation_deg += ticker_rotation_speed_deg_per_frame;
 	// ticker_rotation_deg *= 0.2;
 	// ticker_rotation_speed_deg_per_frame *= 0.2;
-	ticker_rotation_deg = Math.atan2(mod(spin_position + 0.5, 1) * Math.PI, 0.3) * 15;
+	// ticker_rotation_deg = Math.atan2((mod(spin_position + 0.5, 1) + 0.5) * Math.PI, 0.3) * 150;
+	ticker_rotation_deg = (mod(spin_position, 1) - 0.5) * 45;
 
 
 	if (Math.abs(spin_velocity) < 0.01) {
