@@ -126,9 +126,9 @@ const item_els = [];
 let item_els_by_index = {};
 let index_position = 0;
 const renderGrandeRoulette = () => {
-	// TODO: calculate range from viewport
-	// need to get value of CSS variable
-	const visible_range = 50;
+	const item_height = parseFloat(getComputedStyle(grande_roulette_items).getPropertyValue("--item-height"));
+	const visible_range = Math.ceil(grande_roulette_items.offsetHeight / item_height);
+	// console.log(visible_range);
 	const min_visible_index = Math.floor(index_position - visible_range);
 	const max_visible_index = Math.floor(index_position + visible_range);
 	for (let i = min_visible_index; i < max_visible_index; i += 1) {
@@ -165,7 +165,7 @@ const renderGrandeRoulette = () => {
 				console.error(item_els_index);
 			}
 		} else {
-			item_el.style.transform = `translateY(calc(${y.toFixed(5)} * var(--item-height)))`;
+			item_el.style.transform = `translateY(${(y - 1 / 2).toFixed(5) * item_height}px)`;
 		}
 	}
 };
@@ -186,6 +186,8 @@ const main = async () => {
 	title_lines = text.trim().split(/\r?\n/g);
 
 	renderGrandeRoulette();
+	
+	window.addEventListener("resize", renderGrandeRoulette);
 
 	go_button.onclick = () => {
 		if (!animating) {
