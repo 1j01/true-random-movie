@@ -153,6 +153,7 @@ let animating = false;
 const item_els = [];
 let item_els_by_index = {};
 let spin_position = 0;
+let last_spin_position = 0;
 let spin_velocity = 0;
 let ticker_rotation_deg = 0;
 let ticker_rotation_speed_deg_per_frame = 0;
@@ -206,25 +207,35 @@ const animate = () => {
 	renderGrandeRoulette();
 
 	// if ((spin_position % 1) > ((spin_position + spin_velocity) % 1)) {
-	// 	if (Math.abs(ticker_rotation_deg) < 15) {
-	// 		ticker_rotation_speed_deg_per_frame = spin_velocity * 50;
-	// 		ticker_rotation_deg = Math.atan(spin_position % 1);
-	// 	}
-	// }
+	// if ((mod(spin_position, 1) - 0.5) < 0.25) {
+	if (
+		// UGH TODO HANDLE WRAPPING
+		(last_spin_position > spin_position) ?
+			((mod(spin_position, 1) - 0.5) < 1 / 4) :
+			((mod(spin_position, 1) - 0.5) > -1 / 4)
+	) {
+		// if (Math.abs(ticker_rotation_deg - (mod(spin_position, 1) - 0.5)) < 25) {
+		if (Math.abs(ticker_rotation_deg) < 25) {
+			ticker_rotation_speed_deg_per_frame = spin_velocity * 50;
+			ticker_rotation_deg = (mod(spin_position, 1) - 0.5) * 45;
+		}
+	}
 
 	spin_position += spin_velocity;
 	spin_velocity *= 0.99;
-	// ticker_rotation_deg += ticker_rotation_speed_deg_per_frame;
+	ticker_rotation_deg += ticker_rotation_speed_deg_per_frame;
 	// ticker_rotation_deg *= 0.2;
-	// ticker_rotation_speed_deg_per_frame *= 0.2;
+	ticker_rotation_speed_deg_per_frame *= 0.2;
+	ticker_rotation_speed_deg_per_frame -= ticker_rotation_deg / 50;
 	// ticker_rotation_deg = Math.atan2((mod(spin_position + 0.5, 1) + 0.5) * Math.PI, 0.3) * 150;
-	ticker_rotation_deg = (mod(spin_position, 1) - 0.5) * 45;
 
+	last_spin_position = spin_position;
 
 	if (Math.abs(spin_velocity) < 0.01) {
 		const title_line = title_lines[mod(Math.round(spin_position), title_lines.length)];
 		display_result(title_line);
 		spin_velocity = 0;
+		ticker_rotation_deg = 0;
 		animating = false;
 		cancelAnimationFrame(rafid);
 	}
