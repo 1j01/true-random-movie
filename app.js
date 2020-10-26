@@ -120,15 +120,17 @@ const display_result = (title_line) => {
 
 window.title_lines = [];
 
-// TODO: handle wrapping...
 // TODO: use pool of elements to avoid garbage collection churn?
 let animating = false;
 window.item_els = [];
 let item_els_by_index = {};
 let index_position = 0;
 const renderGrandeRoulette = () => {
-	const min_visible_index = Math.floor(index_position - 50);
-	const max_visible_index = Math.floor(index_position + 50);
+	// TODO: calculate range from viewport
+	// need to get value of CSS variable
+	const visible_range = 50;
+	const min_visible_index = Math.floor(index_position - visible_range);
+	const max_visible_index = Math.floor(index_position + visible_range);
 	for (let i = min_visible_index; i < max_visible_index; i += 1) {
 		const index = mod(i, title_lines.length);
 		if (!item_els_by_index[index]) {
@@ -145,7 +147,10 @@ const renderGrandeRoulette = () => {
 			grande_roulette_items.append(item_el);
 		}
 	}
-	for (const item_el of item_els) {
+	// for (const item_el of item_els) {
+	// have to iterate backwards because items can be removed during iteration
+	for (let i = item_els.length - 1; i >= 0; i--) {
+		const item_el = item_els[i];
 		const index = item_el.virtualListIndex;
 		let y = mod(index_position - index, title_lines.length);
 		// item_el.textContent = `${y.toFixed(0)} | ${index} | ${title_lines[index]}`;
@@ -155,9 +160,12 @@ const renderGrandeRoulette = () => {
 		} else {
 			// item_el.style.background = `blue`;
 		}
-		// if (y > 50 || y < -50) {
-		// TODO
-		if (false) {
+		// if (y > visible_range || y < -visible_range) {
+		// 	item_el.style.background = `red`;
+		// } else {
+		// 	item_el.style.background = `green`;
+		// }
+		if (y > visible_range || y < -visible_range) {
 			item_el.remove();
 			delete item_els_by_index[index];
 			const item_els_index = item_els.indexOf(item_el);
