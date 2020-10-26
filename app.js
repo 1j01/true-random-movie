@@ -213,6 +213,8 @@ const animate = () => {
 		animating = false;
 		cancelAnimationFrame(rafid);
 	}
+
+	grande_roulette_ticker.style.transform = `translateY(-50%) rotate(${spin_velocity * Math.random()}deg) scaleY(50%)`;
 };
 
 const main = async () => {
