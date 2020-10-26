@@ -217,14 +217,20 @@ const animate = () => {
 		// if (Math.abs(ticker_rotation_deg - (mod(spin_position, 1) - 0.5)) < 25) {
 		if (Math.abs(ticker_rotation_deg) < 25) {
 			ticker_rotation_speed_deg_per_frame = spin_velocity * 50;
-			ticker_rotation_deg = (mod(spin_position, 1) - 0.5) * 45;
+			if ((mod(spin_position, 1) - 0.5) * 45 > 0 && ticker_rotation_deg > 0) {
+				ticker_rotation_deg = (mod(spin_position, 1) - 0.5) * 45;
+			}
+			if ((mod(spin_position, 1) - 0.5) * 45 < 0 && ticker_rotation_deg < 0) {
+				ticker_rotation_deg = (mod(spin_position, 1) - 0.5) * 45;
+			}
 		}
+	} else {
+		ticker_rotation_deg *= 0.2;
 	}
 
 	spin_position += spin_velocity;
 	spin_velocity *= 0.99;
 	ticker_rotation_deg += ticker_rotation_speed_deg_per_frame;
-	// ticker_rotation_deg *= 0.2;
 	ticker_rotation_speed_deg_per_frame *= 0.2;
 	ticker_rotation_speed_deg_per_frame -= ticker_rotation_deg / 50;
 	// ticker_rotation_deg = Math.atan2((mod(spin_position + 0.5, 1) + 0.5) * Math.PI, 0.3) * 150;
