@@ -152,6 +152,7 @@ let original_indexes;
 
 // TODO: use pool of elements to avoid garbage collection churn?
 let animating = false;
+let dragging = false;
 const item_els = [];
 let item_els_by_index = {};
 let spin_position = 0;
@@ -239,7 +240,7 @@ const animate = () => {
 
 	last_spin_position = spin_position;
 
-	if (Math.abs(spin_velocity) < 0.01) {
+	if (Math.abs(spin_velocity) < 0.01 && !dragging) {
 		const title_line = title_lines[mod(Math.round(spin_position), title_lines.length)];
 		display_result(title_line);
 		spin_velocity = 0;
@@ -278,6 +279,7 @@ const main = async () => {
 
 	grande_roulette_items.style.touchAction = "none";
 	grande_roulette_items.addEventListener("pointerdown", (event) => {
+		dragging = true;
 		spin_velocity = 0;
 		const item_height = parseFloat(getComputedStyle(grande_roulette_items).getPropertyValue("--item-height"));
 		const start_y = event.clientY;
@@ -304,6 +306,7 @@ const main = async () => {
 			grande_roulette_items.removeEventListener("pointerup", onPointerUp);
 			grande_roulette_items.removeEventListener("pointercancel", onPointerUp);
 			spin_velocity = y_velocity_energy / 1000;
+			dragging = false;
 			if (!animating) {
 				animate();
 			}
