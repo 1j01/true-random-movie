@@ -292,12 +292,13 @@ const main = async () => {
 			if (!animating) {
 				animate();
 			}
-			// this is not really a good way of doing this
-			y_velocity_energy *= 0.2;
 			y_velocity_energy += (new_y - last_event_y) * (new_time - last_event_time);
 			last_event_time = new_time;
 			last_event_y = new_y;
 		};
+		setInterval(() => {
+			y_velocity_energy *= 0.8;
+		});
 		const onPointerUp = () => {
 			grande_roulette_items.removeEventListener("pointermove", onPointerMove);
 			grande_roulette_items.removeEventListener("pointerup", onPointerUp);
