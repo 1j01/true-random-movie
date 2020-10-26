@@ -144,6 +144,7 @@ const display_result = (title_line) => {
 	result_container.hidden = false;
 
 	fitty(".scale-to-fit-width", { maxSize: 200 });
+	fitty.fitAllImmediately();
 	// TODO: make sure fitty gets cleaned up
 };
 
