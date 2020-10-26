@@ -234,6 +234,8 @@ const main = async () => {
 		title_lines[i] = original_title_lines[original_indexes[i]];
 	}
 
+	spin_position = Math.random() * title_lines.length;
+
 	renderGrandeRoulette();
 	
 	window.addEventListener("resize", renderGrandeRoulette);
