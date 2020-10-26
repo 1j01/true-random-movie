@@ -129,8 +129,8 @@ const renderGrandeRoulette = () => {
 	const item_height = parseFloat(getComputedStyle(grande_roulette_items).getPropertyValue("--item-height"));
 	const visible_range = Math.ceil(grande_roulette_items.offsetHeight / item_height);
 	// console.log(visible_range);
-	const min_visible_index = Math.floor(index_position - visible_range);
-	const max_visible_index = Math.floor(index_position + visible_range);
+	const min_visible_index = Math.floor(index_position - visible_range / 2);
+	const max_visible_index = Math.ceil(index_position + visible_range / 2 + 1);
 	for (let i = min_visible_index; i < max_visible_index; i += 1) {
 		const index = mod(i, title_lines.length);
 		if (!item_els_by_index[index]) {
@@ -155,7 +155,7 @@ const renderGrandeRoulette = () => {
 		if (y > visible_range) {
 			y -= title_lines.length;
 		}
-		if (y > visible_range || y < -visible_range) {
+		if (y > visible_range / 2 + 1 || y < -visible_range / 2 - 1) {
 			item_el.remove();
 			delete item_els_by_index[index];
 			const item_els_index = item_els.indexOf(item_el);
