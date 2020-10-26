@@ -147,18 +147,13 @@ const renderGrandeRoulette = () => {
 	}
 	for (const item_el of item_els) {
 		const index = item_el.virtualListIndex;
-		const p = mod(index_position, title_lines.length);
-		// console.log(p - index);
-		let y = p - index;
-		item_el.textContent = y.toFixed(0);
-		if (p - index < -1000) {
-			y += title_lines.length;
-			item_el.style.background = `hsl(0.5turn, 80%, 50%)`;
-		} else if (p - index > 1000) {
-			y += title_lines.length;
-			item_el.style.background = `hsl(0turn, 80%, 50%)`;
+		let y = mod(index_position - index, title_lines.length);
+		// item_el.textContent = `${y.toFixed(0)} | ${index} | ${title_lines[index]}`;
+		if (y > 1000) {
+			y -= title_lines.length;
+			// item_el.style.background = `yellow`;
 		} else {
-			item_el.style.background = `hsl(0.25turn, 80%, 50%)`;
+			// item_el.style.background = `blue`;
 		}
 		// if (y > 50 || y < -50) {
 		// TODO
