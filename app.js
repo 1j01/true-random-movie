@@ -41,11 +41,11 @@ function shuffle(a, random = Math.random) {
 
 function parse_title_line(title_line) {
 	// parse e.g.
-		// "Witch Hunt: (1994, 1999 TV & 2019)"
+		// "Witch Hunt (1994, 1999 TV & 2019)"
 		// "Witchboard 2: The Devil's Doorway (1993)"
 			// (colon is not separator unless at end of title)
-		// "The Witness: (1969 French, 1969 Hungarian, 1992 short, 2000, 2012, 2015 American & 2015 Chinese)"
-		// "The Wolf Man: (1924 short, 1941)"
+		// "The Witness (1969 French, 1969 Hungarian, 1992 short, 2000, 2012, 2015 American & 2015 Chinese)"
+		// "The Wolf Man (1924 short, 1941)"
 			// no &
 		// "Fury (1936 & 2012 & 2014)"
 			// no ,
@@ -63,31 +63,33 @@ function parse_title_line(title_line) {
 			// really long...
 
 	// don't need to parse, because not included in movies.txt (either cleaned up, missed, or deleted):
-		// "Aabroo, 1943 & 1968"
-		// "9: (2005 short) & (2009)"
-		// "Beasties (1985) (1989)"
-		// "The Betrayed (1993) * (2008)" weird
-		// "Calendar Girls (2015 film) (2015)"
-		// "Dance of the Dead (2007 film) (2008)" haha
-		// "The Hobbit (1977 & The Hobbit (1985 film))"
-		// "Aadi (2002 & 2005"
-		// "The Bridge of San Luis Rey]]: (1929, 1944 & 2004)"
-		// "Die Hard with a Vengeance (1998]"
-		// "God's Club (2015)[1]"
-		// "Accidentally Engaged"
-		// "Alienator (1989) (TV)"
-		// "Lincoln: Trial by Fire (TV, 1974)"
-		// "Satyricon (Polidoro, 1969)"
-		// "Mermaid's Scar (1993) (OVA)"
-		// "Five Children and It (film) (2004)"
-		// "Death on the Nile (1978 and 2004 television movie)"
-		// "Le Diable boiteux (1948; tr. The Lame Devil)""
-		// "Exponát roku 1827 (2008) Czech"
-		// "Nation and Destiny series (1992: 2002)"
-		// "Jagadamba (TBD)"
-		// "Kuni Mulgi Deta Ka Mulgi (TBA)"
-		// "Foodfight! (unreleased)"
-		// "Khushiyaan (?)"
+		// "Witch Hunt: (1994, 1999 TV & 2019)" (colon before parenthetical)
+		// "Act of Violence (1949, 1956, & 1959)" (Oxford comma)
+		// "Aabroo, 1943 & 1968" (no parenthetical)
+		// "9: (2005 short) & (2009)" (& outside multiple date parentheticals)
+		// "Beasties (1985) (1989)" (multiple date parentheticals)
+		// "The Betrayed (1993) * (2008)" (typo'd & outside multiple date parentheticals)
+		// "Calendar Girls (2015 film) (2015)" (multiple date parentheticals)
+		// "Dance of the Dead (2007 film) (2008)" (haha)
+		// "The Hobbit (1977 & The Hobbit (1985 film))" (extra end paren)
+		// "Aadi (2002 & 2005" (missing end paren)
+		// "The Bridge of San Luis Rey]]: (1929, 1944 & 2004)" (typo'd wikipedia syntax)
+		// "Die Hard with a Vengeance (1998]" (typo'd wikipedia syntax)
+		// "God's Club (2015)[1]" (wikipedia reference)
+		// "Accidentally Engaged" (no parenthetical or dates)
+		// "Alienator (1989) (TV)" (non-distincting indication in separate parenthetical)
+		// "Mermaid's Scar (1993) (OVA)" (non-distincting indication in separate parenthetical)
+		// "Five Children and It (film) (2004)" (useless non-distincting indication in separate parenthetical)
+		// "Lincoln: Trial by Fire (TV, 1974)" (non-distincting indication separated by comma)
+		// "Satyricon (Polidoro, 1969)" (non-distincting indication separated by comma)
+		// "Death on the Nile (1978 and 2004 television movie)" (and instead of &)
+		// "Le Diable boiteux (1948; tr. The Lame Devil) (translated title in date parenthetical)
+		// "Exponát roku 1827 (2008) Czech" (non-distincting indication after parenthetical)
+		// "Nation and Destiny series (1992: 2002)" (I think this one's my fault)
+		// "Jagadamba (TBD)" (no date)
+		// "Kuni Mulgi Deta Ka Mulgi (TBA)" (no date)
+		// "Foodfight! (unreleased)" (no date)
+		// "Khushiyaan (?)" (no date)
 
 	// var match = /^(.*)\(([^\)]*)\)$/.exec(title_line);
 	// if (!match) {
