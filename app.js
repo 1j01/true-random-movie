@@ -76,9 +76,9 @@ function parse_title_line(title_line) {
 	// console.log({title, parenthetical});
 
 	title = title.trim();
-	if (title.lastIndexOf(":") === title.length - 1) {
-		title = title.slice(0, -1);
-	}
+	// if (title.lastIndexOf(":") === title.length - 1) {
+	// 	title = title.slice(0, -1);
+	// }
 
 	const instances = parenthetical.split(/[,&]\s*/g).map((str) => str.trim());
 
