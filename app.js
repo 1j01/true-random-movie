@@ -152,12 +152,13 @@ let original_indexes;
 let animating = false;
 const item_els = [];
 let item_els_by_index = {};
-let index_position = 0;
+let spin_position = 0;
+let spin_velocity = 0;
 const renderGrandeRoulette = () => {
 	const item_height = parseFloat(getComputedStyle(grande_roulette_items).getPropertyValue("--item-height"));
 	const visible_range = Math.ceil(grande_roulette_items.offsetHeight / item_height);
-	const min_visible_index = Math.floor(index_position - visible_range / 2);
-	const max_visible_index = Math.ceil(index_position + visible_range / 2 + 1);
+	const min_visible_index = Math.floor(spin_position - visible_range / 2);
+	const max_visible_index = Math.ceil(spin_position + visible_range / 2 + 1);
 	for (let i = min_visible_index; i < max_visible_index; i += 1) {
 		const index = mod(i, title_lines.length);
 		if (!item_els_by_index[index]) {
@@ -178,7 +179,7 @@ const renderGrandeRoulette = () => {
 	for (let i = item_els.length - 1; i >= 0; i--) {
 		const item_el = item_els[i];
 		const index = item_el.virtualListIndex;
-		let y = mod(index_position - index, title_lines.length);
+		let y = mod(spin_position - index, title_lines.length);
 		if (y > visible_range) {
 			y -= title_lines.length;
 		}
@@ -196,13 +197,22 @@ const renderGrandeRoulette = () => {
 		}
 	}
 };
+let rafid;
 const animate = () => {
-	requestAnimationFrame(animate);
+	rafid = requestAnimationFrame(animate);
 	animating = true;
 	renderGrandeRoulette();
 
-	// index_position += 0.2;
-	index_position = Math.sin(Date.now() / 5000) * 50;
+	spin_position += spin_velocity;
+	spin_velocity *= 0.99;
+
+	if (Math.abs(spin_velocity) < 0.01) {
+		const title_line = title_lines[Math.floor(spin_position)];
+		display_result(title_line);
+		spin_velocity = 0;
+		animating = false;
+		cancelAnimationFrame(rafid);
+	}
 };
 
 const main = async () => {
@@ -230,13 +240,14 @@ const main = async () => {
 
 	go_button.onclick = () => {
 		if (!animating) {
+			spin_velocity = 50 + Math.random() * 50;
 			animate();
 		}
 
-		const index = Math.floor(Math.random() * title_lines.length);
-		const title_line = title_lines[index];
+		// const index = Math.floor(Math.random() * title_lines.length);
+		// const title_line = title_lines[index];
 
-		display_result(title_line);
+		// display_result(title_line);
 	};
 
 	// TODO: remove duplicate movie listings
