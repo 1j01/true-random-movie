@@ -205,17 +205,20 @@ const animate = () => {
 	animating = true;
 	renderGrandeRoulette();
 
-	if ((spin_position % 1) > ((spin_position + spin_velocity) % 1)) {
-		if (Math.abs(ticker_rotation_deg) < 15) {
-			ticker_rotation_speed_deg_per_frame = spin_velocity * 50;
-		}
-	}
+	// if ((spin_position % 1) > ((spin_position + spin_velocity) % 1)) {
+	// 	if (Math.abs(ticker_rotation_deg) < 15) {
+	// 		ticker_rotation_speed_deg_per_frame = spin_velocity * 50;
+	// 		ticker_rotation_deg = Math.atan(spin_position % 1);
+	// 	}
+	// }
 
 	spin_position += spin_velocity;
 	spin_velocity *= 0.99;
-	ticker_rotation_deg += ticker_rotation_speed_deg_per_frame;
-	ticker_rotation_deg *= 0.2;
-	ticker_rotation_speed_deg_per_frame *= 0.2;
+	// ticker_rotation_deg += ticker_rotation_speed_deg_per_frame;
+	// ticker_rotation_deg *= 0.2;
+	// ticker_rotation_speed_deg_per_frame *= 0.2;
+	ticker_rotation_deg = Math.atan2(mod(spin_position + 0.5, 1) * Math.PI, 0.3) * 15;
+
 
 	if (Math.abs(spin_velocity) < 0.01) {
 		const title_line = title_lines[mod(Math.round(spin_position), title_lines.length)];
