@@ -207,7 +207,7 @@ const animate = () => {
 	spin_velocity *= 0.99;
 
 	if (Math.abs(spin_velocity) < 0.01) {
-		const title_line = title_lines[Math.floor(spin_position)];
+		const title_line = title_lines[mod(Math.round(spin_position), title_lines.length)];
 		display_result(title_line);
 		spin_velocity = 0;
 		animating = false;
