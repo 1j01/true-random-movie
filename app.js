@@ -217,12 +217,12 @@ const animate = () => {
 	// 	Math.abs(spin_position - ticker_index_attachment)
 	// 		.toFixed(2);
 	if (
-		ticker_index_attachment !== Math.round(spin_position) &&
+		ticker_index_attachment !== Math.round(spin_position + 0.1 * Math.sign(spin_position - ticker_index_attachment)) &&
 		(mod(Math.abs(spin_position - ticker_index_attachment + 0.5), 1)) < 0.25
 	) {
 		// grande_roulette_ticker.textContent = "hooked";
 		// grande_roulette_ticker.style.color = "green";
-		ticker_rotation_deg = (spin_position - ticker_index_attachment - 0.5 * Math.sign(spin_position - ticker_index_attachment)) * 45;
+		ticker_rotation_deg = (spin_position - ticker_index_attachment - 0.4 * Math.sign(spin_position - ticker_index_attachment)) * 40;
 		ticker_rotation_speed_deg_per_frame = spin_velocity * 50;
 		spin_velocity -= ticker_rotation_deg / 20000;
 		peg_hit_timer = 50;
