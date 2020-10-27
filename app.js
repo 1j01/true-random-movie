@@ -215,7 +215,12 @@ const animate = () => {
 	// grande_roulette_ticker.style.textShadow = "0 0 1px black, 0 0 1px black, 0 0 1px black, 0 0 5px black, 0 0 5px black, 0 0 6px black, 0 0 5px black, 0 0 7px black, 0 0 8px black";
 	// if (Math.abs((mod(spin_position, 1) - 0.5)) < 0.25) {
 	// grande_roulette_ticker.textContent = Math.abs(spin_position - ticker_index_attachment).toFixed(4);
-	if (
+	if (Math.abs(ticker_index_attachment - spin_position) > 1) {
+		// TODO: handle fast movement in a general way with other movement
+		ticker_index_attachment = Math.round(spin_position);
+		ticker_rotation_deg = (spin_position - ticker_index_attachment - 0.5 * Math.sign(spin_position - ticker_index_attachment)) * 45;
+		ticker_rotation_speed_deg_per_frame = spin_velocity * 50;
+	} else if (
 		ticker_index_attachment !== Math.round(spin_position) &&
 		Math.abs(spin_position - ticker_index_attachment) < 0.9
 	) {
