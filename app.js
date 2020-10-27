@@ -159,6 +159,7 @@ let item_els_by_index = {};
 let spin_position = 0;
 let last_spin_position = 0;
 let spin_velocity = 0;
+let ticker_index_attachment = 0;
 let ticker_rotation_deg = 0;
 let ticker_rotation_speed_deg_per_frame = 0;
 const renderGrandeRoulette = () => {
@@ -211,13 +212,21 @@ const animate = () => {
 	renderGrandeRoulette();
 
 	// if ((spin_position % 1) > ((spin_position + spin_velocity) % 1)) {
-	// if ((mod(spin_position, 1) - 0.5) < 0.25) {
+	if ((mod(spin_position, 1) - 0.5) < 0.25) {
+		grande_roulette_ticker.textContent = "yeah";
+		grande_roulette_ticker.style.color = "green";
+	} else {
+		grande_roulette_ticker.textContent = "nah";
+		grande_roulette_ticker.style.color = "red";
+	}
 	if (
-		// UGH TODO HANDLE WRAPPING
+		// UGH TODO HANDLE WRAPPING?
 		(last_spin_position > spin_position) ?
 			((mod(spin_position, 1) - 0.5) < 1 / 8) :
 			((mod(spin_position, 1) - 0.5) > -1 / 8)
 	) {
+		grande_roulette_ticker.textContent += " bruh";
+		grande_roulette_ticker.style.color = "aqua";
 		// if (Math.abs(ticker_rotation_deg - (mod(spin_position, 1) - 0.5)) < 25) {
 		if (Math.abs(ticker_rotation_deg) < 25) {
 			ticker_rotation_speed_deg_per_frame = spin_velocity * 50;
@@ -230,14 +239,20 @@ const animate = () => {
 		}
 	} else {
 		ticker_rotation_deg *= 0.2;
+		ticker_index_attachment = Math.round(spin_position);
 	}
 
 	spin_position += spin_velocity;
 	spin_velocity *= 0.99;
-	ticker_rotation_deg += ticker_rotation_speed_deg_per_frame;
-	ticker_rotation_speed_deg_per_frame *= 0.2;
-	ticker_rotation_speed_deg_per_frame -= ticker_rotation_deg / 50;
+	// ticker_rotation_deg += ticker_rotation_speed_deg_per_frame;
+	// ticker_rotation_speed_deg_per_frame *= 0.2;
+	// ticker_rotation_speed_deg_per_frame -= ticker_rotation_deg / 50;
+
 	// ticker_rotation_deg = Math.atan2((mod(spin_position + 0.5, 1) + 0.5) * Math.PI, 0.3) * 150;
+
+
+	// ticker_rotation_deg = (mod(spin_position, 1) - 0.5) * 45;
+	// ticker_rotation_deg = (spin_position - ticker_index_attachment - 0.5) * 45;
 
 	last_spin_position = spin_position;
 
