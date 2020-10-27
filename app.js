@@ -219,7 +219,7 @@ const animate = () => {
 	// 	// Math.round(spin_position + 0.1 * Math.sign(spin_position - ticker_index_attachment));
 	// 	(mod(Math.abs(spin_position - ticker_index_attachment + 0.5), 1))
 	// 		.toFixed(2);
-	const pass_peg_limit = 0.25;
+	const pass_peg_limit = 0.5;
 	const peg_size = 0.1;
 	const peg_pushback = 1 / 20000;
 	if (
