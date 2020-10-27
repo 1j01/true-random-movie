@@ -211,40 +211,24 @@ const animate = () => {
 	animating = true;
 	renderGrandeRoulette();
 
-	// if ((spin_position % 1) > ((spin_position + spin_velocity) % 1)) {
 	grande_roulette_ticker.style.textShadow = "0 0 1px black, 0 0 1px black, 0 0 1px black, 0 0 5px black, 0 0 5px black, 0 0 6px black, 0 0 5px black, 0 0 7px black, 0 0 8px black";
-	// if (Math.abs((mod(spin_position, 1) - 0.5)) < 0.25) {
-	// grande_roulette_ticker.textContent = Math.abs(spin_position - ticker_index_attachment).toFixed(4);
 	grande_roulette_ticker.textContent =
-		// (spin_position - ticker_index_attachment - 0.5 * Math.sign(spin_position - ticker_index_attachment)).toFixed(4);
-		// Math.abs((mod(spin_position - ticker_index_attachment, 1) - 0.5 * Math.sign(spin_position - ticker_index_attachment)))
-		(mod(spin_position - ticker_index_attachment + 0.5, 1))
-		.toFixed(2);
-	// if (Math.abs(ticker_index_attachment - spin_position) > 1) {
-	// 	// TODO: handle fast movement in a general way with other movement
-	// 	ticker_index_attachment = Math.round(spin_position);
-	// 	ticker_rotation_deg = (spin_position - ticker_index_attachment - 0.5 * Math.sign(spin_position - ticker_index_attachment)) * 45;
-	// 	ticker_rotation_speed_deg_per_frame = spin_velocity * 50;
-	// 	grande_roulette_ticker.textContent = "weeee";
-	// 	grande_roulette_ticker.style.color = "aqua";
-	// } else 
+		Math.abs(spin_position - ticker_index_attachment)
+		// (mod(spin_position - ticker_index_attachment + 0.5, 1))
+			.toFixed(2);
 	if (
 		ticker_index_attachment !== Math.round(spin_position) &&
-		// Math.abs(spin_position - ticker_index_attachment) < 0.9
-		// Math.abs((mod(spin_position - ticker_index_attachment, 1) - 0.5 * Math.sign(spin_position - ticker_index_attachment))) < 0.25
 		(mod(Math.abs(spin_position - ticker_index_attachment + 0.5), 1)) < 0.25
-		// Math.sign(spin_position - ticker_index_attachment) *
-		// (mod(spin_position - ticker_index_attachment + 0.5, 1)) < 0.25
 	) {
 		// grande_roulette_ticker.textContent = "hooked";
 		grande_roulette_ticker.style.color = "green";
-		// ticker_rotation_deg = (spin_position - ticker_index_attachment - 0.5 * Math.sign(spin_position - ticker_index_attachment)) * 45;
+		ticker_rotation_deg = (spin_position - ticker_index_attachment - 0.5 * Math.sign(spin_position - ticker_index_attachment)) * 45;
 		ticker_rotation_speed_deg_per_frame = spin_velocity * 50;
 	} else {
 		// grande_roulette_ticker.textContent = "free";
 		grande_roulette_ticker.style.color = "red";
 		ticker_rotation_deg *= 0.7;
-		// ticker_index_attachment = Math.round(spin_position);
+		ticker_index_attachment = Math.round(spin_position);
 	}
 	grande_roulette_ticker.textContent += ` | ${ticker_index_attachment} | ${spin_position.toFixed(2)} |`;
 	if (
@@ -254,40 +238,12 @@ const animate = () => {
 	} else {
 		grande_roulette_ticker.textContent += " freaky";
 	}
-	// if (
-	// 	// UGH TODO HANDLE WRAPPING?
-	// 	(last_spin_position > spin_position) ?
-	// 		((mod(spin_position, 1) - 0.5) < 1 / 8) :
-	// 		((mod(spin_position, 1) - 0.5) > -1 / 8)
-	// ) {
-	// 	// grande_roulette_ticker.textContent += " bruh";
-	// 	// grande_roulette_ticker.style.color = "aqua";
-	// 	// if (Math.abs(ticker_rotation_deg - (mod(spin_position, 1) - 0.5)) < 25) {
-	// 	if (Math.abs(ticker_rotation_deg) < 25) {
-	// 		ticker_rotation_speed_deg_per_frame = spin_velocity * 50;
-	// 		if ((mod(spin_position, 1) - 0.5) * 45 > 0 && ticker_rotation_deg > 0) {
-	// 			ticker_rotation_deg = (mod(spin_position, 1) - 0.5) * 45;
-	// 		}
-	// 		if ((mod(spin_position, 1) - 0.5) * 45 < 0 && ticker_rotation_deg < 0) {
-	// 			ticker_rotation_deg = (mod(spin_position, 1) - 0.5) * 45;
-	// 		}
-	// 	}
-	// } else {
-	// 	ticker_rotation_deg *= 0.2;
-	// 	ticker_index_attachment = Math.round(spin_position);
-	// }
 
 	spin_position += spin_velocity;
 	spin_velocity *= 0.99;
 	// ticker_rotation_deg += ticker_rotation_speed_deg_per_frame;
 	// ticker_rotation_speed_deg_per_frame *= 0.2;
 	// ticker_rotation_speed_deg_per_frame -= ticker_rotation_deg / 50;
-
-	// ticker_rotation_deg = Math.atan2((mod(spin_position + 0.5, 1) + 0.5) * Math.PI, 0.3) * 150;
-
-
-	// ticker_rotation_deg = (mod(spin_position, 1) - 0.5) * 45;
-	// ticker_rotation_deg = (spin_position - ticker_index_attachment - 0.5) * 45;
 
 	last_spin_position = spin_position;
 
