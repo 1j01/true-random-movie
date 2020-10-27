@@ -23,10 +23,12 @@
 			bottom: 0;
 			right: 0;
 			left: 50%;
+			transition: left ease-in-out 1s;
 		}
 		#info {
 			text-align: center;
 			margin-right: 50%;
+			transition: margin-right ease-in-out 1s, opacity ease-in-out 1s;
 		}
 		#title-output h2 {
 			font-variant: small-caps;
@@ -133,6 +135,21 @@
 			transform-origin: 0% 50%;
 			z-index: 2;
 		} */
+		@media (max-width: 500px) {
+			.spinner-active #grande-roulette {
+				left: 45px;
+			}
+			body:not(.spinner-active) #grande-roulette {
+				left: 95%;
+				pointer-events: none;
+			}
+			body:not(.spinner-active) #info {
+				margin-right: 5%;
+			}
+			body.spinner-active #info {
+				opacity: 0;
+			}
+		}
 	</style>
 </head>
 

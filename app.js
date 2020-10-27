@@ -206,6 +206,7 @@ let rafid;
 const animate = () => {
 	rafid = requestAnimationFrame(animate);
 	animating = true;
+	document.body.classList.add("spinner-active");
 	renderGrandeRoulette();
 
 	// grande_roulette_ticker.style.textShadow = "0 0 1px black, 0 0 1px black, 0 0 1px black, 0 0 5px black, 0 0 5px black, 0 0 6px black, 0 0 5px black, 0 0 7px black, 0 0 8px black";
@@ -265,6 +266,7 @@ const animate = () => {
 		spin_velocity = 0;
 		ticker_rotation_deg = 0;
 		animating = false;
+		document.body.classList.remove("spinner-active");
 		cancelAnimationFrame(rafid);
 	}
 
