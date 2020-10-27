@@ -158,11 +158,10 @@ let peg_hit_timer = 0;
 const item_els = [];
 let item_els_by_index = {};
 let spin_position = 0;
-let last_spin_position = 0;
 let spin_velocity = 0;
 let ticker_index_attachment = 0;
 let ticker_rotation_deg = 0;
-let ticker_rotation_speed_deg_per_frame = 0;
+// let ticker_rotation_speed_deg_per_frame = 0;
 const renderGrandeRoulette = () => {
 	const item_height = parseFloat(getComputedStyle(grande_roulette_items).getPropertyValue("--item-height"));
 	const visible_range = Math.ceil(grande_roulette_items.offsetHeight / item_height);
@@ -174,11 +173,8 @@ const renderGrandeRoulette = () => {
 			const item_el = document.createElement("div");
 			item_el.className = "grande-roulette-item";
 			item_el.style.background = `hsl(${original_indexes[index] / title_lines.length}turn, 80%, 50%)`;
-			// item_el.style.background = `hsl(${index ** 1.1}turn, 80%, 50%)`;
-			// item_el.style.background = `hsl(${index ** 0.1}turn, 80%, 50%)`;
 			item_el.textContent = title_lines[index].replace(/([!?.,]):/g, "$1");
 			item_el.virtualListIndex = index;
-
 			item_els_by_index[index] = item_el;
 			item_els.push(item_el);
 			grande_roulette_items.append(item_el);
@@ -229,7 +225,7 @@ const animate = () => {
 		// grande_roulette_ticker.textContent = "hooked";
 		// grande_roulette_ticker.style.color = "green";
 		ticker_rotation_deg = (spin_position - ticker_index_attachment - (1 / 2 - peg_size) * Math.sign(spin_position - ticker_index_attachment)) * 38;
-		ticker_rotation_speed_deg_per_frame = spin_velocity * 50;
+		// ticker_rotation_speed_deg_per_frame = spin_velocity * 50;
 		spin_velocity -= ticker_rotation_deg * peg_pushback;
 		peg_hit_timer = 50;
 	} else {
@@ -259,8 +255,6 @@ const animate = () => {
 	// ticker_rotation_deg = Math.min(70, Math.max(-70, ticker_rotation_deg));
 	const limit = 70 + Math.random() * 30;
 	ticker_rotation_deg = Math.min(limit, Math.max(-limit, ticker_rotation_deg));
-
-	last_spin_position = spin_position;
 
 	if (peg_hit_timer > 0) {
 		peg_hit_timer -= 1;
