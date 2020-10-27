@@ -241,6 +241,9 @@ const animate = () => {
 	// 	grande_roulette_ticker.textContent += " freaky";
 	// }
 
+	if (dragging) {
+		spin_velocity = 0;
+	}
 	spin_position += spin_velocity;
 	spin_velocity *= 0.99;
 	// ticker_rotation_deg += ticker_rotation_speed_deg_per_frame;
