@@ -211,33 +211,32 @@ const animate = () => {
 	animating = true;
 	renderGrandeRoulette();
 
-	grande_roulette_ticker.style.textShadow = "0 0 1px black, 0 0 1px black, 0 0 1px black, 0 0 5px black, 0 0 5px black, 0 0 6px black, 0 0 5px black, 0 0 7px black, 0 0 8px black";
-	grande_roulette_ticker.textContent =
-		Math.abs(spin_position - ticker_index_attachment)
-		// (mod(spin_position - ticker_index_attachment + 0.5, 1))
-			.toFixed(2);
+	// grande_roulette_ticker.style.textShadow = "0 0 1px black, 0 0 1px black, 0 0 1px black, 0 0 5px black, 0 0 5px black, 0 0 6px black, 0 0 5px black, 0 0 7px black, 0 0 8px black";
+	// grande_roulette_ticker.textContent =
+	// 	Math.abs(spin_position - ticker_index_attachment)
+	// 		.toFixed(2);
 	if (
 		ticker_index_attachment !== Math.round(spin_position) &&
 		(mod(Math.abs(spin_position - ticker_index_attachment + 0.5), 1)) < 0.25
 	) {
 		// grande_roulette_ticker.textContent = "hooked";
-		grande_roulette_ticker.style.color = "green";
+		// grande_roulette_ticker.style.color = "green";
 		ticker_rotation_deg = (spin_position - ticker_index_attachment - 0.5 * Math.sign(spin_position - ticker_index_attachment)) * 45;
 		ticker_rotation_speed_deg_per_frame = spin_velocity * 50;
 	} else {
 		// grande_roulette_ticker.textContent = "free";
-		grande_roulette_ticker.style.color = "red";
+		// grande_roulette_ticker.style.color = "red";
 		ticker_rotation_deg *= 0.7;
 		ticker_index_attachment = Math.round(spin_position);
 	}
-	grande_roulette_ticker.textContent += ` | ${ticker_index_attachment} | ${spin_position.toFixed(2)} |`;
-	if (
-		ticker_index_attachment !== Math.round(spin_position)
-	) {
-		grande_roulette_ticker.textContent += " hooky";
-	} else {
-		grande_roulette_ticker.textContent += " freaky";
-	}
+	// grande_roulette_ticker.textContent += ` | ${ticker_index_attachment} | ${spin_position.toFixed(2)} |`;
+	// if (
+	// 	ticker_index_attachment !== Math.round(spin_position)
+	// ) {
+	// 	grande_roulette_ticker.textContent += " hooky";
+	// } else {
+	// 	grande_roulette_ticker.textContent += " freaky";
+	// }
 
 	spin_position += spin_velocity;
 	spin_velocity *= 0.99;
