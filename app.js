@@ -219,15 +219,18 @@ const animate = () => {
 	// 	// Math.round(spin_position + 0.1 * Math.sign(spin_position - ticker_index_attachment));
 	// 	(mod(Math.abs(spin_position - ticker_index_attachment + 0.5), 1))
 	// 		.toFixed(2);
+	const pass_peg_limit = 0.25;
+	const peg_size = 0.1;
+	const peg_pushback = 1 / 20000;
 	if (
-		ticker_index_attachment !== Math.round(spin_position + 0.1 * Math.sign(spin_position - ticker_index_attachment)) &&
-		(mod(Math.abs(spin_position - ticker_index_attachment + 0.5 + 0.1 * Math.sign(spin_position - ticker_index_attachment)), 1)) < 0.25
+		ticker_index_attachment !== Math.round(spin_position + peg_size * Math.sign(spin_position - ticker_index_attachment)) &&
+		(mod(Math.abs(spin_position - ticker_index_attachment + 1 / 2 + peg_size * Math.sign(spin_position - ticker_index_attachment)), 1)) < pass_peg_limit
 	) {
 		// grande_roulette_ticker.textContent = "hooked";
 		// grande_roulette_ticker.style.color = "green";
-		ticker_rotation_deg = (spin_position - ticker_index_attachment - 0.4 * Math.sign(spin_position - ticker_index_attachment)) * 38;
+		ticker_rotation_deg = (spin_position - ticker_index_attachment - (1 / 2 - peg_size) * Math.sign(spin_position - ticker_index_attachment)) * 38;
 		ticker_rotation_speed_deg_per_frame = spin_velocity * 50;
-		spin_velocity -= ticker_rotation_deg / 20000;
+		spin_velocity -= ticker_rotation_deg * peg_pushback;
 		peg_hit_timer = 50;
 	} else {
 		// grande_roulette_ticker.textContent = "free";
