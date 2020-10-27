@@ -246,6 +246,10 @@ const animate = () => {
 	// ticker_rotation_deg += ticker_rotation_speed_deg_per_frame;
 	// ticker_rotation_speed_deg_per_frame *= 0.2;
 	// ticker_rotation_speed_deg_per_frame -= ticker_rotation_deg / 50;
+	// ticker_rotation_deg /= Math.exp(ticker_rotation_deg / 100)
+	// ticker_rotation_deg = Math.min(70, Math.max(-70, ticker_rotation_deg));
+	const limit = 70 + Math.random() * 30;
+	ticker_rotation_deg = Math.min(limit, Math.max(-limit, ticker_rotation_deg));
 
 	last_spin_position = spin_position;
 
