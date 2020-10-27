@@ -212,21 +212,21 @@ const animate = () => {
 	renderGrandeRoulette();
 
 	// if ((spin_position % 1) > ((spin_position + spin_velocity) % 1)) {
-	grande_roulette_ticker.style.textShadow = "0 0 1px black, 0 0 1px black, 0 0 1px black, 0 0 5px black, 0 0 5px black, 0 0 6px black, 0 0 5px black, 0 0 7px black, 0 0 8px black";
+	// grande_roulette_ticker.style.textShadow = "0 0 1px black, 0 0 1px black, 0 0 1px black, 0 0 5px black, 0 0 5px black, 0 0 6px black, 0 0 5px black, 0 0 7px black, 0 0 8px black";
 	// if (Math.abs((mod(spin_position, 1) - 0.5)) < 0.25) {
-	grande_roulette_ticker.textContent = Math.abs(spin_position - ticker_index_attachment).toFixed(4);
+	// grande_roulette_ticker.textContent = Math.abs(spin_position - ticker_index_attachment).toFixed(4);
 	if (
 		ticker_index_attachment !== Math.round(spin_position) &&
 		Math.abs(spin_position - ticker_index_attachment) < 0.75
 	) {
 		// grande_roulette_ticker.textContent = "yeah";
-		grande_roulette_ticker.style.color = "green";
+		// grande_roulette_ticker.style.color = "green";
 		// ticker_rotation_deg = (spin_position - ticker_index_attachment - 0.5) * 45;
 		// ticker_rotation_deg = (spin_position - ticker_index_attachment) * 45;
 		ticker_rotation_deg = (spin_position - ticker_index_attachment - 0.5 * Math.sign(spin_position - ticker_index_attachment)) * 45;
 	} else {
 		// grande_roulette_ticker.textContent = "nah";
-		grande_roulette_ticker.style.color = "red";
+		// grande_roulette_ticker.style.color = "red";
 		ticker_rotation_deg *= 0.2;
 		// ticker_index_attachment = Math.floor(spin_position);
 		ticker_index_attachment = Math.round(spin_position);
