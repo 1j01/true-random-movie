@@ -154,6 +154,7 @@ let original_indexes;
 // TODO: use pool of elements to avoid garbage collection churn?
 let animating = false;
 let dragging = false;
+let peg_hit_timer = 0;
 const item_els = [];
 let item_els_by_index = {};
 let spin_position = 0;
@@ -223,6 +224,8 @@ const animate = () => {
 		// grande_roulette_ticker.style.color = "green";
 		ticker_rotation_deg = (spin_position - ticker_index_attachment - 0.5 * Math.sign(spin_position - ticker_index_attachment)) * 45;
 		ticker_rotation_speed_deg_per_frame = spin_velocity * 50;
+		spin_velocity -= ticker_rotation_deg / 20000;
+		peg_hit_timer = 50;
 	} else {
 		// grande_roulette_ticker.textContent = "free";
 		// grande_roulette_ticker.style.color = "red";
@@ -246,7 +249,10 @@ const animate = () => {
 
 	last_spin_position = spin_position;
 
-	if (Math.abs(spin_velocity) < 0.01 && !dragging) {
+	if (peg_hit_timer > 0) {
+		peg_hit_timer -= 1;
+	}
+	if (Math.abs(spin_velocity) < 0.01 && !dragging && peg_hit_timer <= 0) {
 		const title_line = title_lines[mod(Math.round(spin_position), title_lines.length)];
 		display_result(title_line);
 		spin_velocity = 0;
