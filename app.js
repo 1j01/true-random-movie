@@ -212,30 +212,30 @@ const animate = () => {
 	animating = true;
 	renderGrandeRoulette();
 
-	grande_roulette_ticker.style.textShadow = "0 0 1px black, 0 0 1px black, 0 0 1px black, 0 0 5px black, 0 0 5px black, 0 0 6px black, 0 0 5px black, 0 0 7px black, 0 0 8px black";
-	grande_roulette_ticker.textContent =
-		// Math.abs(spin_position - ticker_index_attachment)
-		// Math.sign(spin_position - ticker_index_attachment);
-		// Math.round(spin_position + 0.1 * Math.sign(spin_position - ticker_index_attachment));
-		(mod(Math.abs(spin_position - ticker_index_attachment + 0.5), 1))
-			.toFixed(2);
+	// grande_roulette_ticker.style.textShadow = "0 0 1px black, 0 0 1px black, 0 0 1px black, 0 0 5px black, 0 0 5px black, 0 0 6px black, 0 0 5px black, 0 0 7px black, 0 0 8px black";
+	// grande_roulette_ticker.textContent =
+	// 	// Math.abs(spin_position - ticker_index_attachment)
+	// 	// Math.sign(spin_position - ticker_index_attachment);
+	// 	// Math.round(spin_position + 0.1 * Math.sign(spin_position - ticker_index_attachment));
+	// 	(mod(Math.abs(spin_position - ticker_index_attachment + 0.5), 1))
+	// 		.toFixed(2);
 	if (
 		ticker_index_attachment !== Math.round(spin_position + 0.1 * Math.sign(spin_position - ticker_index_attachment)) &&
 		(mod(Math.abs(spin_position - ticker_index_attachment + 0.5 + 0.1 * Math.sign(spin_position - ticker_index_attachment)), 1)) < 0.25
 	) {
 		// grande_roulette_ticker.textContent = "hooked";
-		grande_roulette_ticker.style.color = "green";
+		// grande_roulette_ticker.style.color = "green";
 		ticker_rotation_deg = (spin_position - ticker_index_attachment - 0.4 * Math.sign(spin_position - ticker_index_attachment)) * 38;
 		ticker_rotation_speed_deg_per_frame = spin_velocity * 50;
 		spin_velocity -= ticker_rotation_deg / 20000;
 		peg_hit_timer = 50;
 	} else {
 		// grande_roulette_ticker.textContent = "free";
-		grande_roulette_ticker.style.color = "red";
+		// grande_roulette_ticker.style.color = "red";
 		ticker_rotation_deg *= 0.7;
 		ticker_index_attachment = Math.round(spin_position);
 	}
-	grande_roulette_ticker.textContent += ` | ${ticker_index_attachment} | ${spin_position.toFixed(2)} |`;
+	// grande_roulette_ticker.textContent += ` | ${ticker_index_attachment} | ${spin_position.toFixed(2)} |`;
 	// if (
 	// 	ticker_index_attachment !== Math.round(spin_position)
 	// ) {
