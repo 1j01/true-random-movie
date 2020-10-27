@@ -217,8 +217,9 @@ const animate = () => {
 	// grande_roulette_ticker.textContent = Math.abs(spin_position - ticker_index_attachment).toFixed(4);
 	grande_roulette_ticker.textContent =
 		// (spin_position - ticker_index_attachment - 0.5 * Math.sign(spin_position - ticker_index_attachment)).toFixed(4);
-		Math.abs((mod(spin_position - ticker_index_attachment, 1) - 0.5 * Math.sign(spin_position - ticker_index_attachment)))
-			.toFixed(2);
+		// Math.abs((mod(spin_position - ticker_index_attachment, 1) - 0.5 * Math.sign(spin_position - ticker_index_attachment)))
+		(mod(spin_position - ticker_index_attachment + 0.5, 1))
+		.toFixed(2);
 	// if (Math.abs(ticker_index_attachment - spin_position) > 1) {
 	// 	// TODO: handle fast movement in a general way with other movement
 	// 	ticker_index_attachment = Math.round(spin_position);
@@ -230,7 +231,10 @@ const animate = () => {
 	if (
 		ticker_index_attachment !== Math.round(spin_position) &&
 		// Math.abs(spin_position - ticker_index_attachment) < 0.9
-		Math.abs((mod(spin_position - ticker_index_attachment, 1) - 0.5 * Math.sign(spin_position - ticker_index_attachment))) < 0.25
+		// Math.abs((mod(spin_position - ticker_index_attachment, 1) - 0.5 * Math.sign(spin_position - ticker_index_attachment))) < 0.25
+		(mod(Math.abs(spin_position - ticker_index_attachment + 0.5), 1)) < 0.25
+		// Math.sign(spin_position - ticker_index_attachment) *
+		// (mod(spin_position - ticker_index_attachment + 0.5, 1)) < 0.25
 	) {
 		// grande_roulette_ticker.textContent = "hooked";
 		grande_roulette_ticker.style.color = "green";
@@ -240,9 +244,9 @@ const animate = () => {
 		// grande_roulette_ticker.textContent = "free";
 		grande_roulette_ticker.style.color = "red";
 		ticker_rotation_deg *= 0.7;
-		ticker_index_attachment = Math.round(spin_position);
+		// ticker_index_attachment = Math.round(spin_position);
 	}
-	grande_roulette_ticker.textContent += ` | ${ticker_index_attachment} | ${Math.round(spin_position)} |`;
+	grande_roulette_ticker.textContent += ` | ${ticker_index_attachment} | ${spin_position.toFixed(2)} |`;
 	if (
 		ticker_index_attachment !== Math.round(spin_position)
 	) {
@@ -319,6 +323,7 @@ const main = async () => {
 	}
 
 	spin_position = Math.random() * title_lines.length;
+	ticker_index_attachment = spin_position;
 
 	renderGrandeRoulette();
 	
