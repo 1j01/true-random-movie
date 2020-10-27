@@ -261,7 +261,7 @@ const animate = () => {
 		cancelAnimationFrame(rafid);
 	}
 
-	grande_roulette_ticker.style.transform = `translateY(-50%) rotate(${ticker_rotation_deg}deg) scaleY(50%)`;
+	grande_roulette_ticker.style.transform = `translateY(-50%) rotate(${ticker_rotation_deg}deg) scaleY(0.5)`;
 };
 
 const main = async () => {
