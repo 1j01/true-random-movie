@@ -320,13 +320,14 @@ const main = async () => {
 			last_event_time = new_time;
 			last_event_y = new_y;
 		};
-		setInterval(() => {
+		let iid = setInterval(() => {
 			y_velocity_energy *= 0.8;
 		});
 		const onPointerUp = () => {
 			grande_roulette_items.removeEventListener("pointermove", onPointerMove);
 			grande_roulette_items.removeEventListener("pointerup", onPointerUp);
 			grande_roulette_items.removeEventListener("pointercancel", onPointerUp);
+			clearInterval(iid);
 			spin_velocity = y_velocity_energy / 1000;
 			dragging = false;
 			if (!animating) {
