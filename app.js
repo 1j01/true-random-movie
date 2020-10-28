@@ -148,6 +148,8 @@ const display_result = (title_line) => {
 	// TODO: make sure fitty gets cleaned up
 };
 
+fitty("#go", { maxSize: 30 });
+
 let title_lines;
 let original_indexes;
 
