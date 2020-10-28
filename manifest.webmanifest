@@ -1,0 +1,28 @@
+{
+	"name": "True Random Movie",
+	"short_name": "Random Movie",
+	"description": "Spin the wheel to pick from 32K+ movies.",
+	"categories": [
+		"utilities",
+		"entertainment"
+	],
+	"display": "fullscreen",
+	"start_url": ".",
+	"lang": "en-US",
+	"theme_color": "#ff0000",
+	"background_color": "#ffffff",
+	"screenshots": [
+		{
+			"src": "screenshot.png",
+			"sizes": "870x512",
+			"type": "image/png"
+		}
+	],
+	"icons": [
+		{
+			"src": "icon.svg",
+			"sizes": "512x512",
+			"type": "image/svg+xml"
+		}
+	]
+}
