@@ -224,8 +224,10 @@ const animate = () => {
 	const pass_peg_limit = 0.5;
 	const peg_size = 0.1;
 	const peg_pushback = 1 / 25000;
+	// I'm not totally sure this variable name makes sense:
+	const ticker_index_occupancy = Math.round(spin_position + peg_size * Math.sign(spin_position - ticker_index_attachment));
 	if (
-		ticker_index_attachment !== Math.round(spin_position + peg_size * Math.sign(spin_position - ticker_index_attachment)) &&
+		ticker_index_attachment !== ticker_index_occupancy &&
 		(mod(Math.abs(spin_position - ticker_index_attachment + 1 / 2 + peg_size * Math.sign(spin_position - ticker_index_attachment)), 1)) < pass_peg_limit
 	) {
 		// grande_roulette_ticker.textContent = "hooked";
@@ -234,6 +236,16 @@ const animate = () => {
 		// ticker_rotation_speed_deg_per_frame = spin_velocity * 50;
 		spin_velocity -= ticker_rotation_deg * peg_pushback * delta_time;
 		peg_hit_timer = 50;
+		// Limit attachment to an adjacent item.
+		// This fixes a case where you stop the spinner while it's moving fast and it's on a peg.
+		// With the random limit below (not sure I'll keep that) it flipped out, but it could also just stay in one place but not in a physically plausible way
+		// TODO: handle wrapping seamlessly? this is very much an edge case and you probably wouldn't notice
+		// i.e. if one of these indices is 0
+		if (ticker_index_attachment < ticker_index_occupancy) {
+			ticker_index_attachment = ticker_index_occupancy - 1;
+		} else {
+			ticker_index_attachment = ticker_index_occupancy + 1;
+		}
 	} else {
 		// grande_roulette_ticker.textContent = "free";
 		// grande_roulette_ticker.style.color = "red";
