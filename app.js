@@ -205,8 +205,11 @@ const renderGrandeRoulette = () => {
 	}
 };
 let rafid;
+let last_time = performance.now();
 const animate = () => {
 	rafid = requestAnimationFrame(animate);
+	const now = performance.now();
+	const delta_time = (now - last_time) / 10;
 	animating = true;
 	document.body.classList.add("spinner-active");
 	renderGrandeRoulette();
@@ -229,12 +232,13 @@ const animate = () => {
 		// grande_roulette_ticker.style.color = "green";
 		ticker_rotation_deg = (spin_position - ticker_index_attachment - (1 / 2 - peg_size) * Math.sign(spin_position - ticker_index_attachment)) * 38;
 		// ticker_rotation_speed_deg_per_frame = spin_velocity * 50;
-		spin_velocity -= ticker_rotation_deg * peg_pushback;
+		spin_velocity -= ticker_rotation_deg * peg_pushback * delta_time;
 		peg_hit_timer = 50;
 	} else {
 		// grande_roulette_ticker.textContent = "free";
 		// grande_roulette_ticker.style.color = "red";
-		ticker_rotation_deg *= 0.7;
+		// ticker_rotation_deg *= 0.7;
+		ticker_rotation_deg += ((ticker_rotation_deg * 0.7) - ticker_rotation_deg) * delta_time;
 		ticker_index_attachment = Math.round(spin_position);
 	}
 	// grande_roulette_ticker.textContent += ` | ${ticker_index_attachment} | ${spin_position.toFixed(2)} |`;
@@ -249,8 +253,10 @@ const animate = () => {
 	if (dragging) {
 		spin_velocity = 0;
 	}
-	spin_position += spin_velocity;
-	spin_velocity *= 0.99;
+	spin_position += spin_velocity * delta_time;
+	// spin_velocity *= 0.99;
+	spin_velocity += ((spin_velocity * 0.99) - spin_velocity) * delta_time;
+
 	// ticker_rotation_deg += ticker_rotation_speed_deg_per_frame;
 	// ticker_rotation_speed_deg_per_frame *= 0.2;
 	// ticker_rotation_speed_deg_per_frame -= ticker_rotation_deg / 50;
@@ -260,7 +266,7 @@ const animate = () => {
 	ticker_rotation_deg = Math.min(limit, Math.max(-limit, ticker_rotation_deg));
 
 	if (peg_hit_timer > 0) {
-		peg_hit_timer -= 1;
+		peg_hit_timer -= delta_time;
 	}
 	if (Math.abs(spin_velocity) < 0.01 && !dragging && peg_hit_timer <= 0) {
 		const title_line = title_lines[mod(Math.round(spin_position), title_lines.length)];
@@ -273,6 +279,8 @@ const animate = () => {
 	}
 
 	grande_roulette_ticker.style.transform = `translateY(-50%) rotate(${ticker_rotation_deg}deg) scaleY(0.5)`;
+
+	last_time = now;
 };
 
 const main = async () => {
