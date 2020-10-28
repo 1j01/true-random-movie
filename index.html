@@ -29,8 +29,9 @@
 		}
 		#info {
 			text-align: center;
+			margin-left: 15px;
 			margin-right: 50%;
-			transition: margin-right ease-in-out 1s, opacity ease-in-out 1s;
+			transition: margin-right ease-in-out 1s, transform ease-in-out 1s, opacity ease-in-out 1s;
 		}
 
 		/*
@@ -214,14 +215,15 @@
 				left: 45px;
 			}
 			body:not(.spinner-active) #grande-roulette {
-				left: 95%;
+				left: calc(100% - 10px);
 				pointer-events: none;
 			}
-			body:not(.spinner-active) #info {
-				margin-right: 5%;
+			#info {
+				margin-right: 80px;
 			}
 			body.spinner-active #info {
 				opacity: 0;
+				transform: translateX(-150px);
 			}
 		}
 	</style>
