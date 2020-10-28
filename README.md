@@ -8,6 +8,22 @@ Find movies that you would never watch otherwise.
 
 [![](screenshot.png)][app]
 
+## Features
+
+- Data set of over thirty two thousand movie titles
+- List wraps seamlessly if you can manage to get to the end of it
+- Good spinner physics, where the pegs affect the ticker and the ticker affects the pegs, and the pegs 
+- Mobile friendly
+- "watch online" link to quickly do a web search for a movie (often you can find a site to it for free easily)
+
+## Data Sources
+
+### Wikipedia
+I copied from [Wikipedia's alphabetical lists of movies](https://en.wikipedia.org/wiki/Lists_of_films#Alphabetical_indices).
+I made many edits to normalize the data, and then contributed back to wikipedia, for which someone awarded me The Copyeditor's Barnstar 😊
+
+![](https://upload.wikimedia.org/wikipedia/commons/thumb/e/ee/Copyeditor_Barnstar_Hires.png/100px-Copyeditor_Barnstar_Hires.png)
+
 ## Development Setup
 
 - [Clone the repo.][git clone]
