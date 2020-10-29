@@ -140,6 +140,28 @@ const display_result = (title_line) => {
 
 	result_container.hidden = false;
 
+	const headings = [...document.querySelectorAll(".scale-to-fit-width")];
+	headings[headings.length - 1].addEventListener("fit", () => {
+		// fitty handles scaling individual headings with a max size,
+		// but I want to scale things down in proportion to each other in some cases
+
+		// Prevent subtitles from being larger than main title
+		// (Note: sometimes this isn't really good, where the first title isn't the most important part)
+		// const mainTitleFontSize = parseFloat(headings[0].style.fontSize);
+		// headings.forEach((heading) => {
+		// 	if (heading !== headings[0] && parseFloat(heading.style.fontSize) >= mainTitleFontSize) {
+		// 		heading.style.fontSize = `${mainTitleFontSize * 0.8}px`;
+		// 	}
+		// });
+		// Limit overall font size, scaling things down proportionally
+		const maxFontSize = 100;
+		if (headings.some((heading) => parseFloat(heading.style.fontSize) > maxFontSize)) {
+			const largest = headings.reduce((prevMax, heading) => Math.max(prevMax, parseFloat(heading.style.fontSize)), 0);
+			headings.forEach((heading) => {
+				heading.style.fontSize = `${parseFloat(heading.style.fontSize) / largest * maxFontSize}px`
+			});
+		}
+	});
 	fitty(".scale-to-fit-width", { maxSize: 200 });
 	fitty.fitAllImmediately();
 	// TODO: make sure fitty gets cleaned up
