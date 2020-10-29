@@ -229,6 +229,17 @@
 		#result {
 			transition: opacity ease-in-out 0.3s;
 		}
+
+		#filters {
+			z-index: 2;
+			position: fixed;
+			top: 0;
+			right: 0;
+			background: black;
+			color: white;
+			padding: 15px;
+			border-bottom-left-radius: 5px;
+		}
 	</style>
 </head>
 
@@ -252,6 +263,12 @@
 			<div id="grande-roulette-ticker"></div>
 			<!-- <div id="grande-roulette-center"></div> -->
 			<div id="grande-roulette-items"></div>
+		</div>
+		<div id="filters" hidden>
+			<label>
+				Filter on Movie Title:
+				<input type="search" id="title-filter" />
+			</label>
 		</div>
 	</div>
 	<script src="app.js" type="module"></script>

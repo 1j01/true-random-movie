@@ -8,6 +8,8 @@ const result_container = document.getElementById("result");
 const go_button = document.getElementById("go");
 const grande_roulette_ticker = document.getElementById("grande-roulette-ticker");
 const grande_roulette_items = document.getElementById("grande-roulette-items");
+const filters = document.getElementById("filters");
+const title_filter = document.getElementById("title-filter");
 
 function mod(n, m) {
 	return ((n % m) + m) % m;
@@ -404,6 +406,9 @@ const main = async () => {
 		title_lines[i] = original_title_lines[original_indexes[i]];
 	}
 
+	const unfiltered_title_lines = title_lines;
+	const unfiltered_original_indexes = original_indexes;
+
 	spin_position = Math.random() * title_lines.length;
 	ticker_index_attachment = spin_position;
 
@@ -481,13 +486,50 @@ const main = async () => {
 					event.preventDefault();
 					copy_to_clipboard_button.click();
 				}
+			} else if (event.key.toUpperCase() === "F") {
+				event.preventDefault();
+				filters.hidden = false;
+				title_filter.focus();
+				title_filter.select();
 			}
-			// else if (event.key.toUpperCase() === "F") {
-			// 	event.preventDefault();
-			// 	show_filters();
-			// 	filter_on_title.focus();
-			// }
+		} else if (!event.ctrlKey && !event.metaKey && !event.altKey && !event.shiftKey) {
+			if (event.key === "Escape") {
+				filters.hidden = true;
+			}
 		}
+	});
+
+	title_filter.addEventListener("input", () => {
+		const invalidate = () => {
+			for (const item_el of item_els) {
+				item_el.remove();
+			}
+			item_els.length = 0;
+			item_els_by_index = {};
+			renderGrandeRoulette();
+		};
+		title_lines = [...unfiltered_title_lines];
+		if (title_filter.value === "") {
+			original_indexes = [...unfiltered_original_indexes];
+			invalidate();
+			return;
+		}
+		for (let i = title_lines.length - 1; i >= 0; i--) {
+			if (title_lines[i].toLowerCase().indexOf(title_filter.value.toLowerCase()) === -1) {
+				title_lines.splice(i, 1);
+			}
+		}
+		if (title_lines.length === 0) {
+			title_lines = [...unfiltered_title_lines];
+			original_indexes = [...unfiltered_original_indexes];
+			invalidate();
+			return;
+		}
+		original_indexes = new Int32Array(title_lines.length);
+		for (let i = 0; i < original_indexes.length; i++) {
+			original_indexes[i] = i;
+		}
+		invalidate();
 	});
 
 	// TODO: remove duplicate movie listings
