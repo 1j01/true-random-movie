@@ -533,6 +533,10 @@ const main = async () => {
 		invalidate();
 	});
 
+	window.addEventListener("transitionend", () => {
+		fitty.fitAll();
+	});
+
 	// TODO: remove duplicate movie listings
 	// also look for two vs 2 etc.
 	// window.titles = new Map();
