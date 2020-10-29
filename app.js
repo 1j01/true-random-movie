@@ -123,16 +123,25 @@ const display_result = (title_line) => {
 		const title_part = title_parts[title_part_index];
 		const scale_wrapper = document.createElement("div");
 		const heading = document.createElement(`h${heading_level}`);
-		const match = title_part.match(/^((?:in |on |and | with )(?:the )?|(?:the movie\b))(.*)/i);
-		if (match && title_part_index > 0) {
+		const small_start_match = title_part.match(/^((?:in |on |and | with )(?:the )?|(?:the movie\b))(.*)/i);
+		let remaining_title_part = title_part;
+		if (small_start_match && title_part_index > 0) {
 			const small_span = document.createElement("span");
 			small_span.style.fontSize = "0.5em";
-			small_span.textContent = match[1];
+			small_span.textContent = small_start_match[1];
 			heading.append(small_span);
-			heading.append(document.createTextNode(match[2]));
-		} else {
-			heading.textContent = title_part;
+			remaining_title_part = small_start_match[2];
 		}
+		const small_mid_match = remaining_title_part.match(/(.*)(\svs?\.?\s)(.*)/i);
+		if (small_mid_match) {
+			heading.append(document.createTextNode(small_mid_match[1]));
+			const small_span = document.createElement("span");
+			small_span.style.fontSize = "0.7em";
+			small_span.textContent = small_mid_match[2];
+			heading.append(small_span);
+			remaining_title_part = small_mid_match[3];
+		}
+		heading.append(document.createTextNode(remaining_title_part));
 		heading.classList.add("scale-to-fit-width");
 		scale_wrapper.append(heading);
 		title_output.append(scale_wrapper);
