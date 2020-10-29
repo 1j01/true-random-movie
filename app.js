@@ -435,8 +435,8 @@ const main = async () => {
 	});
 
 	go_button.onclick = () => {
+		spin_velocity = 50 + Math.random() * 50;
 		if (!animating) {
-			spin_velocity = 50 + Math.random() * 50;
 			animate();
 		}
 
