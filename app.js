@@ -122,10 +122,10 @@ let displayed_title;
 
 const display_result = (title_line) => {
 
-	window.console && console.log(title_line);
+	// window.console && console.log(title_line);
 	const parsed = parse_title_line(title_line);
 	const { title, instances } = parsed;
-	window.console && console.log(parsed);
+	// window.console && console.log(parsed);
 
 	var instance_index = ~~(Math.random() * instances.length);
 	var instance_text = instances[instance_index];
