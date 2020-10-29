@@ -234,7 +234,7 @@ const renderGrandeRoulette = () => {
 
 const pass_peg_limit = 0.5;
 const peg_size = 0.1;
-const peg_pushback = 1 / 25000;
+const peg_pushback = 1 / 2500000;
 const time_step = 1; // delta times are broken up into chunks this size or smaller
 const simulate = (delta_time) => {
 	// I'm not totally sure this variable name makes sense:
@@ -246,7 +246,7 @@ const simulate = (delta_time) => {
 		ticker_rotation_deg = (spin_position - ticker_index_attachment - (1 / 2 - peg_size) * Math.sign(spin_position - ticker_index_attachment)) * 38;
 		// ticker_rotation_speed_deg_per_frame = spin_velocity * 50;
 		spin_velocity -= ticker_rotation_deg * peg_pushback * delta_time;
-		peg_hit_timer = 50;
+		peg_hit_timer = 500;
 		// Limit attachment to an adjacent item.
 		// This fixes a case where you stop the spinner while it's moving fast and it's on a peg.
 		// With the random limit below (not sure I'll keep that) it flipped out, but it could also just stay in one place but not in a physically plausible way
@@ -258,8 +258,7 @@ const simulate = (delta_time) => {
 			ticker_index_attachment = ticker_index_occupancy + 1;
 		}
 	} else {
-		// ticker_rotation_deg *= 0.7; but taking delta time into account
-		ticker_rotation_deg -= 0.3 * ticker_rotation_deg * delta_time;
+		ticker_rotation_deg -= 0.03 * ticker_rotation_deg * delta_time;
 		ticker_index_attachment = Math.round(spin_position);
 	}
 
@@ -267,8 +266,7 @@ const simulate = (delta_time) => {
 		spin_velocity = 0;
 	}
 	spin_position += spin_velocity * delta_time;
-	// spin_velocity *= 0.99; but taking delta time into account
-	spin_velocity -= 0.01 * spin_velocity * delta_time;
+	spin_velocity -= 0.001 * spin_velocity * delta_time;
 
 	// ticker_rotation_deg += ticker_rotation_speed_deg_per_frame;
 	// ticker_rotation_speed_deg_per_frame *= 0.2;
@@ -286,7 +284,7 @@ let last_time = performance.now();
 const animate = () => {
 	rafid = requestAnimationFrame(animate);
 	const now = performance.now();
-	const delta_time = Math.min(now - last_time, 500) / 10; // limit needed to handle if the page isn't visible for a while; scalar can be refactored out
+	const delta_time = Math.min(now - last_time, 500); // limit needed to handle if the page isn't visible for a while; scalar can be refactored out
 	animating = true;
 
 	let remaining_delta_time = delta_time;
@@ -295,14 +293,14 @@ const animate = () => {
 		remaining_delta_time -= time_step;
 	}
 
-	if (Math.abs(spin_velocity) < 0.01 && !dragging && peg_hit_timer <= 0) {
+	if (Math.abs(spin_velocity) < 0.001 && !dragging && peg_hit_timer <= 0) {
 		const title_line = title_lines[mod(Math.round(spin_position), title_lines.length)];
 		if (parse_title_line(title_line).title !== displayed_title) {
 			display_result(title_line);
 			// location.hash = `${title} (${instance_text.replace(/\sTV$/, "")})`;
 			// location.hash = `${title} (${instance_text})`;
 			location.hash = title_line;
-			if (Math.abs(spin_velocity) < 0.001 && Math.abs(ticker_rotation_deg) < 0.01) {
+			if (Math.abs(spin_velocity) < 0.0001 && Math.abs(ticker_rotation_deg) < 0.01) {
 				spin_velocity = 0;
 				ticker_rotation_deg = 0;
 				animating = false;
@@ -421,7 +419,7 @@ const main = async () => {
 			grande_roulette_items.removeEventListener("pointercancel", onPointerUp);
 			clearInterval(iid);
 			grande_roulette_items.style.cursor = "grab";
-			spin_velocity = y_velocity_energy / 1000;
+			spin_velocity = y_velocity_energy / 10000;
 			dragging = false;
 			if (!animating) {
 				animate();
@@ -433,7 +431,7 @@ const main = async () => {
 	});
 
 	go_button.onclick = () => {
-		spin_velocity = 50 + Math.random() * 50;
+		spin_velocity = 5 + Math.random() * 5;
 		if (!animating) {
 			animate();
 		}
