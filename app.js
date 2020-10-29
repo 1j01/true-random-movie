@@ -3,6 +3,7 @@ import fitty from "./lib/fitty.module.js";
 const title_output = document.getElementById("title-output");
 const instance_output = document.getElementById("instance-output");
 const watch_online_link = document.getElementById("watch-online-link");
+const copy_to_clipboard_button = document.getElementById("copy-to-clipboard")
 const result_container = document.getElementById("result");
 const go_button = document.getElementById("go");
 const grande_roulette_ticker = document.getElementById("grande-roulette-ticker");
@@ -146,6 +147,10 @@ const display_result = (title_line) => {
 	watch_online_link.href = `https://google.com/search?q=${encodeURIComponent(
 		`${title} (${instance_text.replace(/\sTV$/, "")}) (watch online)`
 	)}`;
+
+	copy_to_clipboard_button.onclick = async () => {
+		await navigator.clipboard.writeText(`${title} (${instance_text.replace(/\sTV$/, "")})`);
+	};
 
 	result_container.hidden = false;
 
