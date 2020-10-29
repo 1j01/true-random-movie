@@ -406,7 +406,7 @@ const main = async () => {
 			if (!animating) {
 				animate();
 			}
-			y_velocity_energy += (new_y - last_event_y) * (new_time - last_event_time);
+			y_velocity_energy += (new_y - last_event_y) * (new_time - last_event_time) / item_height;
 			last_event_time = new_time;
 			last_event_y = new_y;
 		};
@@ -419,7 +419,7 @@ const main = async () => {
 			grande_roulette_items.removeEventListener("pointercancel", onPointerUp);
 			clearInterval(iid);
 			grande_roulette_items.style.cursor = "grab";
-			spin_velocity = y_velocity_energy / 10000;
+			spin_velocity = y_velocity_energy / 250;
 			dragging = false;
 			if (!animating) {
 				animate();
