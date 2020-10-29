@@ -264,7 +264,7 @@ const animate = () => {
 		}
 	} else {
 		// ticker_rotation_deg *= 0.7; but taking delta time into account
-		ticker_rotation_deg += ((ticker_rotation_deg * 0.7) - ticker_rotation_deg) * delta_time;
+		ticker_rotation_deg -= 0.3 * ticker_rotation_deg * delta_time;
 		ticker_index_attachment = Math.round(spin_position);
 	}
 
@@ -273,7 +273,7 @@ const animate = () => {
 	}
 	spin_position += spin_velocity * delta_time;
 	// spin_velocity *= 0.99; but taking delta time into account
-	spin_velocity += ((spin_velocity * 0.99) - spin_velocity) * delta_time;
+	spin_velocity -= 0.01 * spin_velocity * delta_time;
 
 	// ticker_rotation_deg += ticker_rotation_speed_deg_per_frame;
 	// ticker_rotation_speed_deg_per_frame *= 0.2;
