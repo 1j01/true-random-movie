@@ -469,6 +469,17 @@ const main = async () => {
 		}
 	};
 
+	window.addEventListener("keydown", (event) => {
+		if (event.ctrlKey || event.metaKey && !event.altKey && !event.shiftKey) {
+			if (event.key.toUpperCase() === "C") {
+				if (window.getSelection().isCollapsed) {
+					event.preventDefault();
+					copy_to_clipboard_button.click();
+				}
+			}
+		}
+	});
+
 	// TODO: remove duplicate movie listings
 	// also look for two vs 2 etc.
 	// window.titles = new Map();
