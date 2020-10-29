@@ -294,15 +294,17 @@ const animate = () => {
 	}
 	if (Math.abs(spin_velocity) < 0.01 && !dragging && peg_hit_timer <= 0) {
 		const title_line = title_lines[mod(Math.round(spin_position), title_lines.length)];
-		display_result(title_line);
-		// location.hash = `${title} (${instance_text.replace(/\sTV$/, "")})`;
-		// location.hash = `${title} (${instance_text})`;
-		location.hash = title_line;
-		if (Math.abs(spin_velocity) < 0.001 && Math.abs(ticker_rotation_deg) < 0.01) {
-			spin_velocity = 0;
-			ticker_rotation_deg = 0;
-			animating = false;
-			cancelAnimationFrame(rafid);
+		if (parse_title_line(title_line).title !== displayed_title) {
+			display_result(title_line);
+			// location.hash = `${title} (${instance_text.replace(/\sTV$/, "")})`;
+			// location.hash = `${title} (${instance_text})`;
+			location.hash = title_line;
+			if (Math.abs(spin_velocity) < 0.001 && Math.abs(ticker_rotation_deg) < 0.01) {
+				spin_velocity = 0;
+				ticker_rotation_deg = 0;
+				animating = false;
+				cancelAnimationFrame(rafid);
+			}
 		}
 		document.body.classList.remove("spinner-active");
 	} else {
