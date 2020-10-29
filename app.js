@@ -100,6 +100,9 @@ function parse_title_line(title_line) {
 	// console.log({title, parenthetical});
 
 	var open_paren_index = title_line.lastIndexOf("(");
+	if (open_paren_index === -1) {
+		return;
+	}
 	var title = title_line.slice(0, open_paren_index);
 	var parenthetical = title_line.slice(open_paren_index + 1, -1);
 	// console.log({title, parenthetical});
@@ -117,8 +120,9 @@ function parse_title_line(title_line) {
 const display_result = (title_line) => {
 
 	window.console && console.log(title_line);
-	var { title, parenthetical, instances } = parse_title_line(title_line);
-	window.console && console.log({ title, parenthetical, instances });
+	const parsed = parse_title_line(title_line);
+	const { title, instances } = parsed;
+	window.console && console.log(parsed);
 
 	var instance_index = ~~(Math.random() * instances.length);
 	var instance_text = instances[instance_index];
@@ -282,7 +286,10 @@ const animate = () => {
 	}
 	if (Math.abs(spin_velocity) < 0.01 && !dragging && peg_hit_timer <= 0) {
 		const title_line = title_lines[mod(Math.round(spin_position), title_lines.length)];
-		display_result(title_line);
+		// display_result(title_line);
+		// location.hash = `${title} (${instance_text.replace(/\sTV$/, "")})`;
+		// location.hash = `${title} (${instance_text})`;
+		location.hash = title_line;
 		spin_velocity = 0;
 		ticker_rotation_deg = 0;
 		animating = false;
@@ -293,6 +300,38 @@ const animate = () => {
 	grande_roulette_ticker.style.transform = `translateY(-50%) rotate(${ticker_rotation_deg}deg) scaleY(0.5)`;
 
 	last_time = now;
+};
+
+const parse_from_location_hash = () => {
+	const title_id = decodeURIComponent(location.hash.replace(/^#/, ""));
+	if (!title_id) {
+		return;
+	}
+	// TODO: should this be looser? case-insensitive? optional parenthetical? stylization variations like "2" vs "two"?
+	const parsed = parse_title_line(title_id);
+	if (!parsed) {
+		return;
+	}
+	const { title, parenthetical } = parsed;
+	for (let title_index = 0; title_index < title_lines.length; title_index++) {
+		const title_line = title_lines[title_index];
+		if (title_line.indexOf(title) > -1) { // optimization (could be more optimal by comparing substring at start of string with title)
+			const movie = parse_title_line(title_line);
+			if (!movie) {
+				console.warn("movie title line didn't parse:", title_line);
+			}
+			if (movie.title === title && movie.parenthetical.indexOf(parenthetical) > -1) {
+				spin_position = title_index;
+				spin_velocity = 0;
+				ticker_index_attachment = title_index;
+				ticker_rotation_deg = 0;
+				// ticker_rotation_speed_deg_per_frame = 0;
+				display_result(title_line);
+
+				renderGrandeRoulette();
+			}
+		}
+	}
 };
 
 const main = async () => {
@@ -316,6 +355,10 @@ const main = async () => {
 
 	spin_position = Math.random() * title_lines.length;
 	ticker_index_attachment = spin_position;
+
+	parse_from_location_hash();
+
+	window.addEventListener("hashchange", parse_from_location_hash);
 
 	renderGrandeRoulette();
 	

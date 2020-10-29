@@ -14,6 +14,7 @@ Find movies that you would never watch otherwise.
 - List wraps seamlessly if you can manage to get to the end of it
 - Good spinner physics, where the pegs affect the ticker and the ticker affects the pegs, and the pegs 
 - Mobile friendly
+- Browser history integration - the movie you spin to is included in the URL so you can go back with your browser's back button
 - "watch online" link to quickly do a web search for a movie (often you can find a site to it for free easily)
 
 ## Data Sources
