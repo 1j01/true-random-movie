@@ -322,9 +322,10 @@ const animate = () => {
 		remaining_delta_time -= time_step;
 	}
 
+	const title_line = title_lines[mod(ticker_index_attachment, title_lines.length)];
+	const moved_away_from_displayed_title = parse_title_line(title_line).title !== displayed_title;
 	if (Math.abs(spin_velocity) < 0.001 && !dragging && peg_hit_timer <= 0) {
-		const title_line = title_lines[mod(Math.round(spin_position), title_lines.length)];
-		if (parse_title_line(title_line).title !== displayed_title) {
+		if (moved_away_from_displayed_title) {
 			display_result(title_line);
 			// location.hash = `${title} (${instance_text.replace(/\sTV$/, "")})`;
 			// location.hash = `${title} (${instance_text})`;
@@ -337,9 +338,10 @@ const animate = () => {
 			}
 		}
 		document.body.classList.remove("spinner-active");
-	} else if (Math.abs(spin_velocity) > 0.002) {
+	} else if (moved_away_from_displayed_title) {
 		document.body.classList.add("spinner-active");
 		result_container.style.opacity = 0;
+		displayed_title = null;
 	}
 
 	renderGrandeRoulette();
