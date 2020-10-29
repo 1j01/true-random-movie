@@ -472,11 +472,21 @@ const main = async () => {
 	window.addEventListener("keydown", (event) => {
 		if (event.ctrlKey || event.metaKey && !event.altKey && !event.shiftKey) {
 			if (event.key.toUpperCase() === "C") {
-				if (window.getSelection().isCollapsed) {
+				if (
+					window.getSelection().isCollapsed && (
+						!document.activeElement.matches("textarea, input") ||
+						document.activeElement.selectionEnd === document.activeElement.selectionStart
+					)
+				) {
 					event.preventDefault();
 					copy_to_clipboard_button.click();
 				}
 			}
+			// else if (event.key.toUpperCase() === "F") {
+			// 	event.preventDefault();
+			// 	show_filters();
+			// 	filter_on_title.focus();
+			// }
 		}
 	});
 
