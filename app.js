@@ -224,7 +224,6 @@ const animate = () => {
 	const now = performance.now();
 	const delta_time = (now - last_time) / 10;
 	animating = true;
-	document.body.classList.add("spinner-active");
 	renderGrandeRoulette();
 
 	// grande_roulette_ticker.style.textShadow = "0 0 1px black, 0 0 1px black, 0 0 1px black, 0 0 5px black, 0 0 5px black, 0 0 6px black, 0 0 5px black, 0 0 7px black, 0 0 8px black";
@@ -299,11 +298,15 @@ const animate = () => {
 		// location.hash = `${title} (${instance_text.replace(/\sTV$/, "")})`;
 		// location.hash = `${title} (${instance_text})`;
 		location.hash = title_line;
-		spin_velocity = 0;
-		ticker_rotation_deg = 0;
-		animating = false;
+		if (Math.abs(spin_velocity) < 0.001 && Math.abs(ticker_rotation_deg) < 0.01) {
+			spin_velocity = 0;
+			ticker_rotation_deg = 0;
+			animating = false;
+			cancelAnimationFrame(rafid);
+		}
 		document.body.classList.remove("spinner-active");
-		cancelAnimationFrame(rafid);
+	} else {
+		document.body.classList.add("spinner-active");
 	}
 
 	grande_roulette_ticker.style.transform = `translateY(-50%) rotate(${ticker_rotation_deg}deg) scaleY(0.5)`;
