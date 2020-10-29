@@ -383,9 +383,15 @@ const main = async () => {
 	window.addEventListener("resize", renderGrandeRoulette);
 
 	grande_roulette_items.style.touchAction = "none";
+	grande_roulette_items.style.userSelect = "none";
+	grande_roulette_items.style.cursor = "grab";
+	grande_roulette_items.addEventListener("selectstart", (event) => {
+		event.preventDefault();
+	});
 	grande_roulette_items.addEventListener("pointerdown", (event) => {
 		dragging = true;
 		spin_velocity = 0;
+		grande_roulette_items.style.cursor = "grabbing";
 		const item_height = parseFloat(getComputedStyle(grande_roulette_items).getPropertyValue("--item-height"));
 		const start_y = event.clientY;
 		const start_spin_position = spin_position;
@@ -411,6 +417,7 @@ const main = async () => {
 			grande_roulette_items.removeEventListener("pointerup", onPointerUp);
 			grande_roulette_items.removeEventListener("pointercancel", onPointerUp);
 			clearInterval(iid);
+			grande_roulette_items.style.cursor = "grab";
 			spin_velocity = y_velocity_energy / 1000;
 			dragging = false;
 			if (!animating) {
