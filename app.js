@@ -286,7 +286,7 @@ const animate = () => {
 	}
 	if (Math.abs(spin_velocity) < 0.01 && !dragging && peg_hit_timer <= 0) {
 		const title_line = title_lines[mod(Math.round(spin_position), title_lines.length)];
-		// display_result(title_line);
+		display_result(title_line);
 		// location.hash = `${title} (${instance_text.replace(/\sTV$/, "")})`;
 		// location.hash = `${title} (${instance_text})`;
 		location.hash = title_line;
@@ -321,14 +321,16 @@ const parse_from_location_hash = () => {
 				console.warn("movie title line didn't parse:", title_line);
 			}
 			if (movie.title === title && movie.parenthetical.indexOf(parenthetical) > -1) {
-				spin_position = title_index;
-				spin_velocity = 0;
-				ticker_index_attachment = title_index;
-				ticker_rotation_deg = 0;
-				// ticker_rotation_speed_deg_per_frame = 0;
-				display_result(title_line);
+				if (Math.round(spin_position) !== title_index) {
+					spin_position = title_index;
+					spin_velocity = 0;
+					ticker_index_attachment = title_index;
+					ticker_rotation_deg = 0;
+					// ticker_rotation_speed_deg_per_frame = 0;
+					display_result(title_line);
 
-				renderGrandeRoulette();
+					renderGrandeRoulette();
+				}
 			}
 		}
 	}
