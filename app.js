@@ -118,10 +118,21 @@ const display_result = (title_line) => {
 
 	title_output.innerHTML = "";
 	let heading_level = 2;
-	for (const title_part of title.split(/:\s/g)) {
+	const title_parts = title.split(/:\s/g);
+	for (let title_part_index = 0; title_part_index < title_parts.length; title_part_index++) {
+		const title_part = title_parts[title_part_index];
 		const scale_wrapper = document.createElement("div");
 		const heading = document.createElement(`h${heading_level}`);
-		heading.textContent = title_part;
+		const match = title_part.match(/^((?:in |on |and | with )(?:the )?|(?:the movie\b))(.*)/i);
+		if (match && title_part_index > 0) {
+			const small_span = document.createElement("span");
+			small_span.style.fontSize = "0.5em";
+			small_span.textContent = match[1];
+			heading.append(small_span);
+			heading.append(document.createTextNode(match[2]));
+		} else {
+			heading.textContent = title_part;
+		}
 		heading.classList.add("scale-to-fit-width");
 		scale_wrapper.append(heading);
 		title_output.append(scale_wrapper);
