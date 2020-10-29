@@ -533,8 +533,14 @@ const main = async () => {
 		invalidate();
 	});
 
-	window.addEventListener("transitionend", () => {
-		fitty.fitAll();
+	window.addEventListener("transitionstart", () => {
+		const iid = setInterval(() => {
+			fitty.fitAll();
+		}, 100);
+		window.addEventListener("transitionend", () => {
+			fitty.fitAll();
+			clearInterval(iid);
+		});
 	});
 
 	// TODO: remove duplicate movie listings
