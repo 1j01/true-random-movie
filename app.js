@@ -130,7 +130,7 @@ const display_result = (title_line) => {
 
 	instance_output.textContent = `(${instance_text})`;
 
-	watch_online_link.href = `https://google.com/search?q=${encodeURIComponent(
+	watch_online_link.href = `https://duckduckgo.com/?q=${encodeURIComponent(
 		`${title} (${instance_text.replace(/\sTV$/, "")}) (watch online)`
 	)}`;
 
