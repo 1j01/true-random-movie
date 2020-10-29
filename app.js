@@ -117,6 +117,8 @@ function parse_title_line(title_line) {
 	return { title, parenthetical, instances };
 }
 
+let displayed_title;
+
 const display_result = (title_line) => {
 
 	window.console && console.log(title_line);
@@ -150,6 +152,13 @@ const display_result = (title_line) => {
 	fitty(".scale-to-fit-width", { maxSize: 200 });
 	fitty.fitAllImmediately();
 	// TODO: make sure fitty gets cleaned up
+
+	displayed_title = title;
+};
+
+const clear_result = () => {
+	result_container.hidden = true;
+	displayed_title = null;
 };
 
 fitty("#go", { maxSize: 30 });
@@ -305,11 +314,13 @@ const animate = () => {
 const parse_from_location_hash = () => {
 	const title_id = decodeURIComponent(location.hash.replace(/^#/, ""));
 	if (!title_id) {
+		clear_result();
 		return;
 	}
 	// TODO: should this be looser? case-insensitive? optional parenthetical? stylization variations like "2" vs "two"?
 	const parsed = parse_title_line(title_id);
 	if (!parsed) {
+		clear_result();
 		return;
 	}
 	const { title, parenthetical } = parsed;
@@ -321,7 +332,7 @@ const parse_from_location_hash = () => {
 				console.warn("movie title line didn't parse:", title_line);
 			}
 			if (movie.title === title && movie.parenthetical.indexOf(parenthetical) > -1) {
-				if (Math.round(spin_position) !== title_index) {
+				if (displayed_title !== title) {
 					spin_position = title_index;
 					spin_velocity = 0;
 					ticker_index_attachment = title_index;
