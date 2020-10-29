@@ -92,26 +92,14 @@ function parse_title_line(title_line) {
 		// "Foodfight! (unreleased)" (no date)
 		// "Khushiyaan (?)" (no date)
 
-	// var match = /^(.*)\(([^\)]*)\)$/.exec(title_line);
-	// if (!match) {
-	// 	alert("Failed to parse title line:\n\n" + title_line);
-	// 	return;
-	// }
-	// var [, title, parenthetical] = match;
-	// console.log({title, parenthetical});
-
 	var open_paren_index = title_line.lastIndexOf("(");
 	if (open_paren_index === -1) {
 		return;
 	}
 	var title = title_line.slice(0, open_paren_index);
 	var parenthetical = title_line.slice(open_paren_index + 1, -1);
-	// console.log({title, parenthetical});
 
 	title = title.trim();
-	// if (title.lastIndexOf(":") === title.length - 1) {
-	// 	title = title.slice(0, -1);
-	// }
 
 	const instances = parenthetical.split(/[,&]\s*/g).map((str) => str.trim());
 
@@ -122,10 +110,8 @@ let displayed_title;
 
 const display_result = (title_line) => {
 
-	// window.console && console.log(title_line);
 	const parsed = parse_title_line(title_line);
 	const { title, instances } = parsed;
-	// window.console && console.log(parsed);
 
 	var instance_index = ~~(Math.random() * instances.length);
 	var instance_text = instances[instance_index];
@@ -231,13 +217,6 @@ const animate = () => {
 	animating = true;
 	renderGrandeRoulette();
 
-	// grande_roulette_ticker.style.textShadow = "0 0 1px black, 0 0 1px black, 0 0 1px black, 0 0 5px black, 0 0 5px black, 0 0 6px black, 0 0 5px black, 0 0 7px black, 0 0 8px black";
-	// grande_roulette_ticker.textContent =
-	// 	// Math.abs(spin_position - ticker_index_attachment)
-	// 	// Math.sign(spin_position - ticker_index_attachment);
-	// 	// Math.round(spin_position + 0.1 * Math.sign(spin_position - ticker_index_attachment));
-	// 	(mod(Math.abs(spin_position - ticker_index_attachment + 0.5), 1))
-	// 		.toFixed(2);
 	const pass_peg_limit = 0.5;
 	const peg_size = 0.1;
 	const peg_pushback = 1 / 25000;
@@ -247,8 +226,6 @@ const animate = () => {
 		ticker_index_attachment !== ticker_index_occupancy &&
 		(mod(Math.abs(spin_position - ticker_index_attachment + 1 / 2 + peg_size * Math.sign(spin_position - ticker_index_attachment)), 1)) < pass_peg_limit
 	) {
-		// grande_roulette_ticker.textContent = "hooked";
-		// grande_roulette_ticker.style.color = "green";
 		ticker_rotation_deg = (spin_position - ticker_index_attachment - (1 / 2 - peg_size) * Math.sign(spin_position - ticker_index_attachment)) * 38;
 		// ticker_rotation_speed_deg_per_frame = spin_velocity * 50;
 		spin_velocity -= ticker_rotation_deg * peg_pushback * delta_time;
@@ -264,33 +241,21 @@ const animate = () => {
 			ticker_index_attachment = ticker_index_occupancy + 1;
 		}
 	} else {
-		// grande_roulette_ticker.textContent = "free";
-		// grande_roulette_ticker.style.color = "red";
-		// ticker_rotation_deg *= 0.7;
+		// ticker_rotation_deg *= 0.7; but taking delta time into account
 		ticker_rotation_deg += ((ticker_rotation_deg * 0.7) - ticker_rotation_deg) * delta_time;
 		ticker_index_attachment = Math.round(spin_position);
 	}
-	// grande_roulette_ticker.textContent += ` | ${ticker_index_attachment} | ${spin_position.toFixed(2)} |`;
-	// if (
-	// 	ticker_index_attachment !== Math.round(spin_position)
-	// ) {
-	// 	grande_roulette_ticker.textContent += " hooky";
-	// } else {
-	// 	grande_roulette_ticker.textContent += " freaky";
-	// }
 
 	if (dragging) {
 		spin_velocity = 0;
 	}
 	spin_position += spin_velocity * delta_time;
-	// spin_velocity *= 0.99;
+	// spin_velocity *= 0.99; but taking delta time into account
 	spin_velocity += ((spin_velocity * 0.99) - spin_velocity) * delta_time;
 
 	// ticker_rotation_deg += ticker_rotation_speed_deg_per_frame;
 	// ticker_rotation_speed_deg_per_frame *= 0.2;
 	// ticker_rotation_speed_deg_per_frame -= ticker_rotation_deg / 50;
-	// ticker_rotation_deg /= Math.exp(ticker_rotation_deg / 100)
-	// ticker_rotation_deg = Math.min(70, Math.max(-70, ticker_rotation_deg));
 	const limit = 70 + Math.random() * 30;
 	ticker_rotation_deg = Math.min(limit, Math.max(-limit, ticker_rotation_deg));
 
@@ -439,11 +404,6 @@ const main = async () => {
 		if (!animating) {
 			animate();
 		}
-
-		// const index = Math.floor(Math.random() * title_lines.length);
-		// const title_line = title_lines[index];
-
-		// display_result(title_line);
 	};
 
 	// TODO: remove duplicate movie listings
