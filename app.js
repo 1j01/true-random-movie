@@ -229,19 +229,14 @@ const renderGrandeRoulette = () => {
 			item_el.style.transform = `translateY(${(y - 1 / 2).toFixed(5) * item_height}px)`;
 		}
 	}
+	grande_roulette_ticker.style.transform = `translateY(-50%) rotate(${ticker_rotation_deg}deg) scaleY(0.5)`;
 };
-let rafid;
-let last_time = performance.now();
-const animate = () => {
-	rafid = requestAnimationFrame(animate);
-	const now = performance.now();
-	const delta_time = Math.min(now - last_time, 500) / 10; // limit needed to handle if the page isn't visible for a while; scalar can be refactored out
-	animating = true;
-	renderGrandeRoulette();
 
-	const pass_peg_limit = 0.5;
-	const peg_size = 0.1;
-	const peg_pushback = 1 / 25000;
+const pass_peg_limit = 0.5;
+const peg_size = 0.1;
+const peg_pushback = 1 / 25000;
+const time_step = 1; // delta times are broken up into chunks this size or smaller
+const simulate = (delta_time) => {
 	// I'm not totally sure this variable name makes sense:
 	const ticker_index_occupancy = Math.round(spin_position + peg_size * Math.sign(spin_position - ticker_index_attachment));
 	if (
@@ -284,6 +279,22 @@ const animate = () => {
 	if (peg_hit_timer > 0) {
 		peg_hit_timer -= delta_time;
 	}
+};
+
+let rafid;
+let last_time = performance.now();
+const animate = () => {
+	rafid = requestAnimationFrame(animate);
+	const now = performance.now();
+	const delta_time = Math.min(now - last_time, 500) / 10; // limit needed to handle if the page isn't visible for a while; scalar can be refactored out
+	animating = true;
+
+	let remaining_delta_time = delta_time;
+	while (remaining_delta_time > 0) {
+		simulate(Math.min(time_step, remaining_delta_time));
+		remaining_delta_time -= time_step;
+	}
+
 	if (Math.abs(spin_velocity) < 0.01 && !dragging && peg_hit_timer <= 0) {
 		const title_line = title_lines[mod(Math.round(spin_position), title_lines.length)];
 		if (parse_title_line(title_line).title !== displayed_title) {
@@ -303,7 +314,7 @@ const animate = () => {
 		document.body.classList.add("spinner-active");
 	}
 
-	grande_roulette_ticker.style.transform = `translateY(-50%) rotate(${ticker_rotation_deg}deg) scaleY(0.5)`;
+	renderGrandeRoulette();
 
 	last_time = now;
 };
