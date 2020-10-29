@@ -124,8 +124,9 @@ const display_result = (title_line) => {
 		const scale_wrapper = document.createElement("div");
 		const heading = document.createElement(`h${heading_level}`);
 		const small_start_match = title_part.match(/^((?:in |on |and | with )(?:the )?|(?:the movie\b))(.*)/i);
+		const prevent_small_start_match = title_part.match(/In The Lair|In the Beginning|In Your|In It To/i);
 		let remaining_title_part = title_part;
-		if (small_start_match && title_part_index > 0) {
+		if (small_start_match && title_part_index > 0 && !prevent_small_start_match) {
 			const small_span = document.createElement("span");
 			small_span.style.fontSize = "0.5em";
 			small_span.textContent = small_start_match[1];
