@@ -160,6 +160,13 @@ const display_result = (title_line) => {
 	};
 
 	result_container.hidden = false;
+	result_container.style.transition = "unset";
+	setTimeout(() => {
+		result_container.style.opacity = 1;
+		setTimeout(() => {
+			result_container.style.transition = "";
+		}, 15);
+	});
 
 	const headings = [...document.querySelectorAll(".scale-to-fit-width")];
 	headings[headings.length - 1].addEventListener("fit", () => {
@@ -192,6 +199,7 @@ const display_result = (title_line) => {
 
 const clear_result = () => {
 	result_container.hidden = true;
+	result_container.style.opacity = 1;
 	displayed_title = null;
 };
 
@@ -329,8 +337,9 @@ const animate = () => {
 			}
 		}
 		document.body.classList.remove("spinner-active");
-	} else {
+	} else if (Math.abs(spin_velocity) > 0.002) {
 		document.body.classList.add("spinner-active");
+		result_container.style.opacity = 0;
 	}
 
 	renderGrandeRoulette();
