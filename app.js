@@ -228,15 +228,21 @@ const render_grande_roulette = () => {
 	const visible_range = Math.ceil(grande_roulette_items.offsetHeight / item_height);
 	const min_visible_index = Math.floor(spin_position - visible_range / 2);
 	const max_visible_index = Math.ceil(spin_position + visible_range / 2 + 1);
+	let title_line_indexes_wrapped = title_line_indexes;
+	if (title_line_indexes.length > 0) {
+		while (title_line_indexes_wrapped.length < visible_range) {
+			title_line_indexes_wrapped = title_line_indexes_wrapped.concat(title_line_indexes);
+		}
+	}
 	for (let i = min_visible_index; i < max_visible_index; i += 1) {
-		const index = mod(i, title_line_indexes.length);
+		const index = mod(i, title_line_indexes_wrapped.length);
 		if (!item_els_by_index[index]) {
 			const item_el = document.createElement("div");
 			item_el.className = "grande-roulette-item";
-			item_el.style.background = `hsl(${title_line_indexes[index] / unfiltered_title_lines.length}turn, 80%, 50%)`;
-			item_el.textContent = unfiltered_title_lines[title_line_indexes[index]].replace(/([!?.,]):/g, "$1");
+			item_el.style.background = `hsl(${title_line_indexes_wrapped[index] / unfiltered_title_lines.length}turn, 80%, 50%)`;
+			item_el.textContent = unfiltered_title_lines[title_line_indexes_wrapped[index]].replace(/([!?.,]):/g, "$1");
 			item_el.virtualListIndex = index;
-			item_el.dataset.titleLineIndex = title_line_indexes[index]; // debug
+			item_el.dataset.titleLineIndex = title_line_indexes_wrapped[index]; // debug
 			item_els_by_index[index] = item_el;
 			item_els.push(item_el);
 			grande_roulette_items.append(item_el);
@@ -246,9 +252,9 @@ const render_grande_roulette = () => {
 	for (let i = item_els.length - 1; i >= 0; i--) {
 		const item_el = item_els[i];
 		const index = item_el.virtualListIndex;
-		let y = mod(spin_position - index, title_line_indexes.length);
+		let y = mod(spin_position - index, title_line_indexes_wrapped.length);
 		if (y > visible_range) {
-			y -= title_line_indexes.length;
+			y -= title_line_indexes_wrapped.length;
 		}
 		if (y > visible_range / 2 + 1 || y < -visible_range / 2 - 1) {
 			item_el.remove();
