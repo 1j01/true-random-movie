@@ -528,9 +528,12 @@ const main = async () => {
 			invalidate();
 			return;
 		}
+		original_indexes = [];
 		for (let i = title_lines.length - 1; i >= 0; i--) {
 			if (title_lines[i].toLowerCase().indexOf(title_filter.value.toLowerCase()) === -1) {
 				title_lines.splice(i, 1);
+			} else {
+				original_indexes.push(i);
 			}
 		}
 		if (title_lines.length === 0) {
@@ -539,11 +542,11 @@ const main = async () => {
 			invalidate();
 			return;
 		}
-		original_indexes = new Int32Array(title_lines.length);
-		for (let i = 0; i < original_indexes.length; i++) {
-			// this could be optimized by using the index while looping thru the list to filter it
-			original_indexes[i] = unfiltered_title_lines.indexOf(title_lines[i]);
-		}
+		// original_indexes = new Int32Array(title_lines.length);
+		// for (let i = 0; i < original_indexes.length; i++) {
+		// 	// this could be optimized by using the index while looping thru the list to filter it
+		// 	original_indexes[i] = unfiltered_title_lines.indexOf(title_lines[i]);
+		// }
 		invalidate();
 	});
 
