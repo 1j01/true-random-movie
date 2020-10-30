@@ -229,8 +229,8 @@ const render_grande_roulette = () => {
 	const min_visible_index = Math.floor(spin_position - visible_range / 2);
 	const max_visible_index = Math.ceil(spin_position + visible_range / 2 + 1);
 	for (let i = min_visible_index; i < max_visible_index; i += 1) {
-		const index = mod(i, title_line_indexes.length);
-		if (!item_els_by_index[index]) {
+		if (!item_els_by_index[i]) {
+			const index = mod(i, title_line_indexes.length);
 			const item_el = document.createElement("div");
 			item_el.className = "grande-roulette-item";
 			item_el.style.background = `hsl(${title_line_indexes[index] / unfiltered_title_lines.length}turn, 80%, 50%)`;
