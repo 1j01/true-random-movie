@@ -208,6 +208,8 @@ const clear_result = () => {
 
 fitty("#go", { maxSize: 30 });
 
+let unfiltered_title_lines;
+let unfiltered_original_indexes;
 let title_lines;
 let original_indexes;
 
@@ -232,7 +234,7 @@ const renderGrandeRoulette = () => {
 		if (!item_els_by_index[index]) {
 			const item_el = document.createElement("div");
 			item_el.className = "grande-roulette-item";
-			item_el.style.background = `hsl(${original_indexes[index] / title_lines.length}turn, 80%, 50%)`;
+			item_el.style.background = `hsl(${original_indexes[index] / unfiltered_title_lines.length}turn, 80%, 50%)`;
 			item_el.textContent = title_lines[index].replace(/([!?.,]):/g, "$1");
 			item_el.virtualListIndex = index;
 			item_els_by_index[index] = item_el;
@@ -407,8 +409,8 @@ const main = async () => {
 		title_lines[i] = original_title_lines[original_indexes[i]];
 	}
 
-	const unfiltered_title_lines = title_lines;
-	const unfiltered_original_indexes = original_indexes;
+	unfiltered_title_lines = title_lines;
+	unfiltered_original_indexes = original_indexes;
 
 	spin_position = Math.random() * title_lines.length;
 	ticker_index_attachment = spin_position;
@@ -528,7 +530,8 @@ const main = async () => {
 		}
 		original_indexes = new Int32Array(title_lines.length);
 		for (let i = 0; i < original_indexes.length; i++) {
-			original_indexes[i] = i;
+			// this could be optimized by using the index while looping thru the list to filter it
+			original_indexes[i] = unfiltered_title_lines.indexOf(title_lines[i]);
 		}
 		invalidate();
 	});
