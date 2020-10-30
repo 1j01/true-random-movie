@@ -533,14 +533,19 @@ const main = async () => {
 		invalidate();
 	});
 
-	window.addEventListener("transitionstart", () => {
+	window.addEventListener("transitionstart", (event) => {
+		if (!event.target.matches("#info, #grande-roulette")) {
+			return;
+		}
 		const iid = setInterval(() => {
 			fitty.fitAll();
 		}, 100);
-		window.addEventListener("transitionend", () => {
+		const ontransitionend = () => {
 			fitty.fitAll();
 			clearInterval(iid);
-		});
+			window.removeEventListener("transitionend", ontransitionend);
+		}
+		window.addEventListener("transitionend", ontransitionend);
 	});
 
 	// TODO: remove duplicate movie listings
