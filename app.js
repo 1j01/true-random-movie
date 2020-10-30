@@ -229,14 +229,14 @@ const render_grande_roulette = () => {
 	const min_visible_index = Math.floor(spin_position - visible_range / 2);
 	const max_visible_index = Math.ceil(spin_position + visible_range / 2 + 1);
 	for (let i = min_visible_index; i < max_visible_index; i += 1) {
-		const index = mod(i, title_lines.length);
+		const index = mod(i, title_line_indexes.length);
 		if (!item_els_by_index[index]) {
 			const item_el = document.createElement("div");
 			item_el.className = "grande-roulette-item";
-			item_el.style.background = `hsl(${original_indexes[index] / unfiltered_title_lines.length}turn, 80%, 50%)`;
-			item_el.textContent = title_lines[index].replace(/([!?.,]):/g, "$1");
+			item_el.style.background = `hsl(${title_line_indexes[index] / unfiltered_title_lines.length}turn, 80%, 50%)`;
+			item_el.textContent = unfiltered_title_lines[title_line_indexes[index]].replace(/([!?.,]):/g, "$1");
 			item_el.virtualListIndex = index;
-			item_el.dataset.originalIndex = original_indexes[index]; // debug
+			item_el.dataset.titleLineIndex = title_line_indexes[index]; // debug
 			item_els_by_index[index] = item_el;
 			item_els.push(item_el);
 			grande_roulette_items.append(item_el);
@@ -246,9 +246,9 @@ const render_grande_roulette = () => {
 	for (let i = item_els.length - 1; i >= 0; i--) {
 		const item_el = item_els[i];
 		const index = item_el.virtualListIndex;
-		let y = mod(spin_position - index, title_lines.length);
+		let y = mod(spin_position - index, title_line_indexes.length);
 		if (y > visible_range) {
-			y -= title_lines.length;
+			y -= title_line_indexes.length;
 		}
 		if (y > visible_range / 2 + 1 || y < -visible_range / 2 - 1) {
 			item_el.remove();
@@ -327,7 +327,7 @@ const animate = () => {
 		remaining_delta_time -= time_step;
 	}
 
-	const title_line = title_lines[mod(ticker_index_attachment, title_lines.length)];
+	const title_line = unfiltered_title_lines[title_line_indexes[mod(ticker_index_attachment, title_line_indexes.length)]];
 	const moved_away_from_displayed_title = parse_title_line(title_line).title !== displayed_title;
 	if (Math.abs(spin_velocity) < 0.001 && !dragging && peg_hit_timer <= 0) {
 		if (moved_away_from_displayed_title) {
@@ -367,8 +367,8 @@ const parse_from_location_hash = () => {
 		return;
 	}
 	const { title, parenthetical } = parsed;
-	for (let title_index = 0; title_index < title_lines.length; title_index++) {
-		const title_line = title_lines[title_index];
+	for (let item_index = 0; item_index < title_line_indexes.length; item_index++) {
+		const title_line = unfiltered_title_lines[title_line_indexes[item_index]];
 		if (title_line.indexOf(title) > -1) { // optimization (could be more optimal by comparing substring at start of string with title)
 			const movie = parse_title_line(title_line);
 			if (!movie) {
@@ -376,9 +376,9 @@ const parse_from_location_hash = () => {
 			}
 			if (movie.title === title && movie.parenthetical.indexOf(parenthetical) > -1) {
 				if (displayed_title !== title) {
-					spin_position = title_index;
+					spin_position = item_index;
 					spin_velocity = 0;
-					ticker_index_attachment = title_index;
+					ticker_index_attachment = item_index;
 					ticker_rotation_deg = 0;
 					// ticker_rotation_speed_deg_per_frame = 0;
 					display_result(title_line);
@@ -406,7 +406,7 @@ const main = async () => {
 
 	shuffled_unfiltered_title_line_indexes = new Int32Array(title_line_indexes);
 
-	spin_position = Math.random() * title_lines.length;
+	spin_position = Math.random() * title_line_indexes.length;
 	ticker_index_attachment = spin_position;
 
 	parse_from_location_hash();
@@ -507,8 +507,8 @@ const main = async () => {
 			clear_result();
 			render_grande_roulette();
 			parse_from_location_hash();
-			// spin_position = mod(spin_position, title_lines.length);
-			// ticker_index_attachment = mod(ticker_index_attachment, title_lines.length);
+			// spin_position = mod(spin_position, title_line_indexes.length);
+			// ticker_index_attachment = mod(ticker_index_attachment, title_line_indexes.length);
 			// if (!isFinite(spin_position)) {
 			// 	spin_position = 0;
 			// }
@@ -524,9 +524,7 @@ const main = async () => {
 		for (let i = title_line_indexes.length - 1; i >= 0; i--) {
 			const title_line = unfiltered_title_lines[title_line_indexes[i]];
 			if (title_line.toLowerCase().indexOf(title_filter.value.toLowerCase()) === -1) {
-				title_lines.splice(i, 1);
-			} else {
-				original_indexes.push(i);
+				title_line_indexes.splice(i, 1);
 			}
 		}
 		if (title_line_indexes.length === 0) {
@@ -553,7 +551,7 @@ const main = async () => {
 	// TODO: remove duplicate movie listings
 	// also look for two vs 2 etc.
 	// window.titles = new Map();
-	// for (const title_line of title_lines) {
+	// for (const title_line of unfiltered_title_lines) {
 	// 	const parsed = parse_title_line(title_line);
 	// 	if (titles.get(parsed.title)) {
 	// 		// console.log("Collision!", titles.get(parsed.title), "and", parsed);
