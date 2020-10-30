@@ -223,14 +223,29 @@ let spin_velocity = 0;
 let ticker_index_attachment = 0;
 let ticker_rotation_deg = 0;
 // let ticker_rotation_speed_deg_per_frame = 0;
+const prevlist = [];
 const render_grande_roulette = () => {
 	const item_height = parseFloat(getComputedStyle(grande_roulette_items).getPropertyValue("--item-height"));
 	const visible_range = Math.ceil(grande_roulette_items.offsetHeight / item_height);
 	const min_visible_index = Math.floor(spin_position - visible_range / 2);
 	const max_visible_index = Math.ceil(spin_position + visible_range / 2 + 1);
+
+	const wishlist = []; // similar to virtual DOM in frameworks like React
 	for (let i = min_visible_index; i < max_visible_index; i += 1) {
+		// there's gotta be a better way to name these things
+		const title_line_index_index = mod(i, title_line_indexes.length);
+		const title_line_index = title_line_indexes[title_line_index_index];
+		const title_line = unfiltered_title_lines[title_line_index];
+		wishlist.push({
+			title_line_index_index,
+			title_line_index,
+			title_line,
+		});
+	}
+
+	// reconcile differences between the wishlist and previous state
+	for () {
 		if (!item_els_by_index[i]) {
-			const index = mod(i, title_line_indexes.length);
 			const item_el = document.createElement("div");
 			item_el.className = "grande-roulette-item";
 			item_el.style.background = `hsl(${title_line_indexes[index] / unfiltered_title_lines.length}turn, 80%, 50%)`;
@@ -242,29 +257,31 @@ const render_grande_roulette = () => {
 			grande_roulette_items.append(item_el);
 		}
 	}
-	// have to iterate backwards because items can be removed during iteration
-	for (let i = item_els.length - 1; i >= 0; i--) {
-		const item_el = item_els[i];
-		const index = item_el.virtualListIndex;
-		// let y = mod(spin_position - index, title_line_indexes.length);
-		let y = spin_position - index;
-		if (y > visible_range) {
-			y -= title_line_indexes.length;
-		}
-		if (y > visible_range / 2 + 1 || y < -visible_range / 2 - 1) {
-			item_el.remove();
-			delete item_els_by_index[index];
-			const item_els_index = item_els.indexOf(item_el);
-			if (item_els_index > -1) {
-				item_els.splice(item_els_index, 1);
-			} else {
-				console.error(item_els_index);
-			}
-		} else {
-			item_el.style.transform = `translateY(${(y - 1 / 2).toFixed(5) * item_height}px)`;
-		}
-	}
+	// // have to iterate backwards because items can be removed during iteration
+	// for (let i = item_els.length - 1; i >= 0; i--) {
+	// 	const item_el = item_els[i];
+	// 	const index = item_el.virtualListIndex;
+	// 	// let y = mod(spin_position - index, title_line_indexes.length);
+	// 	let y = spin_position - index;
+	// 	if (y > visible_range) {
+	// 		y -= title_line_indexes.length;
+	// 	}
+	// 	if (y > visible_range / 2 + 1 || y < -visible_range / 2 - 1) {
+	// 		item_el.remove();
+	// 		delete item_els_by_index[index];
+	// 		const item_els_index = item_els.indexOf(item_el);
+	// 		if (item_els_index > -1) {
+	// 			item_els.splice(item_els_index, 1);
+	// 		} else {
+	// 			console.error(item_els_index);
+	// 		}
+	// 	} else {
+	// 		item_el.style.transform = `translateY(${(y - 1 / 2).toFixed(5) * item_height}px)`;
+	// 	}
+	// }
 	grande_roulette_ticker.style.transform = `translateY(-50%) rotate(${ticker_rotation_deg}deg) scaleY(0.5)`;
+
+	prevlist = wishlist;
 };
 
 const pass_peg_limit = 0.5;
