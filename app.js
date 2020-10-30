@@ -237,6 +237,7 @@ const renderGrandeRoulette = () => {
 			item_el.style.background = `hsl(${original_indexes[index] / unfiltered_title_lines.length}turn, 80%, 50%)`;
 			item_el.textContent = title_lines[index].replace(/([!?.,]):/g, "$1");
 			item_el.virtualListIndex = index;
+			item_el.dataset.originalIndex = original_indexes[index]; // debug
 			item_els_by_index[index] = item_el;
 			item_els.push(item_el);
 			grande_roulette_items.append(item_el);
