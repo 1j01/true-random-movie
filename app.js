@@ -224,7 +224,7 @@ let spin_velocity = 0;
 let ticker_index_attachment = 0;
 let ticker_rotation_deg = 0;
 // let ticker_rotation_speed_deg_per_frame = 0;
-const renderGrandeRoulette = () => {
+const render_grande_roulette = () => {
 	const item_height = parseFloat(getComputedStyle(grande_roulette_items).getPropertyValue("--item-height"));
 	const visible_range = Math.ceil(grande_roulette_items.offsetHeight / item_height);
 	const min_visible_index = Math.floor(spin_position - visible_range / 2);
@@ -350,7 +350,7 @@ const animate = () => {
 		displayed_title = null;
 	}
 
-	renderGrandeRoulette();
+	render_grande_roulette();
 
 	last_time = now;
 };
@@ -384,7 +384,7 @@ const parse_from_location_hash = () => {
 					// ticker_rotation_speed_deg_per_frame = 0;
 					display_result(title_line);
 
-					renderGrandeRoulette();
+					render_grande_roulette();
 				}
 			}
 		}
@@ -420,9 +420,9 @@ const main = async () => {
 
 	window.addEventListener("hashchange", parse_from_location_hash);
 
-	renderGrandeRoulette();
+	render_grande_roulette();
 	
-	window.addEventListener("resize", renderGrandeRoulette);
+	window.addEventListener("resize", render_grande_roulette);
 
 	grande_roulette_items.style.touchAction = "none";
 	grande_roulette_items.style.userSelect = "none";
@@ -512,7 +512,7 @@ const main = async () => {
 			item_els_by_index = {};
 			// displayed_title = null;
 			clear_result();
-			renderGrandeRoulette();
+			render_grande_roulette();
 			parse_from_location_hash();
 			// spin_position = mod(spin_position, title_lines.length);
 			// ticker_index_attachment = mod(ticker_index_attachment, title_lines.length);
@@ -558,12 +558,12 @@ const main = async () => {
 		const iid = setInterval(() => {
 			fitty.fitAll();
 		}, 100);
-		const ontransitionend = () => {
+		const on_transition_end = () => {
 			fitty.fitAll();
 			clearInterval(iid);
-			window.removeEventListener("transitionend", ontransitionend);
-		}
-		window.addEventListener("transitionend", ontransitionend);
+			window.removeEventListener("transitionend", on_transition_end);
+		};
+		window.addEventListener("transitionend", on_transition_end);
 	});
 
 	// TODO: remove duplicate movie listings
