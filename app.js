@@ -235,7 +235,7 @@ const render_grande_roulette = () => {
 			item_el.className = "grande-roulette-item";
 			item_el.style.background = `hsl(${title_line_indexes[index] / unfiltered_title_lines.length}turn, 80%, 50%)`;
 			item_el.textContent = unfiltered_title_lines[title_line_indexes[index]].replace(/([!?.,]):/g, "$1");
-			item_el.virtualListIndex = index;
+			item_el.virtualListIndex = i;
 			item_el.dataset.titleLineIndex = title_line_indexes[index]; // debug
 			item_els_by_index[index] = item_el;
 			item_els.push(item_el);
@@ -246,7 +246,8 @@ const render_grande_roulette = () => {
 	for (let i = item_els.length - 1; i >= 0; i--) {
 		const item_el = item_els[i];
 		const index = item_el.virtualListIndex;
-		let y = mod(spin_position - index, title_line_indexes.length);
+		// let y = mod(spin_position - index, title_line_indexes.length);
+		let y = spin_position - index;
 		if (y > visible_range) {
 			y -= title_line_indexes.length;
 		}
