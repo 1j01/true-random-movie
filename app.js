@@ -209,9 +209,8 @@ const clear_result = () => {
 fitty("#go", { maxSize: 30 });
 
 let unfiltered_title_lines;
-let unfiltered_original_indexes;
-let title_lines;
-let original_indexes;
+let title_line_indexes; // can be a sorted/shuffled/filtered/wrapped list of indexes into unfiltered_title_lines
+let shuffled_unfiltered_title_line_indexes; // for restoring from filtering
 
 // TODO: use pool of elements to avoid garbage collection churn?
 let animating = false;
@@ -396,22 +395,16 @@ const main = async () => {
 	// const response = await fetch("test-subtitles.txt");
 	const text = await response.text();
 
-	const original_title_lines = text.trim().split(/\r?\n/g);
+	unfiltered_title_lines = text.trim().split(/\r?\n/g);
 
-	original_indexes = new Int32Array(original_title_lines.length);
-	for (let i = 0; i < original_indexes.length; i++) {
-		original_indexes[i] = i;
+	title_line_indexes = new Int32Array(unfiltered_title_lines.length);
+	for (let i = 0; i < title_line_indexes.length; i++) {
+		title_line_indexes[i] = i;
 	}
 	const prng = sfc32(1, 2, 3, 4);
-	shuffle(original_indexes, prng);
+	shuffle(title_line_indexes, prng);
 
-	title_lines = [];
-	for (let i = 0; i < original_indexes.length; i++) {
-		title_lines[i] = original_title_lines[original_indexes[i]];
-	}
-
-	unfiltered_title_lines = title_lines;
-	unfiltered_original_indexes = original_indexes;
+	shuffled_unfiltered_title_line_indexes = new Int32Array(title_line_indexes);
 
 	spin_position = Math.random() * title_lines.length;
 	ticker_index_attachment = spin_position;
@@ -523,31 +516,22 @@ const main = async () => {
 			// 	ticker_index_attachment = 0;
 			// }
 		};
-		title_lines = [...unfiltered_title_lines];
+		title_line_indexes = [...shuffled_unfiltered_title_line_indexes];
 		if (title_filter.value === "") {
-			original_indexes = [...unfiltered_original_indexes];
 			invalidate();
 			return;
 		}
-		original_indexes = [];
-		for (let i = title_lines.length - 1; i >= 0; i--) {
-			if (title_lines[i].toLowerCase().indexOf(title_filter.value.toLowerCase()) === -1) {
+		for (let i = title_line_indexes.length - 1; i >= 0; i--) {
+			const title_line = unfiltered_title_lines[title_line_indexes[i]];
+			if (title_line.toLowerCase().indexOf(title_filter.value.toLowerCase()) === -1) {
 				title_lines.splice(i, 1);
 			} else {
 				original_indexes.push(i);
 			}
 		}
-		if (title_lines.length === 0) {
-			title_lines = [...unfiltered_title_lines];
-			original_indexes = [...unfiltered_original_indexes];
-			invalidate();
-			return;
+		if (title_line_indexes.length === 0) {
+			title_line_indexes = [...shuffled_unfiltered_title_line_indexes];
 		}
-		// original_indexes = new Int32Array(title_lines.length);
-		// for (let i = 0; i < original_indexes.length; i++) {
-		// 	// this could be optimized by using the index while looping thru the list to filter it
-		// 	original_indexes[i] = unfiltered_title_lines.indexOf(title_lines[i]);
-		// }
 		invalidate();
 	});
 
