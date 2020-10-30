@@ -216,8 +216,7 @@ let shuffled_unfiltered_title_line_indexes; // for restoring from filtering
 let animating = false;
 let dragging = false;
 let peg_hit_timer = 0;
-const item_els = [];
-let item_els_by_index = {};
+let item_els = [];
 let spin_position = 0;
 let spin_velocity = 0;
 let ticker_index_attachment = 0;
@@ -228,42 +227,61 @@ const render_grande_roulette = () => {
 	const visible_range = Math.ceil(grande_roulette_items.offsetHeight / item_height);
 	const min_visible_index = Math.floor(spin_position - visible_range / 2);
 	const max_visible_index = Math.ceil(spin_position + visible_range / 2 + 1);
+
+	const wishlist = []; // similar to virtual DOM in frameworks like React
 	for (let i = min_visible_index; i < max_visible_index; i += 1) {
-		const index = mod(i, title_line_indexes.length);
-		if (!item_els_by_index[index]) {
-			const item_el = document.createElement("div");
-			item_el.className = "grande-roulette-item";
-			item_el.style.background = `hsl(${title_line_indexes[index] / unfiltered_title_lines.length}turn, 80%, 50%)`;
-			item_el.textContent = unfiltered_title_lines[title_line_indexes[index]].replace(/([!?.,]):/g, "$1");
-			item_el.virtualListIndex = index;
-			item_el.dataset.titleLineIndex = title_line_indexes[index]; // debug
-			item_els_by_index[index] = item_el;
-			item_els.push(item_el);
-			grande_roulette_items.append(item_el);
-		}
-	}
-	// have to iterate backwards because items can be removed during iteration
-	for (let i = item_els.length - 1; i >= 0; i--) {
-		const item_el = item_els[i];
-		const index = item_el.virtualListIndex;
-		let y = mod(spin_position - index, title_line_indexes.length);
+		// there's gotta be a better way to name these things
+		const title_line_index_index = mod(i, title_line_indexes.length);
+		const title_line_index = title_line_indexes[title_line_index_index];
+		const title_line = unfiltered_title_lines[title_line_index];
+		// let y = mod(spin_position - i, title_line_indexes.length);
+		let y = spin_position - i;
 		if (y > visible_range) {
 			y -= title_line_indexes.length;
 		}
-		if (y > visible_range / 2 + 1 || y < -visible_range / 2 - 1) {
-			item_el.remove();
-			delete item_els_by_index[index];
-			const item_els_index = item_els.indexOf(item_el);
-			if (item_els_index > -1) {
-				item_els.splice(item_els_index, 1);
-			} else {
-				console.error(item_els_index);
-			}
-		} else {
-			item_el.style.transform = `translateY(${(y - 1 / 2).toFixed(5) * item_height}px)`;
-		}
+		wishlist.push({
+			title_line_index_index,
+			title_line_index,
+			title_line,
+			y,
+		});
 	}
+
+	// reconcile differences between the wishlist and previous state
+	let item_el_index = 0;
+	let item_el = item_els[item_el_index];
+	const new_item_els_list = [];
+	let to_remove_item_els = [];
+	for (const wishlist_item of wishlist) {
+		const { title_line_index_index, title_line_index, title_line, y } = wishlist_item;
+		item_el = item_els[item_el_index];
+		if (item_el && item_el.title_line_index_index === title_line_index_index) {
+			new_item_els_list.push(item_el);
+		} else if (item_el) {
+			to_remove_item_els.push(item_el);
+			item_el = null;
+		}
+
+		if (!item_el) {
+			item_el = document.createElement("div");
+			item_el.className = "grande-roulette-item";
+			item_el.style.background = `hsl(${title_line_index / unfiltered_title_lines.length}turn, 80%, 50%)`;
+			item_el.textContent = title_line.replace(/([!?.,]):/g, "$1");
+			item_el.title_line_index_index = title_line_index_index;
+			grande_roulette_items.append(item_el);
+			new_item_els_list.push(item_el);
+		}
+
+		item_el.style.transform = `translateY(${(y - 1 / 2).toFixed(5) * item_height}px)`;
+
+		item_el_index += 1;
+	}
+	to_remove_item_els = to_remove_item_els.concat(item_els.slice(item_el_index));
+	to_remove_item_els.forEach((el) => el.remove());
+	item_els = new_item_els_list;
+
 	grande_roulette_ticker.style.transform = `translateY(-50%) rotate(${ticker_rotation_deg}deg) scaleY(0.5)`;
+
 };
 
 const pass_peg_limit = 0.5;
@@ -390,6 +408,42 @@ const parse_from_location_hash = () => {
 	}
 };
 
+const apply_filters = () => {
+	const invalidate = () => {
+		for (const item_el of item_els) {
+			item_el.remove();
+		}
+		item_els.length = 0;
+		// displayed_title = null;
+		clear_result();
+		render_grande_roulette();
+		parse_from_location_hash();
+		// spin_position = mod(spin_position, title_line_indexes.length);
+		// ticker_index_attachment = mod(ticker_index_attachment, title_line_indexes.length);
+		// if (!isFinite(spin_position)) {
+		// 	spin_position = 0;
+		// }
+		// if (!isFinite(ticker_index_attachment)) {
+		// 	ticker_index_attachment = 0;
+		// }
+	};
+	title_line_indexes = [...shuffled_unfiltered_title_line_indexes];
+	if (title_filter.value === "") {
+		invalidate();
+		return;
+	}
+	for (let i = title_line_indexes.length - 1; i >= 0; i--) {
+		const title_line = unfiltered_title_lines[title_line_indexes[i]];
+		if (title_line.toLowerCase().indexOf(title_filter.value.toLowerCase()) === -1) {
+			title_line_indexes.splice(i, 1);
+		}
+	}
+	if (title_line_indexes.length === 0) {
+		title_line_indexes = [...shuffled_unfiltered_title_line_indexes];
+	}
+	invalidate();
+};
+
 const main = async () => {
 	const response = await fetch("movies.txt");
 	// const response = await fetch("test-subtitles.txt");
@@ -496,42 +550,7 @@ const main = async () => {
 		}
 	});
 
-	title_filter.addEventListener("input", () => {
-		const invalidate = () => {
-			for (const item_el of item_els) {
-				item_el.remove();
-			}
-			item_els.length = 0;
-			item_els_by_index = {};
-			// displayed_title = null;
-			clear_result();
-			render_grande_roulette();
-			parse_from_location_hash();
-			// spin_position = mod(spin_position, title_line_indexes.length);
-			// ticker_index_attachment = mod(ticker_index_attachment, title_line_indexes.length);
-			// if (!isFinite(spin_position)) {
-			// 	spin_position = 0;
-			// }
-			// if (!isFinite(ticker_index_attachment)) {
-			// 	ticker_index_attachment = 0;
-			// }
-		};
-		title_line_indexes = [...shuffled_unfiltered_title_line_indexes];
-		if (title_filter.value === "") {
-			invalidate();
-			return;
-		}
-		for (let i = title_line_indexes.length - 1; i >= 0; i--) {
-			const title_line = unfiltered_title_lines[title_line_indexes[i]];
-			if (title_line.toLowerCase().indexOf(title_filter.value.toLowerCase()) === -1) {
-				title_line_indexes.splice(i, 1);
-			}
-		}
-		if (title_line_indexes.length === 0) {
-			title_line_indexes = [...shuffled_unfiltered_title_line_indexes];
-		}
-		invalidate();
-	});
+	title_filter.addEventListener("input", apply_filters);
 
 	window.addEventListener("transitionstart", (event) => {
 		if (!event.target.matches("#info, #grande-roulette")) {
