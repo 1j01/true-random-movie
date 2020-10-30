@@ -509,7 +509,18 @@ const main = async () => {
 			}
 			item_els.length = 0;
 			item_els_by_index = {};
+			// displayed_title = null;
+			clear_result();
 			renderGrandeRoulette();
+			parse_from_location_hash();
+			// spin_position = mod(spin_position, title_lines.length);
+			// ticker_index_attachment = mod(ticker_index_attachment, title_lines.length);
+			// if (!isFinite(spin_position)) {
+			// 	spin_position = 0;
+			// }
+			// if (!isFinite(ticker_index_attachment)) {
+			// 	ticker_index_attachment = 0;
+			// }
 		};
 		title_lines = [...unfiltered_title_lines];
 		if (title_filter.value === "") {
