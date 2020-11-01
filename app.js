@@ -408,6 +408,43 @@ const parse_from_location_hash = () => {
 	}
 };
 
+const apply_filters = () => {
+	const invalidate = () => {
+		for (const item_el of item_els) {
+			item_el.remove();
+		}
+		item_els.length = 0;
+		item_els_by_index = {};
+		// displayed_title = null;
+		clear_result();
+		render_grande_roulette();
+		parse_from_location_hash();
+		// spin_position = mod(spin_position, title_line_indexes.length);
+		// ticker_index_attachment = mod(ticker_index_attachment, title_line_indexes.length);
+		// if (!isFinite(spin_position)) {
+		// 	spin_position = 0;
+		// }
+		// if (!isFinite(ticker_index_attachment)) {
+		// 	ticker_index_attachment = 0;
+		// }
+	};
+	title_line_indexes = [...shuffled_unfiltered_title_line_indexes];
+	if (title_filter.value === "") {
+		invalidate();
+		return;
+	}
+	for (let i = title_line_indexes.length - 1; i >= 0; i--) {
+		const title_line = unfiltered_title_lines[title_line_indexes[i]];
+		if (title_line.toLowerCase().indexOf(title_filter.value.toLowerCase()) === -1) {
+			title_line_indexes.splice(i, 1);
+		}
+	}
+	if (title_line_indexes.length === 0) {
+		title_line_indexes = [...shuffled_unfiltered_title_line_indexes];
+	}
+	invalidate();
+};
+
 const main = async () => {
 	const response = await fetch("movies.txt");
 	// const response = await fetch("test-subtitles.txt");
@@ -514,42 +551,7 @@ const main = async () => {
 		}
 	});
 
-	title_filter.addEventListener("input", () => {
-		const invalidate = () => {
-			for (const item_el of item_els) {
-				item_el.remove();
-			}
-			item_els.length = 0;
-			item_els_by_index = {};
-			// displayed_title = null;
-			clear_result();
-			render_grande_roulette();
-			parse_from_location_hash();
-			// spin_position = mod(spin_position, title_line_indexes.length);
-			// ticker_index_attachment = mod(ticker_index_attachment, title_line_indexes.length);
-			// if (!isFinite(spin_position)) {
-			// 	spin_position = 0;
-			// }
-			// if (!isFinite(ticker_index_attachment)) {
-			// 	ticker_index_attachment = 0;
-			// }
-		};
-		title_line_indexes = [...shuffled_unfiltered_title_line_indexes];
-		if (title_filter.value === "") {
-			invalidate();
-			return;
-		}
-		for (let i = title_line_indexes.length - 1; i >= 0; i--) {
-			const title_line = unfiltered_title_lines[title_line_indexes[i]];
-			if (title_line.toLowerCase().indexOf(title_filter.value.toLowerCase()) === -1) {
-				title_line_indexes.splice(i, 1);
-			}
-		}
-		if (title_line_indexes.length === 0) {
-			title_line_indexes = [...shuffled_unfiltered_title_line_indexes];
-		}
-		invalidate();
-	});
+	title_filter.addEventListener("input", apply_filters);
 
 	window.addEventListener("transitionstart", (event) => {
 		if (!event.target.matches("#info, #grande-roulette")) {
