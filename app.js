@@ -547,6 +547,10 @@ const main = async () => {
 		} else if (!event.ctrlKey && !event.metaKey && !event.altKey && !event.shiftKey) {
 			if (event.key === "Escape") {
 				filters.hidden = true;
+			} else if (event.key === "Enter" || event.key === "Return") {
+				if (event.target.closest("#filters")) {
+					apply_filters();
+				}
 			}
 		}
 	});
