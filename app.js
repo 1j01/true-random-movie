@@ -509,13 +509,15 @@ const main = async () => {
 		let iid = setInterval(() => {
 			y_velocity_energy *= 0.8;
 		});
-		const on_pointer_up = () => {
+		const on_pointer_up = (event) => {
 			window.removeEventListener("pointermove", on_pointer_move);
 			window.removeEventListener("pointerup", on_pointer_up);
-			grande_roulette_items.removeEventListener("pointercancel", on_pointer_up);
+			window.removeEventListener("pointercancel", on_pointer_up);
 			clearInterval(iid);
 			grande_roulette_items.style.cursor = "grab";
-			spin_velocity = y_velocity_energy / 250;
+			if (event.type !== "pointercancel") {
+				spin_velocity = y_velocity_energy / 250;
+			}
 			dragging = false;
 			if (!animating) {
 				animate();
@@ -523,7 +525,7 @@ const main = async () => {
 		};
 		window.addEventListener("pointermove", on_pointer_move);
 		window.addEventListener("pointerup", on_pointer_up);
-		grande_roulette_items.addEventListener("pointercancel", on_pointer_up);
+		window.addEventListener("pointercancel", on_pointer_up);
 	});
 
 	go_button.onclick = () => {
