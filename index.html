@@ -137,54 +137,22 @@
 			max-width: 50em;
 		}
 
-		#grande-roulette-items {
-			overflow: hidden;
+		#grande-roulette-svg {
 			height: 100%;
 			width: 100%;
-			position: relative;
 			--item-height: 40px;
 			--peg-size: 5px;
 		}
-		.grande-roulette-item {
-			position: absolute;
-			top: 50%;
-			right: 0;
-			left: 0;
-			height: var(--item-height);
-			line-height: var(--item-height);
+		.grande-roulette-item text {
 			font-size: calc(var(--item-height) * 0.6);
-			white-space: nowrap;
-			text-align: left;
-			padding-left: 15px;
 			font-weight: bold;
-			/* color: black; */
-			color: white;
-			text-shadow:
-				-1px -1px 0 #000,
-				1px -1px 0 #000,
-				-1px 1px 0 #000,
-				1px 1px 0 #000,
-				-1px 0 0 #000,
-				0 -1px 0 #000,
-				-0 1px 0 #000,
-				1px 0 0 #000;
+			fill: white;
+			stroke-width: 3.5px;
+			stroke: #000;
+			paint-order: stroke fill;
 		}
-		.grande-roulette-item::before,
-		.grande-roulette-item::after {
-			content: "";
-			display: block;
-			position: absolute;
-			left: 0;
-			width: var(--peg-size);
-			height: var(--peg-size);
-			background: rgb(37, 37, 37);
-			border-radius: 50%;
-		}
-		.grande-roulette-item::before {
-			top: calc(var(--peg-size) / -2);
-		}
-		.grande-roulette-item::after {
-			bottom: calc(var(--peg-size) / -2);
+		.grande-roulette-item circle {
+			fill: rgb(37, 37, 37);
 		}
 		#grande-roulette-ticker {
 			position: absolute;
@@ -262,7 +230,9 @@
 		<div id="grande-roulette">
 			<div id="grande-roulette-ticker"></div>
 			<!-- <div id="grande-roulette-center"></div> -->
-			<div id="grande-roulette-items"></div>
+			<svg xmlns="http://www.w3.org/2000/svg" version="1.1" id="grande-roulette-svg">
+				<g id="grande-roulette-items" style="transform: translate(0, 50%)"></g>
+			</svg>
 		</div>
 		<div id="filters" hidden>
 			<label>

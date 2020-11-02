@@ -224,7 +224,7 @@ let ticker_rotation_deg = 0;
 // let ticker_rotation_speed_deg_per_frame = 0;
 const render_grande_roulette = () => {
 	const item_height = parseFloat(getComputedStyle(grande_roulette_items).getPropertyValue("--item-height"));
-	const visible_range = Math.ceil(grande_roulette_items.offsetHeight / item_height);
+	const visible_range = Math.ceil(grande_roulette_items.parentElement.getBoundingClientRect().height / item_height);
 	const min_visible_index = Math.floor(spin_position - visible_range / 2);
 	const max_visible_index = Math.ceil(spin_position + visible_range / 2 + 1);
 
@@ -263,12 +263,28 @@ const render_grande_roulette = () => {
 		}
 
 		if (!item_el) {
-			item_el = document.createElement("div");
-			item_el.className = "grande-roulette-item";
-			item_el.style.background = `hsl(${title_line_index / unfiltered_title_lines.length}turn, 80%, 50%)`;
-			item_el.textContent = title_line.replace(/([!?.,]):/g, "$1");
+			item_el = document.createElementNS("http://www.w3.org/2000/svg", "g");
+			item_el.setAttribute("class", "grande-roulette-item");
+			const rect_el = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+			rect_el.setAttribute("fill", `hsl(${title_line_index / unfiltered_title_lines.length}turn, 80%, 50%)`);
+			rect_el.setAttribute("x", 0);
+			rect_el.setAttribute("y", 0);
+			rect_el.setAttribute("width", "100%");
+			rect_el.setAttribute("height", item_height);
+			const text_el = document.createElementNS("http://www.w3.org/2000/svg", "text");
+			text_el.setAttribute("dominant-baseline", "middle");
+			text_el.setAttribute("x", 15);
+			text_el.setAttribute("y", item_height / 2);
+			text_el.textContent = title_line.replace(/([!?.,]):/g, "$1");
 			item_el.title_line_index_index = title_line_index_index;
-			grande_roulette_items.append(item_el);
+			const peg_el = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+			peg_el.setAttribute("cx", peg_size_px / 2);
+			peg_el.setAttribute("cy", item_height);
+			peg_el.setAttribute("r", peg_size_px / 2);
+			item_el.appendChild(rect_el);
+			item_el.appendChild(text_el);
+			item_el.appendChild(peg_el);
+			grande_roulette_items.appendChild(item_el);
 			new_item_els_list.push(item_el);
 		}
 
@@ -286,6 +302,7 @@ const render_grande_roulette = () => {
 
 const pass_peg_limit = 0.5;
 const peg_size = 0.1;
+const peg_size_px = 5;
 const peg_pushback = 1 / 2500000;
 const time_step = 1; // delta times are broken up into chunks this size or smaller
 const simulate = (delta_time) => {
