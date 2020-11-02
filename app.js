@@ -487,7 +487,7 @@ const main = async () => {
 		let y_velocity_energy = 0;
 		let last_event_time = performance.now();
 		let last_event_y = start_y;
-		const onPointerMove = (event) => {
+		const on_pointer_move = (event) => {
 			const new_y = event.clientY;
 			const new_time = performance.now();
 			spin_position = start_spin_position + (new_y - start_y) / item_height;
@@ -501,10 +501,10 @@ const main = async () => {
 		let iid = setInterval(() => {
 			y_velocity_energy *= 0.8;
 		});
-		const onPointerUp = () => {
-			window.removeEventListener("pointermove", onPointerMove);
-			window.removeEventListener("pointerup", onPointerUp);
-			grande_roulette_items.removeEventListener("pointercancel", onPointerUp);
+		const on_pointer_up = () => {
+			window.removeEventListener("pointermove", on_pointer_move);
+			window.removeEventListener("pointerup", on_pointer_up);
+			grande_roulette_items.removeEventListener("pointercancel", on_pointer_up);
 			clearInterval(iid);
 			grande_roulette_items.style.cursor = "grab";
 			spin_velocity = y_velocity_energy / 250;
@@ -513,9 +513,9 @@ const main = async () => {
 				animate();
 			}
 		};
-		window.addEventListener("pointermove", onPointerMove);
-		window.addEventListener("pointerup", onPointerUp);
-		grande_roulette_items.addEventListener("pointercancel", onPointerUp);
+		window.addEventListener("pointermove", on_pointer_move);
+		window.addEventListener("pointerup", on_pointer_up);
+		grande_roulette_items.addEventListener("pointercancel", on_pointer_up);
 	});
 
 	go_button.onclick = () => {
