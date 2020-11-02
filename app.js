@@ -175,6 +175,14 @@ const display_result = (title_line) => {
 	});
 
 	const headings = [...document.querySelectorAll(".scale-to-fit-width")];
+	headings[0].addEventListener("beforefit", () => {
+		for (const heading of headings) {
+			if (heading.childElementCount === 1) {
+				heading.children[0].originalFontSizeStyle = heading.children[0].style.fontSize;
+				heading.children[0].style.fontSize = "";
+			}
+		}
+	});
 	headings[headings.length - 1].addEventListener("fit", () => {
 		// fitty handles scaling individual headings with a max size,
 		// but I want to scale things down in proportion to each other in some cases
@@ -194,6 +202,12 @@ const display_result = (title_line) => {
 			headings.forEach((heading) => {
 				heading.style.fontSize = `${parseFloat(heading.style.fontSize) / largest * maxFontSize}px`
 			});
+		}
+
+		for (const heading of headings) {
+			if (heading.childElementCount === 1) {
+				heading.children[0].style.fontSize = heading.children[0].originalFontSizeStyle;
+			}
 		}
 	});
 	fitty(".scale-to-fit-width", { maxSize: 200 });
