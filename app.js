@@ -236,31 +236,57 @@ const render_grande_roulette = () => {
 		const title_line_index_index = mod(i, title_line_indexes.length);
 		const title_line_index = title_line_indexes[title_line_index_index];
 		const title_line = unfiltered_title_lines[title_line_index];
+		let y = spin_position - index;
+		if (y > visible_range) {
+			y -= title_line_indexes.length;
+		}
 		wishlist.push({
 			title_line_index_index,
 			title_line_index,
 			title_line,
+			y,
 		});
 	}
 
 	// reconcile differences between the wishlist and previous state
-	for () {
+	// let wishlist_item;
+	let item_el_index = 0;
+	let item_el = item_els[item_el_index];
+	for (const wishlist_item of wishlist) {
+		item_el = item_els[item_el_index];
+		if (item_el && item_el.title_line_index_index === wishlist_item.title_line_index_index) {
+
+		} else {
+
+		}
+
+		item_el.style.transform = `translateY(${(wishlist_item.y - 1 / 2).toFixed(5) * item_height}px)`;
+
 		if (!item_els_by_index[i]) {
 			const item_el = document.createElement("div");
 			item_el.className = "grande-roulette-item";
 			item_el.style.background = `hsl(${title_line_indexes[index] / unfiltered_title_lines.length}turn, 80%, 50%)`;
 			item_el.textContent = unfiltered_title_lines[title_line_indexes[index]].replace(/([!?.,]):/g, "$1");
-			item_el.virtualListIndex = i;
+			item_el.title_line_index_index = i;
 			item_el.dataset.titleLineIndex = title_line_indexes[index]; // debug
 			item_els_by_index[index] = item_el;
 			item_els.push(item_el);
 			grande_roulette_items.append(item_el);
 		}
 	}
+
+	// remove elements
+	for (let i = item_el_index; i < item_els.length; i++) {
+		const item_el = item_els[i];
+		item_el.remove();
+		delete item_els_by_index[i];
+	}
+	item_els.length = item_el_index;
+
 	// // have to iterate backwards because items can be removed during iteration
 	// for (let i = item_els.length - 1; i >= 0; i--) {
 	// 	const item_el = item_els[i];
-	// 	const index = item_el.virtualListIndex;
+	// 	const index = item_el.title_line_index_index;
 	// 	// let y = mod(spin_position - index, title_line_indexes.length);
 	// 	let y = spin_position - index;
 	// 	if (y > visible_range) {
