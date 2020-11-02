@@ -277,6 +277,7 @@ const render_grande_roulette = () => {
 
 		item_el.style.transform = `translateY(${(y - 1 / 2).toFixed(5) * item_height}px)`;
 
+		item_el_index += 1;
 	}
 	// remove elements
 	// for (let i = item_el_index; i < item_els.length; i++) {
