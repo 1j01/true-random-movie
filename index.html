@@ -27,9 +27,9 @@
 			overflow: auto;
 			height: 100%;
 			text-align: center;
-			margin-left: 15px;
-			margin-right: calc(50% + 60px);
-			transition: margin-right ease-in-out 1s, transform ease-in-out 1s, opacity ease-in-out 1s;
+			padding-left: 15px;
+			padding-right: calc(50% + 60px);
+			transition: padding-right ease-in-out 1s, transform ease-in-out 1s, opacity ease-in-out 1s;
 		}
 
 		/*
@@ -174,7 +174,7 @@
 				pointer-events: none;
 			}
 			#info {
-				margin-right: 80px;
+				padding-right: 80px;
 			}
 			body.spinner-active #info {
 				opacity: 0;
@@ -240,7 +240,10 @@
 			href="https://paypal.me/IsaiahOdhner">Donate</a>
 		<br>
 		<br>
-		<button id="go" autofocus>Random Movie</button>
+		<div>
+			<!-- div is for fitty centering given that #info has padding -->
+			<button id="go" autofocus>Random Movie</button>
+		</div>
 		<div id="result" hidden>
 			<div id="title-output"></div>
 			<div id="instance-output"></div>
