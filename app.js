@@ -216,14 +216,13 @@ let shuffled_unfiltered_title_line_indexes; // for restoring from filtering
 let animating = false;
 let dragging = false;
 let peg_hit_timer = 0;
-const item_els = [];
-let item_els_by_index = {};
+let item_els = [];
+// let item_els_by_index = {};
 let spin_position = 0;
 let spin_velocity = 0;
 let ticker_index_attachment = 0;
 let ticker_rotation_deg = 0;
 // let ticker_rotation_speed_deg_per_frame = 0;
-const prevlist = [];
 const render_grande_roulette = () => {
 	const item_height = parseFloat(getComputedStyle(grande_roulette_items).getPropertyValue("--item-height"));
 	const visible_range = Math.ceil(grande_roulette_items.offsetHeight / item_height);
@@ -236,7 +235,7 @@ const render_grande_roulette = () => {
 		const title_line_index_index = mod(i, title_line_indexes.length);
 		const title_line_index = title_line_indexes[title_line_index_index];
 		const title_line = unfiltered_title_lines[title_line_index];
-		let y = spin_position - index;
+		let y = spin_position - i;
 		if (y > visible_range) {
 			y -= title_line_indexes.length;
 		}
@@ -249,65 +248,50 @@ const render_grande_roulette = () => {
 	}
 
 	// reconcile differences between the wishlist and previous state
-	// let wishlist_item;
 	let item_el_index = 0;
 	let item_el = item_els[item_el_index];
+	const new_item_els_list = [];
+	let to_remove_item_els = [];
 	for (const wishlist_item of wishlist) {
+		const { title_line_index_index, title_line_index, title_line, y } = wishlist_item;
 		item_el = item_els[item_el_index];
-		if (item_el && item_el.title_line_index_index === wishlist_item.title_line_index_index) {
-
-		} else {
-
+		if (item_el && item_el.title_line_index_index === title_line_index_index) {
+			new_item_els_list.push(item_el);
+		} else if (item_el) {
+			to_remove_item_els.push(item_el);
+			item_el = null;
 		}
 
-		item_el.style.transform = `translateY(${(wishlist_item.y - 1 / 2).toFixed(5) * item_height}px)`;
-
-		if (!item_els_by_index[i]) {
-			const item_el = document.createElement("div");
+		if (!item_el) {
+			item_el = document.createElement("div");
 			item_el.className = "grande-roulette-item";
-			item_el.style.background = `hsl(${title_line_indexes[index] / unfiltered_title_lines.length}turn, 80%, 50%)`;
-			item_el.textContent = unfiltered_title_lines[title_line_indexes[index]].replace(/([!?.,]):/g, "$1");
-			item_el.title_line_index_index = i;
-			item_el.dataset.titleLineIndex = title_line_indexes[index]; // debug
-			item_els_by_index[index] = item_el;
-			item_els.push(item_el);
+			item_el.style.background = `hsl(${title_line_index / unfiltered_title_lines.length}turn, 80%, 50%)`;
+			item_el.textContent = title_line.replace(/([!?.,]):/g, "$1");
+			item_el.title_line_index_index = title_line_index_index;
+			item_el.dataset.titleLineIndex = title_line_index; // debug
+			// item_els_by_index[index] = item_el;
+			// item_els.push(item_el);
 			grande_roulette_items.append(item_el);
+			new_item_els_list.push(item_el);
 		}
-	}
 
+		item_el.style.transform = `translateY(${(y - 1 / 2).toFixed(5) * item_height}px)`;
+
+	}
 	// remove elements
-	for (let i = item_el_index; i < item_els.length; i++) {
-		const item_el = item_els[i];
-		item_el.remove();
-		delete item_els_by_index[i];
-	}
-	item_els.length = item_el_index;
-
-	// // have to iterate backwards because items can be removed during iteration
-	// for (let i = item_els.length - 1; i >= 0; i--) {
+	// for (let i = item_el_index; i < item_els.length; i++) {
 	// 	const item_el = item_els[i];
-	// 	const index = item_el.title_line_index_index;
-	// 	// let y = mod(spin_position - index, title_line_indexes.length);
-	// 	let y = spin_position - index;
-	// 	if (y > visible_range) {
-	// 		y -= title_line_indexes.length;
-	// 	}
-	// 	if (y > visible_range / 2 + 1 || y < -visible_range / 2 - 1) {
-	// 		item_el.remove();
-	// 		delete item_els_by_index[index];
-	// 		const item_els_index = item_els.indexOf(item_el);
-	// 		if (item_els_index > -1) {
-	// 			item_els.splice(item_els_index, 1);
-	// 		} else {
-	// 			console.error(item_els_index);
-	// 		}
-	// 	} else {
-	// 		item_el.style.transform = `translateY(${(y - 1 / 2).toFixed(5) * item_height}px)`;
-	// 	}
+	// 	item_el.remove();
+	// 	// delete item_els_by_index[i];
 	// }
+	// item_els.length = item_el_index;
+	// TODO: off-by-one?
+	to_remove_item_els = to_remove_item_els.concat(item_els.slice(item_el_index));
+	to_remove_item_els.forEach((el) => el.remove());
+	item_els = new_item_els_list;
+
 	grande_roulette_ticker.style.transform = `translateY(-50%) rotate(${ticker_rotation_deg}deg) scaleY(0.5)`;
 
-	prevlist = wishlist;
 };
 
 const pass_peg_limit = 0.5;
@@ -440,7 +424,7 @@ const apply_filters = () => {
 			item_el.remove();
 		}
 		item_els.length = 0;
-		item_els_by_index = {};
+		// item_els_by_index = {};
 		// displayed_title = null;
 		clear_result();
 		render_grande_roulette();
