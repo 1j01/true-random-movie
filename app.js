@@ -228,7 +228,10 @@ const render_grande_roulette = () => {
 	const min_visible_index = Math.floor(spin_position - visible_range / 2);
 	const max_visible_index = Math.ceil(spin_position + visible_range / 2 + 1);
 
-	const wishlist = []; // similar to virtual DOM in frameworks like React
+	let item_el_index = 0;
+	let item_el = item_els[item_el_index];
+	const new_item_els_list = [];
+	let to_remove_item_els = [];
 	for (let i = min_visible_index; i < max_visible_index; i += 1) {
 		// there's gotta be a better way to name these things
 		const title_line_index_index = mod(i, title_line_indexes.length);
@@ -239,21 +242,6 @@ const render_grande_roulette = () => {
 		if (y > visible_range) {
 			y -= title_line_indexes.length;
 		}
-		wishlist.push({
-			title_line_index_index,
-			title_line_index,
-			title_line,
-			y,
-		});
-	}
-
-	// reconcile differences between the wishlist and previous state
-	let item_el_index = 0;
-	let item_el = item_els[item_el_index];
-	const new_item_els_list = [];
-	let to_remove_item_els = [];
-	for (const wishlist_item of wishlist) {
-		const { title_line_index_index, title_line_index, title_line, y } = wishlist_item;
 		item_el = item_els[item_el_index];
 		if (item_el && item_el.title_line_index_index === title_line_index_index) {
 			new_item_els_list.push(item_el);
