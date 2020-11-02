@@ -415,6 +415,8 @@ const parse_from_location_hash = () => {
 					spin_velocity = 0;
 					ticker_index_attachment = item_index;
 					ticker_rotation_deg = 0;
+					animating = false;
+					cancelAnimationFrame(rafid);
 					// ticker_rotation_speed_deg_per_frame = 0;
 					display_result(title_line);
 
