@@ -15,7 +15,7 @@
 			height: 100%;
 			overflow: hidden;
 		}
-		#grande-roulette {
+		#mega-spinner {
 			position: fixed;
 			top: 0;
 			bottom: 0;
@@ -135,13 +135,13 @@
 			max-width: 50em;
 		}
 
-		#grande-roulette-svg {
+		#mega-spinner-svg {
 			height: 100vh;
 			width: 100%;
 			--item-height: 40px;
 			--peg-size: 5px;
 		}
-		.grande-roulette-item text {
+		.mega-spinner-item text {
 			font-size: calc(var(--item-height) * 0.6);
 			font-weight: bold;
 			fill: white;
@@ -149,10 +149,10 @@
 			stroke: #000;
 			paint-order: stroke fill;
 		}
-		.grande-roulette-item circle {
+		.mega-spinner-item circle {
 			fill: rgb(37, 37, 37);
 		}
-		#grande-roulette-ticker {
+		#mega-spinner-ticker {
 			position: absolute;
 			top: 50vh;
 			right: calc(100% - 5px);
@@ -166,10 +166,10 @@
 			z-index: 1;
 		}
 		@media (max-width: 500px) {
-			#grande-roulette {
+			#mega-spinner {
 				left: 45px;
 			}
-			body:not(.spinner-active) #grande-roulette {
+			body:not(.spinner-active) #mega-spinner {
 				transform: translateX(calc(100% - 10px));
 				pointer-events: none;
 			}
@@ -248,10 +248,10 @@
 			<button id="copy-to-clipboard" aria-keyshortcuts="Ctrl+C">Copy To Clipboard</a>
 		</div>
 	</div>
-	<div id="grande-roulette">
-		<div id="grande-roulette-ticker"></div>
-		<svg xmlns="http://www.w3.org/2000/svg" version="1.1" id="grande-roulette-svg">
-			<g id="grande-roulette-items" style="transform: translate(0, 50vh)"></g>
+	<div id="mega-spinner">
+		<div id="mega-spinner-ticker"></div>
+		<svg xmlns="http://www.w3.org/2000/svg" version="1.1" id="mega-spinner-svg">
+			<g id="mega-spinner-items" style="transform: translate(0, 50vh)"></g>
 		</svg>
 	</div>
 	<div id="filters" hidden>

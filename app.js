@@ -6,10 +6,10 @@ const watch_online_link = document.getElementById("watch-online-link");
 const copy_to_clipboard_button = document.getElementById("copy-to-clipboard")
 const result_container = document.getElementById("result");
 const go_button = document.getElementById("go");
-const grande_roulette_container = document.getElementById("grande-roulette");
-const grande_roulette_svg = document.getElementById("grande-roulette-svg");
-const grande_roulette_ticker = document.getElementById("grande-roulette-ticker");
-const grande_roulette_items = document.getElementById("grande-roulette-items");
+const mega_spinner_container = document.getElementById("mega-spinner");
+const mega_spinner_svg = document.getElementById("mega-spinner-svg");
+const mega_spinner_ticker = document.getElementById("mega-spinner-ticker");
+const mega_spinner_items = document.getElementById("mega-spinner-items");
 const filters = document.getElementById("filters");
 const close_filters_button = document.getElementById("close-filters");
 const title_filter = document.getElementById("title-filter");
@@ -225,13 +225,13 @@ let spin_velocity = 0;
 let ticker_index_attachment = 0;
 let ticker_rotation_deg = 0;
 // let ticker_rotation_speed_deg_per_frame = 0;
-const render_grande_roulette = () => {
+const render_mega_spinner = () => {
 	// Fix for mobile chrome (not in Desktop Site mode, and either: 1. not after a refresh or 2. after a refresh and then rotating the phone)
 	// I think it relates to the top bar UI that can hide/show when scrolling a page.
-	grande_roulette_container.style.top = `${(grande_roulette_container.clientHeight - grande_roulette_svg.getBoundingClientRect().height) / 2}px`;
+	mega_spinner_container.style.top = `${(mega_spinner_container.clientHeight - mega_spinner_svg.getBoundingClientRect().height) / 2}px`;
 
-	const item_height = parseFloat(getComputedStyle(grande_roulette_items).getPropertyValue("--item-height"));
-	const visible_range = Math.ceil(grande_roulette_container.clientHeight / item_height);
+	const item_height = parseFloat(getComputedStyle(mega_spinner_items).getPropertyValue("--item-height"));
+	const visible_range = Math.ceil(mega_spinner_container.clientHeight / item_height);
 	const min_visible_index = Math.floor(spin_position - visible_range / 2);
 	const max_visible_index = Math.ceil(spin_position + visible_range / 2 + 1);
 
@@ -259,7 +259,7 @@ const render_grande_roulette = () => {
 
 		if (!item_el) {
 			item_el = document.createElementNS("http://www.w3.org/2000/svg", "g");
-			item_el.setAttribute("class", "grande-roulette-item");
+			item_el.setAttribute("class", "mega-spinner-item");
 			const rect_el = document.createElementNS("http://www.w3.org/2000/svg", "rect");
 			rect_el.setAttribute("fill", `hsl(${title_line_index / unfiltered_title_lines.length}turn, 80%, 50%)`);
 			rect_el.setAttribute("x", 0);
@@ -279,7 +279,7 @@ const render_grande_roulette = () => {
 			item_el.appendChild(rect_el);
 			item_el.appendChild(text_el);
 			item_el.appendChild(peg_el);
-			grande_roulette_items.appendChild(item_el);
+			mega_spinner_items.appendChild(item_el);
 			new_item_els_list.push(item_el);
 		}
 
@@ -291,7 +291,7 @@ const render_grande_roulette = () => {
 	to_remove_item_els.forEach((el) => el.remove());
 	item_els = new_item_els_list;
 
-	grande_roulette_ticker.style.transform = `translateY(-50%) rotate(${ticker_rotation_deg}deg) scaleY(0.5)`;
+	mega_spinner_ticker.style.transform = `translateY(-50%) rotate(${ticker_rotation_deg}deg) scaleY(0.5)`;
 
 };
 
@@ -379,7 +379,7 @@ const animate = () => {
 		displayed_title = null;
 	}
 
-	render_grande_roulette();
+	render_mega_spinner();
 
 	last_time = now;
 };
@@ -415,7 +415,7 @@ const parse_from_location_hash = () => {
 					// ticker_rotation_speed_deg_per_frame = 0;
 					display_result(title_line);
 
-					render_grande_roulette();
+					render_mega_spinner();
 				}
 			}
 		}
@@ -430,7 +430,7 @@ const apply_filters = () => {
 		item_els.length = 0;
 		// displayed_title = null;
 		clear_result();
-		render_grande_roulette();
+		render_mega_spinner();
 		parse_from_location_hash();
 		// spin_position = mod(spin_position, title_line_indexes.length);
 		// ticker_index_attachment = mod(ticker_index_attachment, title_line_indexes.length);
@@ -481,21 +481,21 @@ const main = async () => {
 
 	window.addEventListener("hashchange", parse_from_location_hash);
 
-	render_grande_roulette();
+	render_mega_spinner();
 	
-	window.addEventListener("resize", render_grande_roulette);
+	window.addEventListener("resize", render_mega_spinner);
 
-	grande_roulette_svg.style.touchAction = "none";
-	grande_roulette_svg.style.userSelect = "none";
-	grande_roulette_items.style.cursor = "grab";
-	grande_roulette_items.addEventListener("selectstart", (event) => {
+	mega_spinner_svg.style.touchAction = "none";
+	mega_spinner_svg.style.userSelect = "none";
+	mega_spinner_items.style.cursor = "grab";
+	mega_spinner_items.addEventListener("selectstart", (event) => {
 		event.preventDefault();
 	});
-	grande_roulette_items.addEventListener("pointerdown", (event) => {
+	mega_spinner_items.addEventListener("pointerdown", (event) => {
 		dragging = true;
 		spin_velocity = 0;
-		grande_roulette_items.style.cursor = "grabbing";
-		const item_height = parseFloat(getComputedStyle(grande_roulette_items).getPropertyValue("--item-height"));
+		mega_spinner_items.style.cursor = "grabbing";
+		const item_height = parseFloat(getComputedStyle(mega_spinner_items).getPropertyValue("--item-height"));
 		const start_y = event.clientY;
 		const start_spin_position = spin_position;
 		let y_velocity_energy = 0;
@@ -520,7 +520,7 @@ const main = async () => {
 			window.removeEventListener("pointerup", on_pointer_up);
 			window.removeEventListener("pointercancel", on_pointer_up);
 			clearInterval(iid);
-			grande_roulette_items.style.cursor = "grab";
+			mega_spinner_items.style.cursor = "grab";
 			if (event.type !== "pointercancel") {
 				spin_velocity = y_velocity_energy / 250;
 			}
@@ -577,7 +577,7 @@ const main = async () => {
 	title_filter.addEventListener("input", apply_filters);
 
 	window.addEventListener("transitionstart", (event) => {
-		if (!event.target.matches("#info, #grande-roulette")) {
+		if (!event.target.matches("#info, #mega-spinner")) {
 			return;
 		}
 		const iid = setInterval(() => {
