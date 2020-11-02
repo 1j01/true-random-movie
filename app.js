@@ -6,6 +6,8 @@ const watch_online_link = document.getElementById("watch-online-link");
 const copy_to_clipboard_button = document.getElementById("copy-to-clipboard")
 const result_container = document.getElementById("result");
 const go_button = document.getElementById("go");
+const grande_roulette_container = document.getElementById("grande-roulette");
+const grande_roulette_svg = document.getElementById("grande-roulette-svg");
 const grande_roulette_ticker = document.getElementById("grande-roulette-ticker");
 const grande_roulette_items = document.getElementById("grande-roulette-items");
 const filters = document.getElementById("filters");
@@ -224,8 +226,12 @@ let ticker_index_attachment = 0;
 let ticker_rotation_deg = 0;
 // let ticker_rotation_speed_deg_per_frame = 0;
 const render_grande_roulette = () => {
+	// Fix for mobile chrome (not in Desktop Site mode, and either: 1. not after a refresh or 2. after a refresh and then rotating the phone)
+	// I think it relates to the top bar UI that can hide/show when scrolling a page.
+	grande_roulette_container.style.top = `${(grande_roulette_container.clientHeight - grande_roulette_svg.getBoundingClientRect().height) / 2}px`;
+
 	const item_height = parseFloat(getComputedStyle(grande_roulette_items).getPropertyValue("--item-height"));
-	const visible_range = Math.ceil(grande_roulette_items.parentElement.getBoundingClientRect().height / item_height);
+	const visible_range = Math.ceil(grande_roulette_container.clientHeight / item_height);
 	const min_visible_index = Math.floor(spin_position - visible_range / 2);
 	const max_visible_index = Math.ceil(spin_position + visible_range / 2 + 1);
 
@@ -479,8 +485,8 @@ const main = async () => {
 	
 	window.addEventListener("resize", render_grande_roulette);
 
-	grande_roulette_items.style.touchAction = "none";
-	grande_roulette_items.style.userSelect = "none";
+	grande_roulette_svg.style.touchAction = "none";
+	grande_roulette_svg.style.userSelect = "none";
 	grande_roulette_items.style.cursor = "grab";
 	grande_roulette_items.addEventListener("selectstart", (event) => {
 		event.preventDefault();

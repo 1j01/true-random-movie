@@ -13,11 +13,7 @@
 			margin: 0;
 			width: 100%;
 			height: 100%;
-		}
-		#layout {
-			width: 100%;
-			height: 100%;
-			position: relative;
+			overflow: hidden;
 		}
 		#grande-roulette {
 			position: fixed;
@@ -28,6 +24,8 @@
 			transition: left ease-in-out 1s, transform ease-in-out 1s;
 		}
 		#info {
+			overflow: auto;
+			height: 100%;
 			text-align: center;
 			margin-left: 15px;
 			margin-right: calc(50% + 60px);
@@ -138,7 +136,7 @@
 		}
 
 		#grande-roulette-svg {
-			height: 100%;
+			height: 100vh;
 			width: 100%;
 			--item-height: 40px;
 			--peg-size: 5px;
@@ -156,7 +154,7 @@
 		}
 		#grande-roulette-ticker {
 			position: absolute;
-			top: 50%;
+			top: 50vh;
 			right: calc(100% - 5px);
 			width: 0; 
 			height: 0; 
@@ -236,34 +234,32 @@
 </head>
 
 <body>
-	<div id="layout">
-		<div id="info">
-			<h1>True Random Movie</h1>
-			<a href="https://github.com/1j01/true-random-movie">Source Code on GitHub</a> | <a
-				href="https://paypal.me/IsaiahOdhner">Donate</a>
-			<br>
-			<br>
-			<button id="go" autofocus>Random Movie</button>
-			<div id="result" hidden>
-				<div id="title-output"></div>
-				<div id="instance-output"></div>
-				<a id="watch-online-link">Watch Online</a>
-				<button id="copy-to-clipboard" aria-keyshortcuts="Ctrl+C">Copy To Clipboard</a>
-			</div>
+	<div id="info">
+		<h1>True Random Movie</h1>
+		<a href="https://github.com/1j01/true-random-movie">Source Code on GitHub</a> | <a
+			href="https://paypal.me/IsaiahOdhner">Donate</a>
+		<br>
+		<br>
+		<button id="go" autofocus>Random Movie</button>
+		<div id="result" hidden>
+			<div id="title-output"></div>
+			<div id="instance-output"></div>
+			<a id="watch-online-link">Watch Online</a>
+			<button id="copy-to-clipboard" aria-keyshortcuts="Ctrl+C">Copy To Clipboard</a>
 		</div>
-		<div id="grande-roulette">
-			<div id="grande-roulette-ticker"></div>
-			<svg xmlns="http://www.w3.org/2000/svg" version="1.1" id="grande-roulette-svg">
-				<g id="grande-roulette-items" style="transform: translate(0, 50%)"></g>
-			</svg>
-		</div>
-		<div id="filters" hidden>
-			<label>
-				Filter on Movie Title:
-				<input type="search" id="title-filter" />
-			</label>
-			<button id="close-filters" class="close" aria-label="Close filter bar"></button>
-		</div>
+	</div>
+	<div id="grande-roulette">
+		<div id="grande-roulette-ticker"></div>
+		<svg xmlns="http://www.w3.org/2000/svg" version="1.1" id="grande-roulette-svg">
+			<g id="grande-roulette-items" style="transform: translate(0, 50vh)"></g>
+		</svg>
+	</div>
+	<div id="filters" hidden>
+		<label>
+			Filter on Movie Title:
+			<input type="search" id="title-filter" />
+		</label>
+		<button id="close-filters" class="close" aria-label="Close filter bar"></button>
 	</div>
 	<script src="app.js" type="module"></script>
 </body>
