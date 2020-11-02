@@ -502,8 +502,8 @@ const main = async () => {
 			y_velocity_energy *= 0.8;
 		});
 		const onPointerUp = () => {
-			grande_roulette_items.removeEventListener("pointermove", onPointerMove);
-			grande_roulette_items.removeEventListener("pointerup", onPointerUp);
+			window.removeEventListener("pointermove", onPointerMove);
+			window.removeEventListener("pointerup", onPointerUp);
 			grande_roulette_items.removeEventListener("pointercancel", onPointerUp);
 			clearInterval(iid);
 			grande_roulette_items.style.cursor = "grab";
@@ -513,8 +513,8 @@ const main = async () => {
 				animate();
 			}
 		};
-		grande_roulette_items.addEventListener("pointermove", onPointerMove);
-		grande_roulette_items.addEventListener("pointerup", onPointerUp);
+		window.addEventListener("pointermove", onPointerMove);
+		window.addEventListener("pointerup", onPointerUp);
 		grande_roulette_items.addEventListener("pointercancel", onPointerUp);
 	});
 
