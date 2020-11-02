@@ -25,7 +25,7 @@
 			bottom: 0;
 			right: 0;
 			left: 50%;
-			transition: left ease-in-out 1s;
+			transition: left ease-in-out 1s, transform ease-in-out 1s;
 		}
 		#info {
 			text-align: center;
@@ -179,11 +179,11 @@
 			z-index: 2;
 		} */
 		@media (max-width: 500px) {
-			.spinner-active #grande-roulette {
+			#grande-roulette {
 				left: 45px;
 			}
 			body:not(.spinner-active) #grande-roulette {
-				left: calc(100% - 10px);
+				transform: translateX(calc(100% - 10px));
 				pointer-events: none;
 			}
 			#info {
