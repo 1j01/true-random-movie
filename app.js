@@ -9,6 +9,7 @@ const go_button = document.getElementById("go");
 const grande_roulette_ticker = document.getElementById("grande-roulette-ticker");
 const grande_roulette_items = document.getElementById("grande-roulette-items");
 const filters = document.getElementById("filters");
+const close_filters_button = document.getElementById("close-filters");
 const title_filter = document.getElementById("title-filter");
 
 function mod(n, m) {
@@ -559,6 +560,10 @@ const main = async () => {
 				}
 			}
 		}
+	});
+
+	close_filters_button.addEventListener("click", () => {
+		filters.hidden = true;
 	});
 
 	title_filter.addEventListener("input", apply_filters);

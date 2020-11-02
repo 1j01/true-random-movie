@@ -208,6 +208,41 @@
 			padding: 15px;
 			border-bottom-left-radius: 5px;
 		}
+		.close {
+			vertical-align: middle;
+			border: none;
+			color: inherit;
+			border-radius: 50%;
+			background: transparent;
+			position: relative;
+			width: 32px;
+			height: 32px;
+			opacity: 0.6;
+		}
+		.close:focus,
+		.close:hover {
+			opacity: 1;
+			background: rgba(128, 128, 128, 0.5);
+		}
+		.close:active {
+			background: rgba(128, 128, 128, 0.9);
+		}
+		.close::before,
+		.close::after {
+			content: " ";
+			position: absolute;
+			top: 50%;
+			left: 50%;
+			height: 20px;
+			width: 4px;
+			background-color: currentColor;
+		}
+		.close::before {
+			transform: translate(-50%, -50%) rotate(45deg);
+		}
+		.close::after {
+			transform: translate(-50%, -50%) rotate(-45deg);
+		}
 	</style>
 </head>
 
@@ -239,6 +274,7 @@
 				Filter on Movie Title:
 				<input type="search" id="title-filter" />
 			</label>
+			<button id="close-filters" class="close" aria-label="Close filter bar"></button>
 		</div>
 	</div>
 	<script src="app.js" type="module"></script>
