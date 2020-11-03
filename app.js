@@ -577,14 +577,10 @@ const apply_filters = () => {
 	}
 	const search = title_filter.value;
 	// const normlized_search = normalize_title(search); // might want something like this as an optimization
-	// TODO: simplify with filter()
-	for (let item_index = title_line_indexes.length - 1; item_index >= 0; item_index--) {
-		const title_line_index = title_line_indexes[item_index];
+	title_line_indexes = title_line_indexes.filter((title_line_index) => {
 		const normalized_title_line = normalized_unfiltered_title_lines[title_line_index];
-		if (!search_matches_normalized_title(search, normalized_title_line)) {
-			title_line_indexes.splice(item_index, 1);
-		}
-	}
+		return search_matches_normalized_title(search, normalized_title_line);
+	});
 	if (title_line_indexes.length === 0) {
 		title_line_indexes = [...shuffled_unfiltered_title_line_indexes];
 	}
