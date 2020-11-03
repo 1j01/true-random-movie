@@ -398,6 +398,7 @@ const normalizations = [
 	"TEN",
 	"ELEVEN",
 	"TWELVE",
+	"VERSUS",
 	// should this include roman numerals?
 	// ensure a substring of a matching search will ALWAYS match, or would it be weird?
 ];
@@ -407,11 +408,12 @@ const normalize_title = (title) =>
 	title.normalize("NFKD")
 		.toLocaleUpperCase()
 		.replace(/[\u0300-\u036f]/g, "") // probably not needed with "NFKD"
+		.replace(/\s(VS?\.?|VERSUS)(\s|$)/g, " {VERSUS} ")
 		.replace(/\b(1|I(?!,|\s)|ONE)\b/g, "{1}")
 		.replace(/\b(2|II|TWO)\b/g, "{2}")
 		.replace(/\b(3|III|THREE)\b/g, "{3}")
 		.replace(/\b(4|IV|IIII|FOUR)\b/g, "{4}")
-		.replace(/\b(5|V|IIIII|FIVE)\b/g, "{5}")
+		.replace(/\b(5|V(?!\s)|IIIII|FIVE)\b/g, "{5}")
 		.replace(/\b(6|VI|IIIIII|IIIIX|SIX)\b/g, "{6}")
 		.replace(/\b(7|VII|IIIX|SEVEN)\b/g, "{7}")
 		.replace(/\b(8|VIII|IIX|EIGHT)\b/g, "{8}")
@@ -467,6 +469,7 @@ for (const [a, b] of [
 	["Star Wars: Episode VI: Return of the Jedi (1983)", "Star Wars: Episode Ⅵ: Return of the Jedi (1983)"],
 	["2 Fast 2 Furious (2003)", "Two Fast II Furious (2003)"],
 	// ["2 Fast 2 Furious (2003)", "Too Fast Too Furious (2003)"],
+	["Roe v. Wade", "Roe vs. Wade"],
 ]) {
 	if (console && console.assert) {
 		console.assert(normalize_title(a) === normalize_title(b), `Normalized titles should be equal.
@@ -493,6 +496,9 @@ for (const [a, b] of [
 	["I, t", "I, The Jury"],
 	["One, t", "One, two, three"],
 	["One, two, th", "One, two, three"],
+	["Batman vs", "Batman v Superman"],
+	["Batman vers", "Batman v Superman"],
+	["Batman vers", "Batman vs. Two-Face"],
 ]) {
 	if (console && console.assert) {
 		console.assert(search_matches_title(a, b), `Search should match.
