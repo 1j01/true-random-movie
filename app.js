@@ -525,7 +525,7 @@ const parse_from_location_hash = () => {
 		const title_line_index = title_line_indexes[item_index];
 		const title_line = unfiltered_title_lines[title_line_index];
 		const normalized_title_line = normalized_unfiltered_title_lines[title_line_index];
-		if (normalized_title_line.indexOf(normalized_title) > -1) { // optimization (could be more optimal by comparing substring at start of string with title)
+		if (normalized_title_line.slice(0, normalized_title.length) === normalized_title) { // optimization
 			const movie = parse_title_line(title_line);
 			if (!movie) {
 				console.warn("movie title line didn't parse:", title_line);
