@@ -508,19 +508,19 @@ ${show_normalization(a, b)}
 	}
 }
 const parse_from_location_hash = () => {
-	const title_id = normalize_title(decodeURIComponent(location.hash.replace(/^#/, "")));
-	if (!title_id) {
+	const hash = decodeURIComponent(location.hash.replace(/^#/, ""));
+	if (!hash) {
 		clear_result();
 		return;
 	}
 	// TODO: should the parenthetical be optional?
-	const parsed = parse_title_line(title_id);
+	const parsed = parse_title_line(hash);
 	if (!parsed) {
 		clear_result();
 		return;
 	}
-	const normalized_title = parsed.title;
-	const normalized_parenthetical = parsed.parenthetical;
+	const normalized_title = normalize_title(parsed.title);
+	const normalized_parenthetical = normalize_title(parsed.parenthetical);
 	for (let item_index = 0; item_index < title_line_indexes.length; item_index++) {
 		const title_line_index = title_line_indexes[item_index];
 		const title_line = unfiltered_title_lines[title_line_index];
