@@ -17,6 +17,7 @@ Find movies that you would never watch otherwise.
 - Browser history integration - the movie you spin to is included in the URL so you can go back with your browser's back button
 - "Watch Online" link to quickly do a web search for a movie (often you can find a site to it for free easily)
 - Ctrl+F to filter the films list by title
+	- Handles accents (e vs. é) and stylization variations like "2" vs. "two" vs. "II"
 
 ## Data Sources
 

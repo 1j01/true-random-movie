@@ -212,6 +212,7 @@ const clear_result = () => {
 fitty("#go", { maxSize: 30 });
 
 let unfiltered_title_lines;
+let normalized_unfiltered_title_lines; // for loose string comparison
 let title_line_indexes; // can be a sorted/shuffled/filtered/wrapped list of indexes into unfiltered_title_lines
 let shuffled_unfiltered_title_line_indexes; // for restoring from filtering
 
@@ -384,28 +385,150 @@ const animate = () => {
 	last_time = now;
 };
 
+const normalizations = [
+	"ONE",
+	"TWO",
+	"THREE",
+	"FOUR",
+	"FIVE",
+	"SIX",
+	"SEVEN",
+	"EIGHT",
+	"NINE",
+	"TEN",
+	"ELEVEN",
+	"TWELVE",
+	// should this include roman numerals?
+	// ensure a substring of a matching search will ALWAYS match, or would it be weird?
+];
+const normalize_title = (title) =>
+	// Note: I is a common word; might want to not normalize it in some cases
+	// Note: some titles use numbers, especially 2, in different ways, like in place of "to" or "too"
+	title.normalize("NFKD")
+		.toLocaleUpperCase()
+		.replace(/[\u0300-\u036f]/g, "") // probably not needed with "NFKD"
+		.replace(/\b(1|I(?!,|\s)|ONE)\b/g, "{1}")
+		.replace(/\b(2|II|TWO)\b/g, "{2}")
+		.replace(/\b(3|III|THREE)\b/g, "{3}")
+		.replace(/\b(4|IV|IIII|FOUR)\b/g, "{4}")
+		.replace(/\b(5|V|IIIII|FIVE)\b/g, "{5}")
+		.replace(/\b(6|VI|IIIIII|IIIIX|SIX)\b/g, "{6}")
+		.replace(/\b(7|VII|IIIX|SEVEN)\b/g, "{7}")
+		.replace(/\b(8|VIII|IIX|EIGHT)\b/g, "{8}")
+		.replace(/\b(9|IX|VIIII|NINE)\b/g, "{9}")
+		.replace(/\b(10|X|TEN)\b/g, "{10}")
+		.replace(/\b(11|XI|ELEVEN)\b/g, "{11}")
+		.replace(/\b(12|XII|TWELVE)\b/g, "{12}");
+
+const search_matches_normalized_title = (search, normalized_title) => {
+	const simply_normalized_search = normalize_title(search);
+	// if (normalized_title.slice(0, simply_normalized_search.length) === simply_normalized_search) {
+	if (normalized_title.indexOf(simply_normalized_search) > -1) {
+		return true;
+	}
+	const search_upper = search.toLocaleUpperCase();
+	for (const normalization of normalizations) {
+		for (let i = 1; i < normalization.length; i++) {
+			if (search_upper.slice(search_upper.length - i) === normalization.slice(0, i)) {
+				const autocompleted = `${search_upper}${normalization.slice(i)}`;
+				const autocomplete_normalized = normalize_title(autocompleted);
+				// if (normalized_title.slice(0, autocomplete_normalized.length) === autocomplete_normalized) {
+				if (normalized_title.indexOf(autocomplete_normalized) > -1) {
+					return true;
+				}
+			}
+		}
+	}
+	return false;
+};
+
+const search_matches_title = (search, title) => search_matches_normalized_title(search, normalize_title(title));
+
+const show_normalization = (a, b) => {
+	const indent = "    ";
+	return `
+Original titles:
+${indent}"${a}"
+${indent}"${b}"
+
+Normalized:
+${indent}"${normalize_title(a)}"
+${indent}"${normalize_title(b)}"
+`;
+};
+for (const [a, b] of [
+	["Psycho IV: The Beginning (1990)", "Psycho 4: The Beginning (1990)"],
+	["1: The Movie", "One: The Movie"],
+	["The Human Condition I: No Greater Love (1959)", "The Human Condition One: No Greater Love (1959)"],
+	["The Uchōten Hotel", "The Uchoten Hotel"],
+	["Omen III", "Omen Three"],
+	["Meatballs II", "Meatballs 2"],
+	["Star Wars: Episode VI: Return of the Jedi (1983)", "Star Wars: Episode Six: Return of the Jedi (1983)"],
+	["Star Wars: Episode VI: Return of the Jedi (1983)", "Star Wars: Episode Ⅵ: Return of the Jedi (1983)"],
+	["2 Fast 2 Furious (2003)", "Two Fast II Furious (2003)"],
+	// ["2 Fast 2 Furious (2003)", "Too Fast Too Furious (2003)"],
+]) {
+	if (console && console.assert) {
+		console.assert(normalize_title(a) === normalize_title(b), `Normalized titles should be equal.
+${show_normalization(a, b)}
+`);
+	}
+}
+for (const [a, b] of [
+	["Furious (200three)", "Furious (2003)"],
+	["Furious (II003)", "Furious (2003)"],
+	["One, t", "I, T"], // I, The Jury
+	["I as in Icarus (1979)", "One as in Icarus (1979)"],
+]) {
+	if (console && console.assert) {
+		console.assert(normalize_title(a) !== normalize_title(b), `Normalized titles SHOULD NOT BE EQUAL but are.
+${show_normalization(a, b)}
+`);
+	}
+}
+for (const [a, b] of [
+	[":", "ACAB: All Cops Are Bastards (2012)"],
+	["The Smurfs Tw", "The Smurfs 2"],
+	["Tw", "American Kickboxer 2"],
+	["I, t", "I, The Jury"],
+	["One, t", "One, two, three"],
+	["One, two, th", "One, two, three"],
+]) {
+	if (console && console.assert) {
+		console.assert(search_matches_title(a, b), `Search should match.
+${show_normalization(a, b)}
+(Note: search may do dynamic normalization)
+`);
+	}
+}
 const parse_from_location_hash = () => {
-	const title_id = decodeURIComponent(location.hash.replace(/^#/, ""));
+	const title_id = normalize_title(decodeURIComponent(location.hash.replace(/^#/, "")));
 	if (!title_id) {
 		clear_result();
 		return;
 	}
-	// TODO: should this be looser? case-insensitive? optional parenthetical? stylization variations like "2" vs "two"?
+	// TODO: should the parenthetical be optional?
 	const parsed = parse_title_line(title_id);
 	if (!parsed) {
 		clear_result();
 		return;
 	}
-	const { title, parenthetical } = parsed;
+	const normalized_title = parsed.title;
+	const normalized_parenthetical = parsed.parenthetical;
 	for (let item_index = 0; item_index < title_line_indexes.length; item_index++) {
-		const title_line = unfiltered_title_lines[title_line_indexes[item_index]];
-		if (title_line.indexOf(title) > -1) { // optimization (could be more optimal by comparing substring at start of string with title)
+		const title_line_index = title_line_indexes[item_index];
+		const title_line = unfiltered_title_lines[title_line_index];
+		const normalized_title_line = normalized_unfiltered_title_lines[title_line_index];
+		if (normalized_title_line.indexOf(normalized_title) > -1) { // optimization (could be more optimal by comparing substring at start of string with title)
 			const movie = parse_title_line(title_line);
 			if (!movie) {
 				console.warn("movie title line didn't parse:", title_line);
 			}
-			if (movie.title === title && movie.parenthetical.indexOf(parenthetical) > -1) {
-				if (displayed_title !== title) {
+			if (
+				normalize_title(movie.title) === normalized_title &&
+				normalize_title(movie.parenthetical).indexOf(normalized_parenthetical) > -1
+			) {
+				if (!displayed_title || normalize_title(displayed_title) !== normalized_title) {
 					spin_position = item_index;
 					spin_velocity = 0;
 					ticker_index_attachment = item_index;
@@ -446,10 +569,14 @@ const apply_filters = () => {
 		invalidate();
 		return;
 	}
-	for (let i = title_line_indexes.length - 1; i >= 0; i--) {
-		const title_line = unfiltered_title_lines[title_line_indexes[i]];
-		if (title_line.toLowerCase().indexOf(title_filter.value.toLowerCase()) === -1) {
-			title_line_indexes.splice(i, 1);
+	const search = title_filter.value;
+	// const normlized_search = normalize_title(search); // might want something like this as an optimization
+	// TODO: simplify with filter()
+	for (let item_index = title_line_indexes.length - 1; item_index >= 0; item_index--) {
+		const title_line_index = title_line_indexes[item_index];
+		const normalized_title_line = normalized_unfiltered_title_lines[title_line_index];
+		if (!search_matches_normalized_title(search, normalized_title_line)) {
+			title_line_indexes.splice(item_index, 1);
 		}
 	}
 	if (title_line_indexes.length === 0) {
@@ -464,6 +591,7 @@ const main = async () => {
 	const text = await response.text();
 
 	unfiltered_title_lines = text.trim().split(/\r?\n/g);
+	normalized_unfiltered_title_lines = unfiltered_title_lines.map(normalize_title);
 
 	title_line_indexes = new Int32Array(unfiltered_title_lines.length);
 	for (let i = 0; i < title_line_indexes.length; i++) {
