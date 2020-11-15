@@ -403,6 +403,8 @@ const render_plinketto = () => {
 const gravity = 0.0005;
 const air_friction_x = 0.001;
 const air_friction_y = 0.001;
+const collision_friction_x = 0.02;
+const collision_friction_y = 0.02;
 
 const simulate_plinketto = (delta_time) => {
 	for (const ball of plinketto_balls) {
@@ -417,14 +419,14 @@ const simulate_plinketto = (delta_time) => {
 			if (distance_of_edges < 0) {
 				ball.velocity_x += (ball.x - peg.x) / distance_of_centers * 0.005 * delta_time;
 				ball.velocity_y += (ball.y - peg.y) / distance_of_centers * 0.005 * delta_time;
-				ball.velocity_x -= ball.velocity_x * air_friction_x * 50 * delta_time;
-				ball.velocity_y -= ball.velocity_y * air_friction_y * 50 * delta_time;
+				ball.velocity_x -= ball.velocity_x * collision_friction_x * delta_time;
+				ball.velocity_y -= ball.velocity_y * collision_friction_y * delta_time;
 			}
 		}
-		if (ball.x > 100) {
+		if (ball.x - ball.radius > 100) {
 			ball.velocity_x = -Math.abs(ball.velocity_x) * 0.9;
 		}
-		if (ball.x < 0) {
+		if (ball.x + ball.radius < 0) {
 			ball.velocity_x = Math.abs(ball.velocity_x) * 0.9;
 		}
 	}
@@ -455,7 +457,7 @@ const setup_plinketto = (options) => {
 	const x_spacing = 5;
 	const y_spacing = 5;
 	for (let y = y_spacing * 3; y < 80; y += y_spacing) {
-		for (let x = (y % (y_spacing * 2)) / 2; x < 100; x += x_spacing) {
+		for (let x = (y % (y_spacing * 2)) ? x_spacing / 2 : 0; x < 100; x += x_spacing) {
 			plinketto_pegs.push({
 				x, y,
 				radius: 1,
