@@ -10,6 +10,7 @@ const mega_spinner_container = document.getElementById("mega-spinner");
 const mega_spinner_svg = document.getElementById("mega-spinner-svg");
 const mega_spinner_ticker = document.getElementById("mega-spinner-ticker");
 const mega_spinner_items = document.getElementById("mega-spinner-items");
+const plinketto_svg = document.getElementById("plinketto-svg");
 const filters = document.getElementById("filters");
 const close_filters_button = document.getElementById("close-filters");
 const title_filter = document.getElementById("title-filter");
@@ -301,7 +302,7 @@ const peg_size = 0.1;
 const peg_size_px = 5;
 const peg_pushback = 1 / 2500000;
 const time_step = 1; // delta times are broken up into chunks this size or smaller
-const simulate = (delta_time) => {
+const simulate_mega_spinner = (delta_time) => {
 	// I'm not totally sure this variable name makes sense:
 	const ticker_index_occupancy = Math.round(spin_position + peg_size * Math.sign(spin_position - ticker_index_attachment));
 	if (
@@ -344,6 +345,102 @@ const simulate = (delta_time) => {
 	}
 };
 
+let plinketto_pegs = [];
+let plinketto_balls = []; // or pucks, but that looks too similar to "buckets" for visual scanning :)
+let plinketto_buckets = [];
+let gravity = 0.01;
+let air_friction_x = 0.01;
+let air_friction_y = 0.01;
+
+const render_plinketto = () => {
+	plinketto_svg
+	for (const ball of plinketto_balls) {
+		if (!ball.element) {
+			ball.element = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+			ball.element.setAttribute("class", "plinketto-ball");
+			plinketto_svg.appendChild(ball.element);
+		}
+		ball.element.setAttribute("cx", ball.x);
+		ball.element.setAttribute("cy", ball.y);
+		ball.element.setAttribute("r", ball.radius);
+	}
+	for (const peg of plinketto_pegs) {
+		if (!peg.element) {
+			peg.element = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+			peg.element.setAttribute("class", "plinketto-peg");
+			plinketto_svg.appendChild(peg.element);
+		}
+		peg.element.setAttribute("cx", peg.x);
+		peg.element.setAttribute("cy", peg.y);
+		peg.element.setAttribute("r", peg.radius);
+	}
+	let i = 0;
+	for (const bucket of plinketto_buckets) {
+		i++;
+		if (!bucket.element) {
+			bucket.element = document.createElementNS("http://www.w3.org/2000/svg", "g");
+			bucket.element.setAttribute("class", "plinketto-bucket");
+			const rect_el = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+			rect_el.setAttribute("fill", `hsl(${i / plinketto_buckets.length}turn, 80%, 50%)`);
+			rect_el.setAttribute("x", bucket.x);
+			rect_el.setAttribute("y", bucket.y);
+			rect_el.setAttribute("width", bucket.width);
+			rect_el.setAttribute("height", bucket.height);
+			const text_el = document.createElementNS("http://www.w3.org/2000/svg", "text");
+			text_el.setAttribute("dominant-baseline", "middle");
+			text_el.setAttribute("x", bucket.x + bucket.width / 2);
+			text_el.setAttribute("y", bucket.y + bucket.height / 2);
+			text_el.textContent = bucket.id;
+			bucket.element.appendChild(rect_el);
+			bucket.element.appendChild(text_el);
+			plinketto_svg.appendChild(bucket.element);
+		}
+		bucket.element.setAttribute("x", bucket.x);
+		bucket.element.setAttribute("y", bucket.y);
+		bucket.element.setAttribute("width", bucket.width);
+		bucket.element.setAttribute("height", bucket.height);
+	}
+};
+
+const simulate_plinketto = (delta_time) => {
+	for (const ball of plinketto_balls) {
+		ball.velocity_y += gravity * delta_time;
+		ball.velocity_x -= ball.velocity_x * air_friction_x * delta_time;
+		ball.velocity_y -= ball.velocity_y * air_friction_y * delta_time;
+		ball.x += ball.velocity_x;
+		ball.y += ball.velocity_y;
+		for (const peg of plinketto_pegs) {
+			if (Math.hypot(ball.x - peg.x, ball.y - peg.y) < peg.radius + ball.radius) {
+				ball.velocity_x = Math.random() - 0.2;
+				ball.velocity_y = Math.random() - 0.2;
+			}
+		}
+	}
+};
+
+const setup_plinketto = (options) => {
+	for (let x = 0; x < options.length; x += 1) {
+		plinketto_buckets.push({
+			id: options[x],
+			x: x,
+			y: 90,
+			width: 100 / options.length,
+			height: 10,
+		});
+	}
+	for (let y = 0; y < 10; y += 0.1) {
+		for (let x = (y % 0.2) / 2; x < 10; x += 0.1) {
+			plinketto_pegs.push({
+				x, y,
+				radius: 4,
+			});
+		}
+	}
+};
+
+setup_plinketto(["1913", "1922", "1933", "1946"]);
+render_plinketto();
+
 let rafid;
 let last_time = performance.now();
 const animate = () => {
@@ -354,7 +451,8 @@ const animate = () => {
 
 	let remaining_delta_time = delta_time;
 	while (remaining_delta_time > 0) {
-		simulate(Math.min(time_step, remaining_delta_time));
+		simulate_mega_spinner(Math.min(time_step, remaining_delta_time));
+		simulate_plinketto(Math.min(time_step, remaining_delta_time));
 		remaining_delta_time -= time_step;
 	}
 
@@ -381,6 +479,7 @@ const animate = () => {
 	}
 
 	render_mega_spinner();
+	render_plinketto();
 
 	last_time = now;
 };

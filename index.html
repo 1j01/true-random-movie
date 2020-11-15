@@ -135,6 +135,28 @@
 			max-width: 50em;
 		}
 
+		#plinketto {
+			position: fixed;
+			top: 0;
+			bottom: 0;
+			right: 0;
+			left: 0;
+		}
+		#plinketto-svg {
+			height: 100vh;
+			width: 100%;
+			background-color: black;
+		}
+		.plinketto-peg {
+			fill:rgba(128, 128, 128, 0.5);
+			stroke: rosybrown;
+			stroke-width: 1px;
+		}
+		.plinketto-bucket text {
+			font-size: 10px;
+			fill:rgba(128, 128, 128, 0.5);
+		}
+
 		#mega-spinner-svg {
 			height: 100vh;
 			width: 100%;
@@ -256,6 +278,9 @@
 		<svg xmlns="http://www.w3.org/2000/svg" version="1.1" id="mega-spinner-svg">
 			<g id="mega-spinner-items" style="transform: translate(0, 50vh)"></g>
 		</svg>
+	</div>
+	<div id="plinketto">
+		<svg xmlns="http://www.w3.org/2000/svg" version="1.1" id="plinketto-svg" viewbox="0 0 100 100"></svg>
 	</div>
 	<div id="filters" hidden>
 		<label>
