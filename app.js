@@ -400,9 +400,9 @@ const render_plinketto = () => {
 	}
 };
 
-const gravity = 0.001;
-const air_friction_x = 0.01;
-const air_friction_y = 0.01;
+const gravity = 0.0005;
+const air_friction_x = 0.001;
+const air_friction_y = 0.001;
 
 const simulate_plinketto = (delta_time) => {
 	for (const ball of plinketto_balls) {
@@ -412,9 +412,13 @@ const simulate_plinketto = (delta_time) => {
 		ball.x += ball.velocity_x * delta_time;
 		ball.y += ball.velocity_y * delta_time;
 		for (const peg of plinketto_pegs) {
-			if (Math.hypot(ball.x - peg.x, ball.y - peg.y) < peg.radius + ball.radius) {
-				ball.velocity_x += (Math.random() - 0.5) * 0.01 * delta_time;
-				ball.velocity_y += (Math.random() - 0.6) * 0.01 * delta_time;
+			const distance_of_centers = Math.hypot(ball.x - peg.x, ball.y - peg.y);
+			const distance_of_edges = distance_of_centers - peg.radius - ball.radius;
+			if (distance_of_edges < 0) {
+				ball.velocity_x += (ball.x - peg.x) / distance_of_centers * 0.005 * delta_time;
+				ball.velocity_y += (ball.y - peg.y) / distance_of_centers * 0.005 * delta_time;
+				ball.velocity_x -= ball.velocity_x * air_friction_x * 50 * delta_time;
+				ball.velocity_y -= ball.velocity_y * air_friction_y * 50 * delta_time;
 			}
 		}
 		if (ball.x > 100) {
@@ -458,14 +462,22 @@ const setup_plinketto = (options) => {
 			});
 		}
 	}
-	for (let x = 0; x < 100; x += x_spacing) {
-		plinketto_balls.push({
-			x, y: 1,
-			velocity_x: Math.random() * 0.3,
-			velocity_y: 0,
-			radius: 1.5,
-		});
-	}
+	// for (let x = 0; x < 100; x += x_spacing) {
+	// 	plinketto_balls.push({
+	// 		x, y: 1,
+	// 		velocity_x: Math.random() * 0.3,
+	// 		velocity_y: 0,
+	// 		radius: 1.5,
+	// 	});
+	// }
+
+	plinketto_balls.push({
+		x: Math.random() * 100,
+		y: 1,
+		velocity_x: Math.random() * 10,
+		velocity_y: 0,
+		radius: 1.5,
+	});
 };
 
 window.plinketto = () => {
@@ -484,7 +496,7 @@ const animate = () => {
 
 	let remaining_delta_time = delta_time;
 	while (remaining_delta_time > 0) {
-		simulate_mega_spinner(Math.min(time_step, remaining_delta_time));
+		// simulate_mega_spinner(Math.min(time_step, remaining_delta_time));
 		simulate_plinketto(Math.min(time_step, remaining_delta_time));
 		remaining_delta_time -= time_step;
 	}
@@ -500,8 +512,8 @@ const animate = () => {
 			if (Math.abs(spin_velocity) < 0.0001 && Math.abs(ticker_rotation_deg) < 0.01) {
 				spin_velocity = 0;
 				ticker_rotation_deg = 0;
-				animating = false;
-				cancelAnimationFrame(rafid);
+				// animating = false;
+				// cancelAnimationFrame(rafid);
 			}
 		}
 		document.body.classList.remove("spinner-active");
@@ -671,8 +683,8 @@ const parse_from_location_hash = () => {
 					spin_velocity = 0;
 					ticker_index_attachment = item_index;
 					ticker_rotation_deg = 0;
-					animating = false;
-					cancelAnimationFrame(rafid);
+					// animating = false;
+					// cancelAnimationFrame(rafid);
 					// ticker_rotation_speed_deg_per_frame = 0;
 					display_result(title_line);
 
