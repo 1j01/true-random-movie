@@ -427,7 +427,8 @@ const simulate_plinketto = (delta_time) => {
 };
 
 const cleanup_plinketto = () => {
-	for (const child of plinketto_svg.children) {
+	// Array.from is necessary because it's a live NodeList, updated as things are removed
+	for (const child of Array.from(plinketto_svg.childNodes)) {
 		child.remove();
 	}
 	plinketto_buckets.length = 0;
