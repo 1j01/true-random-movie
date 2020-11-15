@@ -388,6 +388,7 @@ const render_plinketto = () => {
 			rect_el.setAttribute("height", bucket.height);
 			const text_el = document.createElementNS("http://www.w3.org/2000/svg", "text");
 			text_el.setAttribute("dominant-baseline", "middle");
+			text_el.setAttribute("text-anchor", "middle");
 			text_el.setAttribute("x", bucket.x + bucket.width / 2);
 			text_el.setAttribute("y", bucket.y + bucket.height / 2);
 			text_el.textContent = bucket.id;
@@ -419,20 +420,20 @@ const simulate_plinketto = (delta_time) => {
 };
 
 const setup_plinketto = (options) => {
-	for (let x = 0; x < options.length; x += 1) {
+	for (let i = 0; i < options.length; i += 1) {
 		plinketto_buckets.push({
-			id: options[x],
-			x: x,
+			id: options[i],
+			x: i * 100 / options.length,
 			y: 90,
 			width: 100 / options.length,
 			height: 10,
 		});
 	}
-	for (let y = 0; y < 10; y += 0.1) {
-		for (let x = (y % 0.2) / 2; x < 10; x += 0.1) {
+	for (let y = 0; y < 80; y += 10) {
+		for (let x = (y % 20) / 2; x < 100; x += 10) {
 			plinketto_pegs.push({
 				x, y,
-				radius: 4,
+				radius: 1,
 			});
 		}
 	}
