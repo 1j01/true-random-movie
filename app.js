@@ -348,9 +348,6 @@ const simulate_mega_spinner = (delta_time) => {
 let plinketto_pegs = [];
 let plinketto_balls = []; // or pucks, but that looks too similar to "buckets" for visual scanning :)
 let plinketto_buckets = [];
-let gravity = 0.01;
-let air_friction_x = 0.01;
-let air_friction_y = 0.01;
 
 const render_plinketto = () => {
 	plinketto_svg
@@ -403,23 +400,44 @@ const render_plinketto = () => {
 	}
 };
 
+const gravity = 0.001;
+const air_friction_x = 0.01;
+const air_friction_y = 0.01;
+
 const simulate_plinketto = (delta_time) => {
 	for (const ball of plinketto_balls) {
 		ball.velocity_y += gravity * delta_time;
 		ball.velocity_x -= ball.velocity_x * air_friction_x * delta_time;
 		ball.velocity_y -= ball.velocity_y * air_friction_y * delta_time;
-		ball.x += ball.velocity_x;
-		ball.y += ball.velocity_y;
+		ball.x += ball.velocity_x * delta_time;
+		ball.y += ball.velocity_y * delta_time;
 		for (const peg of plinketto_pegs) {
 			if (Math.hypot(ball.x - peg.x, ball.y - peg.y) < peg.radius + ball.radius) {
-				ball.velocity_x = Math.random() - 0.2;
-				ball.velocity_y = Math.random() - 0.2;
+				ball.velocity_x += (Math.random() - 0.5) * 0.01 * delta_time;
+				ball.velocity_y += (Math.random() - 0.6) * 0.01 * delta_time;
 			}
+		}
+		if (ball.x > 100) {
+			ball.velocity_x = -Math.abs(ball.velocity_x) * 0.9;
+		}
+		if (ball.x < 0) {
+			ball.velocity_x = Math.abs(ball.velocity_x) * 0.9;
 		}
 	}
 };
 
+const cleanup_plinketto = () => {
+	for (const child of plinketto_svg.children) {
+		child.remove();
+	}
+	plinketto_buckets.length = 0;
+	plinketto_balls.length = 0;
+	plinketto_pegs.length = 0;
+};
+
 const setup_plinketto = (options) => {
+	cleanup_plinketto();
+
 	for (let i = 0; i < options.length; i += 1) {
 		plinketto_buckets.push({
 			id: options[i],
@@ -429,18 +447,31 @@ const setup_plinketto = (options) => {
 			height: 10,
 		});
 	}
-	for (let y = 0; y < 80; y += 10) {
-		for (let x = (y % 20) / 2; x < 100; x += 10) {
+	const x_spacing = 5;
+	const y_spacing = 5;
+	for (let y = y_spacing * 3; y < 80; y += y_spacing) {
+		for (let x = (y % (y_spacing * 2)) / 2; x < 100; x += x_spacing) {
 			plinketto_pegs.push({
 				x, y,
 				radius: 1,
 			});
 		}
 	}
+	for (let x = 0; x < 100; x += x_spacing) {
+		plinketto_balls.push({
+			x, y: 1,
+			velocity_x: Math.random() * 0.3,
+			velocity_y: 0,
+			radius: 1.5,
+		});
+	}
 };
 
-setup_plinketto(["1913", "1922", "1933", "1946"]);
-render_plinketto();
+window.plinketto = () => {
+	setup_plinketto(["1913", "1922", "1933", "1946"]);
+	render_plinketto();
+};
+plinketto();
 
 let rafid;
 let last_time = performance.now();
@@ -835,6 +866,8 @@ const main = async () => {
 	// 	}
 	// 	titles.set(parsed.title, parsed);
 	// }
+
+	animate();
 
 };
 
