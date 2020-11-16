@@ -476,11 +476,22 @@ const setup_plinketto = (options) => {
 				radius: 0.8,
 			});
 		}
+		for (let y2 = y; y2 < y + y_spacing; y2 += 2) {
+			const x = 0;
+			plinketto_pegs.push({
+				x, y,
+				radius: 0.8,
+			});
+			plinketto_pegs.push({
+				x: 100 - x, y,
+				radius: 0.8,
+			});
+		}
 	}
-	for (let x = 0; x < 100; x += x_spacing) {
+	for (let i = 0; i < 50; i++) {
 		plinketto_balls.push({
 			x: 50, y: 1,
-			velocity_x: Math.random() * 0.003,
+			velocity_x: (Math.random() - 0.5) * 0.5,
 			velocity_y: 0,
 			radius: 1.2,
 		});
