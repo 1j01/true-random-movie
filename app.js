@@ -528,7 +528,10 @@ let last_time = performance.now();
 const animate = () => {
 	rafid = requestAnimationFrame(animate);
 	const now = performance.now();
-	const delta_time = Math.min(now - last_time, 500); // limit needed to handle if the page isn't visible for a while; scalar can be refactored out
+	if (!animating) {
+		last_time = now;
+	}
+	const delta_time = Math.min(now - last_time, 30); // limit needed to handle if the page isn't visible for a while; scalar can be refactored out
 	animating = true;
 
 	let remaining_delta_time = delta_time;
