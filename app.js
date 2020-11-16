@@ -965,8 +965,12 @@ const main = async () => {
 	// 	titles.set(normalized_title, parsed);
 	// }
 
+	// fine:
+
 	// different titles! Ten Years vs 10 Years
 	// 	also different parentheticals 2011 vs 2015
+
+	// to investigate:
 
 	// different titles! Twelve vs 12
 	// 	also different parentheticals 2003 & 2007 vs 2010
@@ -1000,12 +1004,6 @@ const main = async () => {
 
 	// different titles! Kid vs KID
 	// 	also different parentheticals 2015 vs 1990, 2012 & 2015
-
-	// different titles! The MatchMaker vs The Matchmaker
-	// 	also different parentheticals 2018 vs 1997
-
-	// different titles! The Matchmaker vs The MatchMaker
-	// 	also different parentheticals 1997 vs 1958
 
 	// different titles! Napoléon vs Napoleon
 	// 	also different parentheticals 1951, 1994, 1995 & 2007 vs 1927 & 1955
