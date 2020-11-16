@@ -965,13 +965,6 @@ const main = async () => {
 	// 	titles.set(normalized_title, parsed);
 	// }
 
-	// different titles! 5 Centimeters Per Second vs 5 Centimeters per Second
-	// different titles! 12 Years A Slave vs 12 Years a Slave
-	// different titles! One of Our Dinosaurs is Missing vs One of Our Dinosaurs Is Missing
-	// different titles! Twelve Monkeys vs 12 Monkeys
-	// different titles! Two or Three Things I Know About Her vs 2 or 3 Things I Know About Her
-	// different titles! A Walk to Remember vs A Walk To Remember
-
 	// different titles! Ten Years vs 10 Years
 	// 	also different parentheticals 2011 vs 2015
 
