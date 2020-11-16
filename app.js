@@ -352,7 +352,6 @@ let plinketto_balls = []; // or pucks, but that looks too similar to "buckets" f
 let plinketto_buckets = [];
 
 const render_plinketto = () => {
-	plinketto_svg
 	for (const ball of plinketto_balls) {
 		if (!ball.element) {
 			ball.element = document.createElementNS("http://www.w3.org/2000/svg", "circle");
@@ -398,10 +397,6 @@ const render_plinketto = () => {
 			const bbox = text_el.getBBox();
 			text_el.setAttribute("font-size", Math.min(7, (bucket.width - 2) / bbox.width));
 		}
-		bucket.element.setAttribute("x", bucket.x);
-		bucket.element.setAttribute("y", bucket.y);
-		bucket.element.setAttribute("width", bucket.width);
-		bucket.element.setAttribute("height", bucket.height);
 	}
 };
 
@@ -574,13 +569,10 @@ const animate = (start_animating_what) => {
 			}
 		}
 		document.body.classList.remove("spinner-active");
-	} else {
-		// mega_spinner_animating = true;
-		if (moved_away_from_displayed_title) {
-			document.body.classList.add("spinner-active");
-			result_container.style.opacity = 0;
-			displayed_title = null;
-		}
+	} else if (moved_away_from_displayed_title) {
+		document.body.classList.add("spinner-active");
+		result_container.style.opacity = 0;
+		displayed_title = null;
 	}
 
 	if (plinketto_balls.every((ball) => Math.abs(ball.velocity_y) < 0.01 && ball.y + ball.radius >= 90 - 0.1)) {
