@@ -423,12 +423,12 @@ const simulate_plinketto = (delta_time) => {
 				ball.velocity_y -= ball.velocity_y * collision_friction_y * delta_time;
 			}
 		}
-		if (ball.x + ball.radius > 100) {
-			ball.velocity_x = -Math.abs(ball.velocity_x) * 0.9;
-		}
-		if (ball.x - ball.radius < 0) {
-			ball.velocity_x = Math.abs(ball.velocity_x) * 0.9;
-		}
+		// if (ball.x + ball.radius > 100) {
+		// 	ball.velocity_x = -Math.abs(ball.velocity_x) * 0.9;
+		// }
+		// if (ball.x - ball.radius < 0) {
+		// 	ball.velocity_x = Math.abs(ball.velocity_x) * 0.9;
+		// }
 		if (ball.y + ball.radius > 90) {
 			ball.velocity_y = -Math.abs(ball.velocity_y) * 0.9;
 			ball.y = Math.min(ball.y, 90 - ball.radius);
@@ -477,7 +477,7 @@ const setup_plinketto = (options) => {
 			});
 		}
 		for (let y2 = y - 5; y2 < y + y_spacing; y2 += 2.5) {
-			const x = Math.sin(y2 / y_spacing * Math.PI);
+			const x = Math.sin(y2 / y_spacing * Math.PI) - 5;
 			plinketto_pegs.push({
 				x, y: y2,
 				radius: 0.8,
