@@ -405,7 +405,13 @@ const air_friction_x = 0.001;
 const air_friction_y = 0.001;
 const collision_friction_x = 0.04;
 const collision_friction_y = 0.04;
-
+const wall_radius = 0.5;
+const peg_x_spacing = 5;
+const peg_y_spacing = 5;
+const outer_wall_x = (right, y) => right * 100 + (right ? -1 : 1) * Math.max(
+	Math.cos(y / peg_y_spacing * Math.PI + Math.PI) - 5,
+	(y - 91) / 4, // taper in near bottom
+);
 const simulate_plinketto = (delta_time) => {
 	for (const ball of plinketto_balls) {
 		ball.velocity_y += gravity * delta_time;
@@ -423,12 +429,20 @@ const simulate_plinketto = (delta_time) => {
 				ball.velocity_y -= ball.velocity_y * collision_friction_y * delta_time;
 			}
 		}
-		// if (ball.x + ball.radius > 100) {
-		// 	ball.velocity_x = -Math.abs(ball.velocity_x) * 0.9;
-		// }
-		// if (ball.x - ball.radius < 0) {
-		// 	ball.velocity_x = Math.abs(ball.velocity_x) * 0.9;
-		// }
+
+		const left_wall_x = outer_wall_x(false, ball.y);
+		const right_wall_x = outer_wall_x(true, ball.y);
+		// ignoring wall_radius for these two conditions so they only apply when the ball is moving fast,
+		// and otherwise the pegs of the wall come into play
+		if (ball.x + ball.radius > right_wall_x) {
+			ball.velocity_x = -Math.abs(ball.velocity_x) * 0.9;
+			ball.x = Math.min(ball.x, right_wall_x - wall_radius);
+		}
+		if (ball.x - ball.radius < left_wall_x) {
+			ball.velocity_x = Math.abs(ball.velocity_x) * 0.9;
+			ball.x = Math.max(ball.x, left_wall_x + wall_radius);
+		}
+
 		if (ball.y + ball.radius > 90) {
 			ball.velocity_y = -Math.abs(ball.velocity_y) * 0.9;
 			ball.y = Math.min(ball.y, 90 - ball.radius);
@@ -467,10 +481,8 @@ const setup_plinketto = (options) => {
 			}
 		}
 	}
-	const x_spacing = 5;
-	const y_spacing = 5;
-	for (let y = y_spacing * 3; y < 80; y += y_spacing) {
-		for (let x = (y % (y_spacing * 2)) ? x_spacing / 2 : 0; x <= 100; x += x_spacing) {
+	for (let y = peg_y_spacing * 3; y < 80; y += peg_y_spacing) {
+		for (let x = (y % (peg_y_spacing * 2)) ? peg_x_spacing / 2 : 0; x <= 100; x += peg_x_spacing) {
 			plinketto_pegs.push({
 				x, y,
 				radius: 0.8,
@@ -478,23 +490,19 @@ const setup_plinketto = (options) => {
 		}
 	}
 	for (let y = 0; y < 90; y += 1) {
-		const x = Math.max(
-			Math.cos(y / y_spacing * Math.PI + Math.PI) - 5,
-			(y - 90) / 4, // taper in near bottom
-		);
 		plinketto_pegs.push({
-			x, y,
+			x: outer_wall_x(false, y), y,
 			radius: 0.5,
 		});
 		plinketto_pegs.push({
-			x: 100 - x, y,
+			x: outer_wall_x(true, y), y,
 			radius: 0.5,
 		});
 	}
 	for (let i = 0; i < 50; i++) {
 		plinketto_balls.push({
 			x: 50, y: 1,
-			velocity_x: (Math.random() - 0.5) * 0.5,
+			velocity_x: (Math.random() - 0.5) * 50,
 			velocity_y: 0,
 			radius: 1.2,
 		});
