@@ -16,6 +16,25 @@ const filters = document.getElementById("filters");
 const close_filters_button = document.getElementById("close-filters");
 const title_filter = document.getElementById("title-filter");
 
+const audio_context = new AudioContext();
+const gain = audio_context.createGain();
+gain.gain.value = 0;
+
+const buffer_size = 2 * audio_context.sampleRate;
+const noise_buffer = audio_context.createBuffer(1, buffer_size, audio_context.sampleRate);
+const output = noise_buffer.getChannelData(0);
+for (var i = 0; i < buffer_size; i++) {
+	output[i] = Math.random() * 2 - 1;
+}
+
+var white_noise = audio_context.createBufferSource();
+white_noise.buffer = noise_buffer;
+white_noise.loop = true;
+white_noise.start(0);
+
+white_noise.connect(gain);
+gain.connect(audio_context.destination);
+
 function mod(n, m) {
 	return ((n % m) + m) % m;
 }
@@ -323,6 +342,8 @@ const peg_size_px = 5;
 const peg_pushback = 1 / 2500000;
 const time_step = 1; // delta times are broken up into chunks this size or smaller
 const simulate_mega_spinner = (delta_time) => {
+	const prev_ticker_index_attachment = ticker_index_attachment;
+	const prev_ticker_rotation_deg = ticker_rotation_deg;
 	// I'm not totally sure this variable name makes sense:
 	const ticker_index_occupancy = Math.round(spin_position + peg_size * Math.sign(spin_position - ticker_index_attachment));
 	if (
@@ -347,6 +368,24 @@ const simulate_mega_spinner = (delta_time) => {
 		ticker_rotation_deg -= 0.03 * ticker_rotation_deg * delta_time;
 		ticker_index_attachment = Math.round(spin_position);
 	}
+	// white_noise.playbackRate.setTargetAtTime(Math.abs(prev_ticker_rotation_deg - ticker_rotation_deg) + spin_velocity, audio_context.currentTime + 0.02, 0.03);
+	// white_noise.playbackRate.setTargetAtTime(
+	// 	Math.min(10,
+	// 		10000 / (Math.abs(prev_ticker_rotation_deg - ticker_rotation_deg) + spin_velocity)
+	// 	)
+	// 	, audio_context.currentTime + 0.02, 0.03);
+
+	if (prev_ticker_index_attachment !== ticker_index_attachment) {
+		gain.gain.setTargetAtTime(0, audio_context.currentTime + 0.001, 0.001);
+		// gain.gain.setTargetAtTime(0, audio_context.currentTime + 0.001, 1 * Math.abs(prev_ticker_rotation_deg - ticker_rotation_deg));
+		gain.gain.setTargetAtTime(1, audio_context.currentTime + 0.01, 0.1);
+		gain.gain.setTargetAtTime(0, audio_context.currentTime + 0.02, 0.03);
+	} //else
+		// if (ticker_index_attachment !== Math.round(spin_position)) {
+		// 	gain.gain.setTargetAtTime(1 * Math.abs(prev_ticker_rotation_deg - ticker_rotation_deg), audio_context.currentTime + 0.001, 0.001);
+		// } else {
+		// 	gain.gain.setTargetAtTime(0, audio_context.currentTime + 0.02, 0.03);
+		// }
 
 	if (dragging) {
 		spin_velocity = 0;
