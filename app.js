@@ -737,12 +737,7 @@ const parse_from_location_hash = () => {
 		clear_result();
 		return;
 	}
-	// TODO: should the parenthetical be optional?
-	const parsed = parse_title_line(hash);
-	if (!parsed) {
-		clear_result();
-		return;
-	}
+	const parsed = parse_title_line(hash) || { title: hash, parenthetical: "", instances: [] };
 	const normalized_title = normalize_title(parsed.title);
 	const normalized_parenthetical = normalize_title(parsed.parenthetical);
 	for (let item_index = 0; item_index < title_line_indexes.length; item_index++) {
