@@ -374,18 +374,8 @@ const simulate_mega_spinner = (delta_time, audio_context_time) => {
 			audio_context_time + 0.02,
 			0.03
 		);
-		tick_source.connect(gain);
-
-		// gain.gain.setTargetAtTime(0, audio_context.currentTime + 0.001, 0.001);
-		// // gain.gain.setTargetAtTime(0, audio_context.currentTime + 0.001, 1 * Math.abs(prev_ticker_rotation_deg - ticker_rotation_deg));
-		// gain.gain.setTargetAtTime(1, audio_context.currentTime + 0.01, 0.1);
-		// gain.gain.setTargetAtTime(0, audio_context.currentTime + 0.02, 0.03);
-	} //else
-		// if (ticker_index_attachment !== Math.round(spin_position)) {
-		// 	gain.gain.setTargetAtTime(1 * Math.abs(prev_ticker_rotation_deg - ticker_rotation_deg), audio_context.currentTime + 0.001, 0.001);
-		// } else {
-		// 	gain.gain.setTargetAtTime(0, audio_context.currentTime + 0.02, 0.03);
-		// }
+		tick_source.connect(audio_context.destination);
+	}
 
 	if (dragging) {
 		spin_velocity = 0;
