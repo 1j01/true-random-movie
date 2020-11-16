@@ -403,8 +403,8 @@ const render_plinketto = () => {
 const gravity = 0.0005;
 const air_friction_x = 0.001;
 const air_friction_y = 0.001;
-const collision_friction_x = 0.02;
-const collision_friction_y = 0.02;
+const collision_friction_x = 0.04;
+const collision_friction_y = 0.04;
 
 const simulate_plinketto = (delta_time) => {
 	for (const ball of plinketto_balls) {
@@ -423,11 +423,15 @@ const simulate_plinketto = (delta_time) => {
 				ball.velocity_y -= ball.velocity_y * collision_friction_y * delta_time;
 			}
 		}
-		if (ball.x - ball.radius > 100) {
+		if (ball.x + ball.radius > 100) {
 			ball.velocity_x = -Math.abs(ball.velocity_x) * 0.9;
 		}
-		if (ball.x + ball.radius < 0) {
+		if (ball.x - ball.radius < 0) {
 			ball.velocity_x = Math.abs(ball.velocity_x) * 0.9;
+		}
+		if (ball.y + ball.radius > 90) {
+			ball.velocity_y = -Math.abs(ball.velocity_y) * 0.9;
+			ball.y = Math.min(ball.y, 90 - ball.radius);
 		}
 	}
 };
@@ -446,13 +450,22 @@ const setup_plinketto = (options) => {
 	cleanup_plinketto();
 
 	for (let i = 0; i < options.length; i += 1) {
+		const x = i * 100 / options.length;
 		plinketto_buckets.push({
 			id: options[i],
-			x: i * 100 / options.length,
+			x: x,
 			y: 90,
 			width: 100 / options.length,
 			height: 10,
 		});
+		if (i > 0) {
+			for (let y = 83; y < 90; y += 2) {
+				plinketto_pegs.push({
+					x, y,
+					radius: 0.8,
+				});
+			}
+		}
 	}
 	const x_spacing = 5;
 	const y_spacing = 5;
@@ -460,25 +473,25 @@ const setup_plinketto = (options) => {
 		for (let x = (y % (y_spacing * 2)) ? x_spacing / 2 : 0; x < 100; x += x_spacing) {
 			plinketto_pegs.push({
 				x, y,
-				radius: 1,
+				radius: 0.8,
 			});
 		}
 	}
-	// for (let x = 0; x < 100; x += x_spacing) {
-	// 	plinketto_balls.push({
-	// 		x, y: 1,
-	// 		velocity_x: Math.random() * 0.3,
-	// 		velocity_y: 0,
-	// 		radius: 1.5,
-	// 	});
-	// }
+	for (let x = 0; x < 100; x += x_spacing) {
+		plinketto_balls.push({
+			x: 50, y: 1,
+			velocity_x: Math.random() * 0.003,
+			velocity_y: 0,
+			radius: 1.2,
+		});
+	}
 
 	plinketto_balls.push({
-		x: Math.random() * 100,
+		x: 0,
 		y: 1,
 		velocity_x: Math.random() * 10,
 		velocity_y: 0,
-		radius: 1.5,
+		radius: 1.2,
 	});
 };
 
