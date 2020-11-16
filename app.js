@@ -947,19 +947,198 @@ const main = async () => {
 	});
 
 	// TODO: remove duplicate movie listings
-	// also look for two vs 2 etc.
 	// window.titles = new Map();
 	// for (const title_line of unfiltered_title_lines) {
 	// 	const parsed = parse_title_line(title_line);
-	// 	if (titles.get(parsed.title)) {
-	// 		// console.log("Collision!", titles.get(parsed.title), "and", parsed);
-	// 		if (parsed.parenthetical !== titles.get(parsed.title).parenthetical) {
-	// 			// console.log("listed differently!", titles.get(parsed.title), "and", parsed);
-	// 			console.log("listed differently!", parsed.title, titles.get(parsed.title).parenthetical, "vs", parsed.parenthetical);
+	// 	const normalized_title = normalize_title(parsed.title);
+	// 	const existing = titles.get(normalized_title);
+	// 	if (existing) {
+	// 		if (parsed.title !== existing.title) {
+	// 			console.log("different titles!", parsed.title, "vs", existing.title);
+	// 			if (parsed.parenthetical !== existing.parenthetical) {
+	// 				console.log("also different parentheticals", existing.parenthetical, "vs", parsed.parenthetical);
+	// 			}
+	// 		} else if (parsed.parenthetical !== existing.parenthetical) {
+	// 			console.log(`different parentheticals for "${parsed.title}"`, existing.parenthetical, "vs", parsed.parenthetical);
 	// 		}
 	// 	}
-	// 	titles.set(parsed.title, parsed);
+	// 	titles.set(normalized_title, parsed);
 	// }
+
+	// different titles! 5 Centimeters Per Second vs 5 Centimeters per Second
+	// different titles! 12 Years A Slave vs 12 Years a Slave
+	// different titles! One of Our Dinosaurs is Missing vs One of Our Dinosaurs Is Missing
+	// different titles! Twelve Monkeys vs 12 Monkeys
+	// different titles! Two or Three Things I Know About Her vs 2 or 3 Things I Know About Her
+	// different titles! A Walk to Remember vs A Walk To Remember
+
+	// different titles! Ten Years vs 10 Years
+	// 	also different parentheticals 2011 vs 2015
+
+	// different titles! Twelve vs 12
+	// 	also different parentheticals 2003 & 2007 vs 2010
+
+	// different titles! Three Godfathers vs 3 Godfathers
+	// 	also different parentheticals 1948 vs 1936
+
+	// different titles! Five Fingers vs 5 Fingers
+	// 	also different parentheticals 1952 vs 2006
+
+	// different titles! Nine vs 9
+	// 	also different parentheticals 2005 short & 2009 vs 2009
+
+	// different titles! 5 Fingers vs Five Fingers
+	// 	also different parentheticals 2006 vs 1952
+
+	// different titles! 9 vs Nine
+	// 	also different parentheticals 2009 vs 2005 short & 2009
+
+	// different titles! 12 vs Twelve
+	// 	also different parentheticals 2010 vs 2007
+
+	// different titles! Angel vs Ángel
+	// 	also different parentheticals 2007 vs 1937, 1966 short, 1982 Greek, 1982 Irish, 1984, 1987, 2007, 2009 & 2011
+
+	// different titles! Boogeyman II vs Boogeyman 2
+	// 	also different parentheticals 2008 vs 1983
+
+	// different titles! Doppelganger vs Doppelgänger
+	// 	also different parentheticals 1969 vs 1993
+
+	// different titles! Kid vs KID
+	// 	also different parentheticals 2015 vs 1990, 2012 & 2015
+
+	// different titles! The MatchMaker vs The Matchmaker
+	// 	also different parentheticals 2018 vs 1997
+
+	// different titles! The Matchmaker vs The MatchMaker
+	// 	also different parentheticals 1997 vs 1958
+
+	// different titles! Napoléon vs Napoleon
+	// 	also different parentheticals 1951, 1994, 1995 & 2007 vs 1927 & 1955
+
+	// different titles! Naughty but Nice vs Naughty But Nice
+	// 	also different parentheticals 1927 vs 1939
+
+	// different titles! Nine vs 9
+	// 	also different parentheticals 2005 short & 2009 vs 2009
+
+	// different titles! Noëlle vs Noelle
+	// 	also different parentheticals 2019 vs 2007
+
+	// different titles! Regeneration vs ReGeneration
+	// 	also different parentheticals 2010 vs 1915 & 1997
+
+	// different titles! ReGeneration vs Regeneration
+	// 	also different parentheticals 1915 & 1997 vs 2010
+
+	// different titles! Rocketman vs RocketMan
+	// 	also different parentheticals 1997 vs 2019
+
+	// different titles! Roe vs. Wade vs Roe v. Wade
+	// 	also different parentheticals 2019 vs 1989
+
+	// different titles! SubUrbia vs Suburbia
+	// 	also different parentheticals 1984 vs 1996
+
+	// different titles! Three Women vs 3 Women
+	// 	also different parentheticals 1977 vs 1924, 1949 & 1952
+
+	// different titles! Twelve vs 12
+	// 	also different parentheticals 2007 vs 2010
+
+	// different titles! X vs 10
+	// 	also different parentheticals 1979 vs 1986
+
+	// different titles! Zatōichi vs Zatoichi
+	// 	also different parentheticals 1989 vs 2003
+
+
+	// different parentheticals for "2 Fast 2 Furious" 2003 vs 2004
+	// different parentheticals for "The Three Musketeers" 1921, 1933, 1948, 1973, 1992, 1993 & 2011 vs 1921, 1933, 1973, 1992 & 1993
+	// different parentheticals for "Three Sisters" 1966, 1970, 1970 Olivier & 1994 vs 1970 Olivier & 1994
+	// different parentheticals for "Four Feathers" 1939, 1978 & 2002 vs 1939 & 2002
+	// different parentheticals for "Ten Little Indians" 1965 & 1989 vs 1965
+	// different parentheticals for "Ten Little Indians" 1965 vs 1989
+	// different parentheticals for "12 Angry Men" 1957 & 1997 vs 1957
+	// different parentheticals for "16 Blocks" 2005 vs 2006
+	// different parentheticals for "The 39 Steps" 1935, 1959, 1978 & 2008 TV vs 1935, 1959 & 1978
+	// different parentheticals for "300: Rise of an Empire" 2014 vs 2013
+	// different parentheticals for "1984" 1956 vs 1984
+	// different parentheticals for "Aladdin" 1992 Golden Films, 1992 Disney vs 1992 & 2019
+	// different parentheticals for "Alice" 1982, 1988, 1990 & 2005 vs 2012
+	// different parentheticals for "The Apartment" 1996 vs 1960
+	// different parentheticals for "Arsenal" 1929 vs 2017
+	// different parentheticals for "Avatar" 1916 & 2004 vs 2009
+	// different parentheticals for "Beyond" 2003 vs 1921, 2010, 2012 & 2014
+	// different parentheticals for "The Bourne Identity" 1988 TV vs 2002
+	// different parentheticals for "Calendar Girls" 2003 vs 2015
+	// different parentheticals for "Center Stage" 2000 vs 1991
+	// different parentheticals for "Chang Chen Ghost Stories" 2015 vs 2016
+	// different parentheticals for "Children of the Corn" 1984 vs 2009
+	// different parentheticals for "Control" 2005 vs 2007
+	// different parentheticals for "Cypher" 2002 vs 2019
+	// different parentheticals for "The Eye" 2002 vs 2008
+	// different parentheticals for "Fanaa" 2006 vs 2010
+	// different parentheticals for "The Fast and the Furious" 1955 vs 2001
+	// different parentheticals for "2 Fast 2 Furious" 2004 vs 2003
+	// different parentheticals for "Four Horsemen of the Apocalypse" 1962 vs 1921 & 1962
+	// different parentheticals for "The Four Seasons" 1981 vs 1979 & 1981
+	// different parentheticals for "The Fourth Man" 1983 vs 1983 & 2007
+	// different parentheticals for "House" 1977 & 2008 vs 1986
+	// different parentheticals for "How to Swim" 1942 vs 2018
+	// different parentheticals for "Hush" 1998 & 2004 TV vs 2016
+	// different parentheticals for "An Inspector Calls" 2015 vs 1954
+	// different parentheticals for "Casino Royale" 1967 & 2006 vs 2006
+	// different parentheticals for "Jason X" 2001 vs 2002
+	// different parentheticals for "Joy Ride" 1935 & 2000 vs 2001
+	// different parentheticals for "The Lover" 1986 vs 1992
+	// different parentheticals for "Million Dollar Baby" 2004 vs 1941 & 2004
+	// different parentheticals for "Millions" 2004 vs 1937 & 2004
+	// different parentheticals for "Les Misérables" 1909, 1917, 1925, 1934, 1935, 1948, 1952, 1958, 1967, 1978, 1982, 1995, 1998 & 2012 vs 1909, 1917, 1925, 1934, 1935, 1948, 1952, 1958, 1978, 1982, 1995, 1998 & 2012
+	// different parentheticals for "Montana" 1950, 1998 & 2014 vs 2017
+	// different parentheticals for "My Best Friend's Wedding" 1997 vs 2016
+	// different parentheticals for "My Cousin Rachel" 1952 vs 2017
+	// different parentheticals for "Mystery" 2012 vs 2014
+	// different parentheticals for "The Night Flier" 1997 vs 1998
+	// different parentheticals for "A Nightmare on Elm Street" 1984 & 2010 vs 1984
+	// different parentheticals for "A Nightmare on Elm Street" 1984 vs 2010
+	// different parentheticals for "The One" 2001 vs 2001 & 2003
+	// different parentheticals for "One More Time" 1970 vs 1931, 1970 & 2015
+	// different parentheticals for "Open Season" 1974 vs 2006
+	// different parentheticals for "Police Story" 1987 vs 1996
+	// different parentheticals for "Police Story 2" 1988 vs 2007
+	// different parentheticals for "Pride and Prejudice" 1955, 1998, 2004, 2007 & 2014 vs 1940, 2003 & 2005
+	// different parentheticals for "Race" 2007, 2011, 2013 & 2016 vs 2008
+	// different parentheticals for "Saw" 2003 vs 2004
+	// different parentheticals for "Sayonara" 1957 vs 2015
+	// different parentheticals for "The Scorpion King" 1992 vs 2002
+	// different parentheticals for "Metallica: Some Kind of Monster" 2003 vs 2004
+	// different parentheticals for "Stage Fright" 1923, 1940, 1950, 1987, 1989, 1997 & 2014 vs 1987 & 2013
+	// different parentheticals for "Superman" 1941 vs 1978
+	// different parentheticals for "Taxi" 2004 vs 1998
+	// different parentheticals for "The Ten" 2007 vs 2008
+	// different parentheticals for "The Ten Commandments" 1923, 1956, 2007 vs 1923 & 1956
+	// different parentheticals for "Ten Little Indians" 1989 vs 1965
+	// different parentheticals for "Thirteen Ghosts" 2001 vs 1960 & 2001
+	// different parentheticals for "The Three Musketeers" 1921, 1933, 1973, 1992 & 1993 vs 1921, 1933 serial, 1973, 1992 & 1993
+	// different parentheticals for "Three Sisters" 1970 Olivier & 1994 vs 1966, 1970, 1970 Olivier & 1994
+	// different parentheticals for "The Three Stooges" 2000 vs 2012
+	// different parentheticals for "Three Young Texans" 1954 vs 1953
+	// different parentheticals for "Turbulence" 2000 & 2011 vs 1997
+	// different parentheticals for "The Twelve Chairs" 1962, 1970, 1971 & 1976 vs 1970, 1971 & 1976
+	// different parentheticals for "Twilight" 1998 vs 2008
+	// different parentheticals for "The Two Jakes" 1990 vs 1974
+	// different parentheticals for "Two Women" 1960 vs 1960, 1947 & 1999
+	// different parentheticals for "Underworld" 1927, 1937, 1985, 1996 & 2004 vs 2003
+	// different parentheticals for "Universal Soldier" 1971 vs 1992
+	// different parentheticals for "V.I.P." 2017 vs 1989 & 1997
+	// different parentheticals for "Vampires" 1986 vs 1998
+	// different parentheticals for "Venom" 1981 & 2005 vs 2018
+	// different parentheticals for "Voices" 1973 & 1979 vs 1973, 1979 & 2007
+	// different parentheticals for "Witchcraft" 1916 & 1964 vs 1988
+	// different parentheticals for "XXX" 2016 vs 2002
+	// different parentheticals for "Zero Tolerance" 1995 vs 1995, 1999 & 2015
 
 };
 
