@@ -116,14 +116,7 @@ function parse_title_line(title_line) {
 
 let displayed_title;
 
-const display_result = (title_line) => {
-
-	const parsed = parse_title_line(title_line);
-	const { title, instances } = parsed;
-
-	var instance_index = ~~(Math.random() * instances.length);
-	var instance_text = instances[instance_index];
-
+const display_result = (title, instance_text) => {
 	title_output.innerHTML = "";
 	let heading_level = 2;
 	const title_parts = title.split(/:\s/g);
@@ -210,6 +203,27 @@ const clear_result = () => {
 	result_container.style.opacity = 1;
 	displayed_title = null;
 };
+
+const pick_title_line = (title_line) => {
+	const { title, instances } = parse_title_line(title_line);
+	if (instances.length > 1) {
+		setup_plinketto(instances);
+		plinketto_container.hidden = false;
+		animate("plinketto");
+	}// else {
+	// displayed_title is currently used for logic, so display this early, behind plinketto
+	display_result(title, instances[0]);
+	//}
+};
+
+// const quick_pick = () => {
+// 	const title_line_index = ~~(Math.random() * title_line_indexes.length);
+// 	const title_line = unfiltered_title_lines[title_line_index];
+// 	const { title, instances } = parse_title_line(title_line);
+// 	const instance_index = ~~(Math.random() * instances.length);
+// 	const instance_text = instances[instance_index];
+// 	display_result(title, instance_text);
+// };
 
 fitty("#go", { maxSize: 30 });
 
@@ -548,17 +562,11 @@ const animate = (start_animating_what) => {
 	}
 
 	const title_line = unfiltered_title_lines[title_line_indexes[mod(ticker_index_attachment, title_line_indexes.length)]];
-	const moved_away_from_displayed_title = parse_title_line(title_line).title !== displayed_title;
+	const { title } = parse_title_line(title_line);
+	const moved_away_from_displayed_title = title !== displayed_title;
 	if (Math.abs(spin_velocity) < 0.001 && !dragging && peg_hit_timer <= 0) {
 		if (moved_away_from_displayed_title) {
-			const { instances } = parse_title_line(title_line);
-			if (instances.length > 1) {
-				setup_plinketto(instances);
-				plinketto_container.hidden = false;
-				animate("plinketto");
-			} else {
-				display_result(title_line);
-			}
+			pick_title_line(title_line);
 			// location.hash = `${title} (${instance_text.replace(/\sTV$/, "")})`;
 			// location.hash = `${title} (${instance_text})`;
 			location.hash = title_line;
@@ -575,10 +583,14 @@ const animate = (start_animating_what) => {
 		displayed_title = null;
 	}
 
-	if (plinketto_balls.every((ball) => Math.abs(ball.velocity_y) < 0.01 && ball.y + ball.radius >= 90 - 0.1)) {
-		plinketto_animating = false;
-		// display_result();
-		plinketto_container.hidden = true;
+	if (plinketto_animating) {
+		if (plinketto_balls.every((ball) => Math.abs(ball.velocity_y) < 0.01 && ball.y + ball.radius >= 90 - 0.1)) {
+			plinketto_animating = false;
+			const ball = plinketto_balls[0];
+			const instance_text = plinketto_buckets.find((bucket) => bucket.x < ball.x && bucket.x + bucket.width > ball.x).id;
+			display_result(title, instance_text);
+			plinketto_container.hidden = true;
+		}
 	}
 
 	render_mega_spinner();
@@ -750,7 +762,7 @@ const parse_from_location_hash = () => {
 					ticker_rotation_deg = 0;
 					mega_spinner_animating = false;
 					// ticker_rotation_speed_deg_per_frame = 0;
-					display_result(title_line);
+					pick_title_line(title_line);
 
 					render_mega_spinner();
 				}
