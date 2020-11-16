@@ -394,6 +394,9 @@ const render_plinketto = () => {
 			bucket.element.appendChild(rect_el);
 			bucket.element.appendChild(text_el);
 			plinketto_svg.appendChild(bucket.element);
+			text_el.setAttribute("font-size", 1);
+			const bbox = text_el.getBBox();
+			text_el.setAttribute("font-size", Math.min(7, (bucket.width - 2) / bbox.width));
 		}
 		bucket.element.setAttribute("x", bucket.x);
 		bucket.element.setAttribute("y", bucket.y);
@@ -693,6 +696,7 @@ for (const [a, b] of [
 	["Furious (II003)", "Furious (2003)"],
 	["One, t", "I, T"], // I, The Jury
 	["I as in Icarus (1979)", "One as in Icarus (1979)"],
+	// ["Hallelujah, I'm a Bum (1933)", "Hallelujah, ONE'm a Bum (1933)"], // TODO
 ]) {
 	if (console && console.assert) {
 		console.assert(normalize_title(a) !== normalize_title(b), `Normalized titles SHOULD NOT BE EQUAL but are.
@@ -710,6 +714,8 @@ for (const [a, b] of [
 	["Batman vs", "Batman v Superman"],
 	["Batman vers", "Batman v Superman"],
 	["Batman vers", "Batman vs. Two-Face"],
+	// ["Hallelujah, I'm a Bum (1933)", ", I"], // TODO
+	// ["Hallelujah, I'm a Bum (1933)", "(1"], // TODO
 ]) {
 	if (console && console.assert) {
 		console.assert(search_matches_title(a, b), `Search should match.
