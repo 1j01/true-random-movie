@@ -18,22 +18,18 @@ const title_filter = document.getElementById("title-filter");
 
 const audio_context = new AudioContext();
 const gain = audio_context.createGain();
-gain.gain.value = 0;
-
-const buffer_size = 2 * audio_context.sampleRate;
-const noise_buffer = audio_context.createBuffer(1, buffer_size, audio_context.sampleRate);
-const output = noise_buffer.getChannelData(0);
-for (var i = 0; i < buffer_size; i++) {
-	output[i] = Math.random() * 2 - 1;
-}
-
-var white_noise = audio_context.createBufferSource();
-white_noise.buffer = noise_buffer;
-white_noise.loop = true;
-white_noise.start(0);
-
-white_noise.connect(gain);
 gain.connect(audio_context.destination);
+
+const load_sound = async (path) => {
+	const response = await fetch(path);
+	if (response.ok) {
+		return await audio_context.decodeAudioData(await response.arrayBuffer());
+	} else {
+		throw new Error(`got HTTP ${response.status} fetching '${path}'`);
+	}
+};
+
+let tick_sound;
 
 function mod(n, m) {
 	return ((n % m) + m) % m;
@@ -341,7 +337,7 @@ const peg_size = 0.1;
 const peg_size_px = 5;
 const peg_pushback = 1 / 2500000;
 const time_step = 1; // delta times are broken up into chunks this size or smaller
-const simulate_mega_spinner = (delta_time) => {
+const simulate_mega_spinner = (delta_time, audio_context_time) => {
 	const prev_ticker_index_attachment = ticker_index_attachment;
 	const prev_ticker_rotation_deg = ticker_rotation_deg;
 	// I'm not totally sure this variable name makes sense:
@@ -368,18 +364,22 @@ const simulate_mega_spinner = (delta_time) => {
 		ticker_rotation_deg -= 0.03 * ticker_rotation_deg * delta_time;
 		ticker_index_attachment = Math.round(spin_position);
 	}
-	// white_noise.playbackRate.setTargetAtTime(Math.abs(prev_ticker_rotation_deg - ticker_rotation_deg) + spin_velocity, audio_context.currentTime + 0.02, 0.03);
-	// white_noise.playbackRate.setTargetAtTime(
-	// 	Math.min(10,
-	// 		10000 / (Math.abs(prev_ticker_rotation_deg - ticker_rotation_deg) + spin_velocity)
-	// 	)
-	// 	, audio_context.currentTime + 0.02, 0.03);
 
 	if (prev_ticker_index_attachment !== ticker_index_attachment) {
-		gain.gain.setTargetAtTime(0, audio_context.currentTime + 0.001, 0.001);
-		// gain.gain.setTargetAtTime(0, audio_context.currentTime + 0.001, 1 * Math.abs(prev_ticker_rotation_deg - ticker_rotation_deg));
-		gain.gain.setTargetAtTime(1, audio_context.currentTime + 0.01, 0.1);
-		gain.gain.setTargetAtTime(0, audio_context.currentTime + 0.02, 0.03);
+		var tick_source = audio_context.createBufferSource();
+		tick_source.buffer = tick_sound;
+		tick_source.start(audio_context_time);
+		tick_source.playbackRate.setTargetAtTime(
+			1 + (Math.abs(prev_ticker_rotation_deg - ticker_rotation_deg) / 15 + Math.abs(spin_velocity)) / 15,
+			audio_context_time + 0.02,
+			0.03
+		);
+		tick_source.connect(gain);
+
+		// gain.gain.setTargetAtTime(0, audio_context.currentTime + 0.001, 0.001);
+		// // gain.gain.setTargetAtTime(0, audio_context.currentTime + 0.001, 1 * Math.abs(prev_ticker_rotation_deg - ticker_rotation_deg));
+		// gain.gain.setTargetAtTime(1, audio_context.currentTime + 0.01, 0.1);
+		// gain.gain.setTargetAtTime(0, audio_context.currentTime + 0.02, 0.03);
 	} //else
 		// if (ticker_index_attachment !== Math.round(spin_position)) {
 		// 	gain.gain.setTargetAtTime(1 * Math.abs(prev_ticker_rotation_deg - ticker_rotation_deg), audio_context.currentTime + 0.001, 0.001);
@@ -599,10 +599,13 @@ const animate = (start_animating_what) => {
 	const delta_time = Math.min(now - last_time, 30); // limit needed to handle if the page isn't visible for a while; scalar can be refactored out
 
 	let remaining_delta_time = delta_time;
+	let audio_context_time = audio_context.currentTime;
 	while (remaining_delta_time > 0) {
-		simulate_mega_spinner(Math.min(time_step, remaining_delta_time));
-		simulate_plinketto(Math.min(time_step, remaining_delta_time));
-		remaining_delta_time -= time_step;
+		const sub_time_step = Math.min(time_step, remaining_delta_time);
+		simulate_mega_spinner(sub_time_step, audio_context_time);
+		simulate_plinketto(sub_time_step, remaining_delta_time);
+		remaining_delta_time -= sub_time_step;
+		audio_context_time += sub_time_step / 1000;
 	}
 
 	const title_line = unfiltered_title_lines[title_line_indexes[mod(ticker_index_attachment, title_line_indexes.length)]];
@@ -984,6 +987,8 @@ const main = async () => {
 		};
 		window.addEventListener("transitionend", on_transition_end);
 	});
+
+	tick_sound = await load_sound("tick.wav");
 
 	// TODO: remove duplicate movie listings
 	// window.titles = new Map();
