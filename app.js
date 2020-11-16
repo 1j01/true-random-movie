@@ -476,14 +476,14 @@ const setup_plinketto = (options) => {
 				radius: 0.8,
 			});
 		}
-		for (let y2 = y; y2 < y + y_spacing; y2 += 2) {
-			const x = 0;
+		for (let y2 = y - 5; y2 < y + y_spacing; y2 += 2.5) {
+			const x = Math.sin(y2 / y_spacing * Math.PI);
 			plinketto_pegs.push({
-				x, y,
+				x, y: y2,
 				radius: 0.8,
 			});
 			plinketto_pegs.push({
-				x: 100 - x, y,
+				x: 100 - x, y: y2,
 				radius: 0.8,
 			});
 		}
