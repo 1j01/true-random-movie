@@ -470,7 +470,7 @@ const setup_plinketto = (options) => {
 	const x_spacing = 5;
 	const y_spacing = 5;
 	for (let y = y_spacing * 3; y < 80; y += y_spacing) {
-		for (let x = (y % (y_spacing * 2)) ? x_spacing / 2 : 0; x < 100; x += x_spacing) {
+		for (let x = (y % (y_spacing * 2)) ? x_spacing / 2 : 0; x <= 100; x += x_spacing) {
 			plinketto_pegs.push({
 				x, y,
 				radius: 0.8,
@@ -479,7 +479,7 @@ const setup_plinketto = (options) => {
 	}
 	for (let y = 0; y < 90; y += 1) {
 		const x = Math.max(
-			Math.sin(y / y_spacing * Math.PI) - 5,
+			Math.cos(y / y_spacing * Math.PI + Math.PI) - 5,
 			(y - 90) / 4, // taper in near bottom
 		);
 		plinketto_pegs.push({
