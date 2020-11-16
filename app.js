@@ -204,26 +204,31 @@ const clear_result = () => {
 	displayed_title = null;
 };
 
-const pick_title_line = (title_line) => {
+const picked_title_line = (title_line) => {
 	const { title, instances } = parse_title_line(title_line);
 	if (instances.length > 1) {
 		setup_plinketto(instances);
 		plinketto_container.hidden = false;
 		animate("plinketto");
-	}// else {
+	} else {
+		location.hash = `${title} (${instances[0]})`;
+	}
 	// displayed_title is currently used for logic, so display this early, behind plinketto
 	display_result(title, instances[0]);
-	//}
 };
 
-// const quick_pick = () => {
-// 	const title_line_index = ~~(Math.random() * title_line_indexes.length);
-// 	const title_line = unfiltered_title_lines[title_line_index];
-// 	const { title, instances } = parse_title_line(title_line);
-// 	const instance_index = ~~(Math.random() * instances.length);
-// 	const instance_text = instances[instance_index];
-// 	display_result(title, instance_text);
-// };
+const quick_pick = (title_line) => {
+	if (!title_line) {
+		const title_line_index = ~~(Math.random() * title_line_indexes.length);
+		title_line = unfiltered_title_lines[title_line_index];
+	}
+	const { title, instances } = parse_title_line(title_line);
+	const instance_index = ~~(Math.random() * instances.length);
+	const instance_text = instances[instance_index];
+	display_result(title, instance_text);
+	// location.hash = `${title} (${instance_text.replace(/\sTV$/, "")})`;
+	location.hash = `${title} (${instance_text})`;
+};
 
 fitty("#go", { maxSize: 30 });
 
@@ -566,10 +571,7 @@ const animate = (start_animating_what) => {
 	const moved_away_from_displayed_title = title !== displayed_title;
 	if (Math.abs(spin_velocity) < 0.001 && !dragging && peg_hit_timer <= 0) {
 		if (moved_away_from_displayed_title) {
-			pick_title_line(title_line);
-			// location.hash = `${title} (${instance_text.replace(/\sTV$/, "")})`;
-			// location.hash = `${title} (${instance_text})`;
-			location.hash = title_line;
+			picked_title_line(title_line);
 			if (Math.abs(spin_velocity) < 0.0001 && Math.abs(ticker_rotation_deg) < 0.01) {
 				spin_velocity = 0;
 				ticker_rotation_deg = 0;
@@ -589,6 +591,7 @@ const animate = (start_animating_what) => {
 			const ball = plinketto_balls[0];
 			const instance_text = plinketto_buckets.find((bucket) => bucket.x < ball.x && bucket.x + bucket.width > ball.x).id;
 			display_result(title, instance_text);
+			location.hash = `${title} (${instance_text})`;
 			plinketto_container.hidden = true;
 		}
 	}
@@ -762,7 +765,13 @@ const parse_from_location_hash = () => {
 					ticker_rotation_deg = 0;
 					mega_spinner_animating = false;
 					// ticker_rotation_speed_deg_per_frame = 0;
-					pick_title_line(title_line);
+					const instance_index = movie.instances.map(normalize_title).indexOf(normalized_parenthetical);
+					if (instance_index !== -1) {
+						const instance_text = movie.instances[instance_index];
+						display_result(movie.title, instance_text);
+					} else {
+						picked_title_line(title_line);
+					}
 
 					render_mega_spinner();
 				}
@@ -905,7 +914,14 @@ const main = async () => {
 			}
 		} else if (!event.ctrlKey && !event.metaKey && !event.altKey && !event.shiftKey) {
 			if (event.key === "Escape") {
-				filters.hidden = true;
+				if (!filters.hidden) {
+					filters.hidden = true;
+				} else if (!plinketto_container.hidden || plinketto_animating) {
+					plinketto_container.hidden = true;
+					plinketto_animating = false;
+					const title_line = unfiltered_title_lines[title_line_indexes[mod(ticker_index_attachment, title_line_indexes.length)]];
+					quick_pick(title_line);
+				}
 			} else if (event.key === "Enter" || event.key === "Return") {
 				if (event.target.closest("#filters")) {
 					apply_filters();
