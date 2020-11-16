@@ -459,10 +459,10 @@ const setup_plinketto = (options) => {
 			height: 10,
 		});
 		if (i > 0) {
-			for (let y = 83; y < 90; y += 2) {
+			for (let y = 80; y < 90; y += 1) {
 				plinketto_pegs.push({
 					x, y,
-					radius: 0.8,
+					radius: 0.5,
 				});
 			}
 		}
@@ -477,18 +477,18 @@ const setup_plinketto = (options) => {
 			});
 		}
 	}
-	for (let y = 0; y < 90; y += 2) {
+	for (let y = 0; y < 90; y += 1) {
 		const x = Math.max(
 			Math.sin(y / y_spacing * Math.PI) - 5,
 			(y - 90) / 4, // taper in near bottom
 		);
 		plinketto_pegs.push({
 			x, y,
-			radius: 0.8,
+			radius: 0.5,
 		});
 		plinketto_pegs.push({
 			x: 100 - x, y,
-			radius: 0.8,
+			radius: 0.5,
 		});
 	}
 	for (let i = 0; i < 50; i++) {
