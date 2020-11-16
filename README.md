@@ -18,6 +18,7 @@ Find movies that you would never watch otherwise.
 - "Watch Online" link to quickly do a web search for a movie (often you can find a site to it for free easily)
 - Ctrl+F to filter the films list by title
 	- Handles accents (e vs. é) and stylization variations like "2" vs. "two" vs. "II"
+- Plinko-like bonus round for picking between movies that have the same name (usually different dates)
 
 ## Data Sources
 

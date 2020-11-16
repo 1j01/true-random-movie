@@ -10,6 +10,7 @@ const mega_spinner_container = document.getElementById("mega-spinner");
 const mega_spinner_svg = document.getElementById("mega-spinner-svg");
 const mega_spinner_ticker = document.getElementById("mega-spinner-ticker");
 const mega_spinner_items = document.getElementById("mega-spinner-items");
+const plinketto_container = document.getElementById("plinketto");
 const plinketto_svg = document.getElementById("plinketto-svg");
 const filters = document.getElementById("filters");
 const close_filters_button = document.getElementById("close-filters");
@@ -218,7 +219,7 @@ let title_line_indexes; // can be a sorted/shuffled/filtered/wrapped list of ind
 let shuffled_unfiltered_title_line_indexes; // for restoring from filtering
 
 // TODO: use pool of elements to avoid garbage collection churn?
-let animating = false;
+let mega_spinner_animating = false;
 let dragging = false;
 let peg_hit_timer = 0;
 let item_els = [];
@@ -345,6 +346,7 @@ const simulate_mega_spinner = (delta_time) => {
 	}
 };
 
+let plinketto_animating = false;
 let plinketto_pegs = [];
 let plinketto_balls = []; // or pucks, but that looks too similar to "buckets" for visual scanning :)
 let plinketto_buckets = [];
@@ -451,7 +453,7 @@ const simulate_plinketto = (delta_time) => {
 };
 
 const cleanup_plinketto = () => {
-	// Array.from is necessary because it's a live NodeList, updated as things are removed
+	// Array.from is necessary because childNodes is a live NodeList, updated as things are removed
 	for (const child of Array.from(plinketto_svg.childNodes)) {
 		child.remove();
 	}
@@ -499,44 +501,50 @@ const setup_plinketto = (options) => {
 			radius: 0.5,
 		});
 	}
-	for (let i = 0; i < 50; i++) {
-		plinketto_balls.push({
-			x: 50, y: 1,
-			velocity_x: (Math.random() - 0.5) * 50,
-			velocity_y: 0,
-			radius: 1.2,
-		});
-	}
+	// for (let i = 0; i < 50; i++) {
+	// 	plinketto_balls.push({
+	// 		x: 50,
+	// 		y: 1,
+	// 		velocity_x: (Math.random() - 0.5) * 50,
+	// 		velocity_y: 0,
+	// 		radius: 1.2,
+	// 	});
+	// }
 
 	plinketto_balls.push({
-		x: 0,
+		x: 50,
 		y: 1,
-		velocity_x: Math.random() * 10,
+		velocity_x: (Math.random() - 0.5) * 50,
 		velocity_y: 0,
 		radius: 1.2,
 	});
 };
 
-window.plinketto = () => {
-	setup_plinketto(["1913", "1922", "1933", "1946"]);
-	render_plinketto();
-};
-plinketto();
-
 let rafid;
-let last_time = performance.now();
-const animate = () => {
+let last_time = -1;
+const animate = (start_animating_what) => {
+	if (start_animating_what === "mega_spinner") {
+		if (mega_spinner_animating) {
+			return;
+		}
+		mega_spinner_animating = true;
+	}
+	if (start_animating_what === "plinketto") {
+		if (plinketto_animating) {
+			return;
+		}
+		plinketto_animating = true;
+	}
 	rafid = requestAnimationFrame(animate);
 	const now = performance.now();
-	if (!animating) {
+	if (last_time === -1) {
 		last_time = now;
 	}
 	const delta_time = Math.min(now - last_time, 30); // limit needed to handle if the page isn't visible for a while; scalar can be refactored out
-	animating = true;
 
 	let remaining_delta_time = delta_time;
 	while (remaining_delta_time > 0) {
-		// simulate_mega_spinner(Math.min(time_step, remaining_delta_time));
+		simulate_mega_spinner(Math.min(time_step, remaining_delta_time));
 		simulate_plinketto(Math.min(time_step, remaining_delta_time));
 		remaining_delta_time -= time_step;
 	}
@@ -545,26 +553,45 @@ const animate = () => {
 	const moved_away_from_displayed_title = parse_title_line(title_line).title !== displayed_title;
 	if (Math.abs(spin_velocity) < 0.001 && !dragging && peg_hit_timer <= 0) {
 		if (moved_away_from_displayed_title) {
-			display_result(title_line);
+			const { instances } = parse_title_line(title_line);
+			if (instances.length > 1) {
+				setup_plinketto(instances);
+				plinketto_container.hidden = false;
+				animate("plinketto");
+			} else {
+				display_result(title_line);
+			}
 			// location.hash = `${title} (${instance_text.replace(/\sTV$/, "")})`;
 			// location.hash = `${title} (${instance_text})`;
 			location.hash = title_line;
 			if (Math.abs(spin_velocity) < 0.0001 && Math.abs(ticker_rotation_deg) < 0.01) {
 				spin_velocity = 0;
 				ticker_rotation_deg = 0;
-				// animating = false;
-				// cancelAnimationFrame(rafid);
+				mega_spinner_animating = false;
 			}
 		}
 		document.body.classList.remove("spinner-active");
-	} else if (moved_away_from_displayed_title) {
-		document.body.classList.add("spinner-active");
-		result_container.style.opacity = 0;
-		displayed_title = null;
+	} else {
+		// mega_spinner_animating = true;
+		if (moved_away_from_displayed_title) {
+			document.body.classList.add("spinner-active");
+			result_container.style.opacity = 0;
+			displayed_title = null;
+		}
+	}
+
+	if (plinketto_balls.every((ball) => Math.abs(ball.velocity_y) < 0.01 && ball.y + ball.radius >= 90 - 0.1)) {
+		plinketto_animating = false;
+		// display_result();
+		plinketto_container.hidden = true;
 	}
 
 	render_mega_spinner();
 	render_plinketto();
+
+	if (!mega_spinner_animating && !plinketto_animating) {
+		cancelAnimationFrame(rafid);
+	}
 
 	last_time = now;
 };
@@ -723,8 +750,7 @@ const parse_from_location_hash = () => {
 					spin_velocity = 0;
 					ticker_index_attachment = item_index;
 					ticker_rotation_deg = 0;
-					// animating = false;
-					// cancelAnimationFrame(rafid);
+					mega_spinner_animating = false;
 					// ticker_rotation_speed_deg_per_frame = 0;
 					display_result(title_line);
 
@@ -819,9 +845,7 @@ const main = async () => {
 			const new_y = event.clientY;
 			const new_time = performance.now();
 			spin_position = start_spin_position + (new_y - start_y) / item_height;
-			if (!animating) {
-				animate();
-			}
+			animate("mega_spinner");
 			y_velocity_energy += (new_y - last_event_y) * (new_time - last_event_time) / item_height;
 			last_event_time = new_time;
 			last_event_y = new_y;
@@ -839,9 +863,7 @@ const main = async () => {
 				spin_velocity = y_velocity_energy / 250;
 			}
 			dragging = false;
-			if (!animating) {
-				animate();
-			}
+			animate("mega_spinner");
 		};
 		window.addEventListener("pointermove", on_pointer_move);
 		window.addEventListener("pointerup", on_pointer_up);
@@ -850,9 +872,7 @@ const main = async () => {
 
 	go_button.onclick = () => {
 		spin_velocity = 5 + Math.random() * 5;
-		if (!animating) {
-			animate();
-		}
+		animate("mega_spinner");
 	};
 
 	window.addEventListener("keydown", (event) => {
@@ -919,8 +939,6 @@ const main = async () => {
 	// 	}
 	// 	titles.set(parsed.title, parsed);
 	// }
-
-	animate();
 
 };
 
