@@ -501,9 +501,22 @@ const simulate_plinketto = (delta_time, audio_context_time) => {
 		}
 
 		if (collision) {
+			const panner = audio_context.createPanner();
+			panner.coneOuterGain = 1; // don't actually care about a cone, just want position
+			panner.coneOuterAngle = 180;
+			panner.coneInnerAngle = 0;
+			panner.connect(audio_context.destination);
+			if (panner.positionX) {
+				panner.positionX.setValueAtTime((ball.x - 50) / 50, audio_context_time);
+				panner.positionY.setValueAtTime((ball.y - 50) / 50, audio_context_time);
+				panner.positionZ.setValueAtTime(-0.5, audio_context_time);
+			} else {
+				panner.setPosition((ball.x - 50) / 50, (ball.y - 50) / 50, -0.5);
+			}
+
 			const plink_gain = audio_context.createGain();
 			plink_gain.gain.setValueAtTime(0, 0);
-			plink_gain.connect(audio_context.destination);
+			plink_gain.connect(panner);
 
 			const plink_source = audio_context.createBufferSource();
 			plink_source.buffer = plink_sound;
