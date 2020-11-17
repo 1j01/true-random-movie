@@ -426,7 +426,7 @@ const render_plinketto = () => {
 			bucket.element = document.createElementNS("http://www.w3.org/2000/svg", "g");
 			bucket.element.setAttribute("class", "plinketto-bucket");
 			const rect_el = document.createElementNS("http://www.w3.org/2000/svg", "rect");
-			rect_el.setAttribute("fill", `hsl(${i / plinketto_buckets.length}turn, 80%, 50%)`);
+			rect_el.setAttribute("fill", `hsl(${(i - 0.3) / Math.max(plinketto_buckets.length, 4)}turn, 80%, 50%)`);
 			rect_el.setAttribute("x", bucket.x);
 			rect_el.setAttribute("y", bucket.y);
 			rect_el.setAttribute("width", bucket.width);
