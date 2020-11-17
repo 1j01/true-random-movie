@@ -540,8 +540,8 @@ const handle_device_orientation = (event) => {
 	// gamma is the left-to-right tilt in degrees, where right is positive
 	// beta is the front-to-back tilt in degrees, where front is positive
 	// alpha is the compass direction the device is facing in degrees
-	gravity.y = Math.sin(event.beta * Math.PI / 180) * Math.cos(event.gamma * Math.PI / 180);
-	gravity.x = Math.sin(event.gamma * Math.PI / 180);
+	gravity.y = Math.sin(event.beta * Math.PI / 180) * Math.cos(event.gamma * Math.PI / 180) * 0.001;
+	gravity.x = Math.sin(event.gamma * Math.PI / 180) * 0.001;
 	//ang = -Math.atan(x / y) + (y < 0 ? Math.PI : 0) + Math.PI / 2 // from x axis clockwise
 	//r = Math.sqrt(x * x + y * y)
 };
