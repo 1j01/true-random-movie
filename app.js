@@ -17,8 +17,12 @@ const close_filters_button = document.getElementById("close-filters");
 const title_filter = document.getElementById("title-filter");
 
 const audio_context = new AudioContext();
-const gain = audio_context.createGain();
-gain.connect(audio_context.destination);
+const plink_gain = audio_context.createGain();
+const plink_osc = audio_context.createOscillator();
+plink_gain.gain.setValueAtTime(0, 0);
+plink_gain.connect(audio_context.destination);
+plink_osc.connect(plink_gain);
+plink_osc.start();
 
 const load_sound = async (path) => {
 	const response = await fetch(path);
@@ -460,13 +464,14 @@ const outer_wall_x = (right, y) => right * 100 + (right ? -1 : 1) * Math.max(
 	Math.cos(y / peg_y_spacing * Math.PI + Math.PI) - 5,
 	(y - 91) / 4, // taper in near bottom
 );
-const simulate_plinketto = (delta_time) => {
+const simulate_plinketto = (delta_time, audio_context_time) => {
 	for (const ball of plinketto_balls) {
 		ball.velocity_y += gravity * delta_time;
 		ball.velocity_x -= ball.velocity_x * air_friction_x * delta_time;
 		ball.velocity_y -= ball.velocity_y * air_friction_y * delta_time;
 		ball.x += ball.velocity_x * delta_time;
 		ball.y += ball.velocity_y * delta_time;
+		let collision = false;
 		for (const peg of plinketto_pegs) {
 			const distance_of_centers = Math.hypot(ball.x - peg.x, ball.y - peg.y);
 			const distance_of_edges = distance_of_centers - peg.radius - ball.radius;
@@ -475,6 +480,7 @@ const simulate_plinketto = (delta_time) => {
 				ball.velocity_y += (ball.y - peg.y) / distance_of_centers * 0.005 * delta_time;
 				ball.velocity_x -= ball.velocity_x * collision_friction_x * delta_time;
 				ball.velocity_y -= ball.velocity_y * collision_friction_y * delta_time;
+				collision = true;
 			}
 		}
 
@@ -485,20 +491,33 @@ const simulate_plinketto = (delta_time) => {
 		if (ball.x + ball.radius > right_wall_x) {
 			ball.velocity_x = -Math.abs(ball.velocity_x) * 0.9;
 			ball.x = Math.min(ball.x, right_wall_x - wall_radius);
+			collision = true;
 		}
 		if (ball.x - ball.radius < left_wall_x) {
 			ball.velocity_x = Math.abs(ball.velocity_x) * 0.9;
 			ball.x = Math.max(ball.x, left_wall_x + wall_radius);
+			collision = true;
 		}
 
 		if (ball.y + ball.radius > 90) {
 			ball.velocity_y = -Math.abs(ball.velocity_y) * 0.9;
 			ball.y = Math.min(ball.y, 90 - ball.radius);
+			collision = true;
+		}
+
+		if (collision) {
+			plink_osc.frequency.setTargetAtTime(440 + Math.hypot(ball.velocity_x, ball.velocity_y) * 1005, audio_context_time, 0.01);
+			plink_osc.frequency.setTargetAtTime(44 + Math.hypot(ball.velocity_x, ball.velocity_y) * 105, audio_context_time + 0.1, 0.1);
+			plink_gain.gain.setTargetAtTime(Math.sqrt(Math.hypot(ball.velocity_x, ball.velocity_y)), audio_context_time, 0.01);
+			plink_gain.gain.setTargetAtTime(0, audio_context_time + 0.1, 0.01);
 		}
 	}
 };
 
 const cleanup_plinketto = () => {
+	plinketto_container.hidden = true;
+	plinketto_animating = false;
+
 	// Array.from is necessary because childNodes is a live NodeList, updated as things are removed
 	for (const child of Array.from(plinketto_svg.childNodes)) {
 		child.remove();
@@ -593,7 +612,7 @@ const animate = (start_animating_what) => {
 	while (remaining_delta_time > 0) {
 		const sub_time_step = Math.min(time_step, remaining_delta_time);
 		simulate_mega_spinner(sub_time_step, audio_context_time);
-		simulate_plinketto(sub_time_step, remaining_delta_time);
+		simulate_plinketto(sub_time_step, audio_context_time);
 		remaining_delta_time -= sub_time_step;
 		audio_context_time += sub_time_step / 1000;
 	}
@@ -601,22 +620,23 @@ const animate = (start_animating_what) => {
 	const title_line = unfiltered_title_lines[title_line_indexes[mod(ticker_index_attachment, title_line_indexes.length)]];
 	const { title } = parse_title_line(title_line);
 	const moved_away_from_displayed_title = title !== displayed_title;
-	if (Math.abs(spin_velocity) < 0.001 && !dragging && peg_hit_timer <= 0) {
-		if (moved_away_from_displayed_title) {
-			picked_title_line(title_line);
-			if (Math.abs(spin_velocity) < 0.0001 && Math.abs(ticker_rotation_deg) < 0.01) {
-				spin_velocity = 0;
-				ticker_rotation_deg = 0;
-				mega_spinner_animating = false;
+	if (mega_spinner_animating) {
+		if (Math.abs(spin_velocity) < 0.001 && !dragging && peg_hit_timer <= 0 && !plinketto_animating) {
+			if (moved_away_from_displayed_title) {
+				picked_title_line(title_line);
+				if (Math.abs(spin_velocity) < 0.0001 && Math.abs(ticker_rotation_deg) < 0.01) {
+					spin_velocity = 0;
+					ticker_rotation_deg = 0;
+					mega_spinner_animating = false;
+				}
 			}
+			document.body.classList.remove("spinner-active");
+		} else if (moved_away_from_displayed_title) {
+			document.body.classList.add("spinner-active");
+			result_container.style.opacity = 0;
+			displayed_title = null;
 		}
-		document.body.classList.remove("spinner-active");
-	} else if (moved_away_from_displayed_title) {
-		document.body.classList.add("spinner-active");
-		result_container.style.opacity = 0;
-		displayed_title = null;
 	}
-
 	if (plinketto_animating) {
 		if (plinketto_balls.every((ball) => Math.abs(ball.velocity_y) < 0.01 && ball.y + ball.radius >= 90 - 0.1)) {
 			plinketto_animating = false;
@@ -624,7 +644,7 @@ const animate = (start_animating_what) => {
 			const instance_text = plinketto_buckets.find((bucket) => bucket.x < ball.x && bucket.x + bucket.width > ball.x).id;
 			display_result(title, instance_text);
 			location.hash = `${title} (${instance_text})`;
-			plinketto_container.hidden = true;
+			cleanup_plinketto();
 		}
 	}
 
@@ -944,8 +964,7 @@ const main = async () => {
 				if (!filters.hidden) {
 					filters.hidden = true;
 				} else if (!plinketto_container.hidden || plinketto_animating) {
-					plinketto_container.hidden = true;
-					plinketto_animating = false;
+					cleanup_plinketto();
 					const title_line = unfiltered_title_lines[title_line_indexes[mod(ticker_index_attachment, title_line_indexes.length)]];
 					quick_pick(title_line);
 				}
