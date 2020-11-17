@@ -577,7 +577,7 @@ const setup_plinketto = (options) => {
 	// 	plinketto_balls.push({
 	// 		x: 50,
 	// 		y: 1,
-	// 		velocity_x: (Math.random() - 0.5) * 50,
+	// 		velocity_x: (Math.random() - 0.5) * 5,
 	// 		velocity_y: 0,
 	// 		radius: 1.2,
 	// 	});
@@ -586,7 +586,7 @@ const setup_plinketto = (options) => {
 	plinketto_balls.push({
 		x: 50,
 		y: 1,
-		velocity_x: (Math.random() - 0.5) * 50,
+		velocity_x: (Math.random() - 0.5) * 5,
 		velocity_y: 0,
 		radius: 1.2,
 	});
