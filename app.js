@@ -447,7 +447,7 @@ const render_plinketto = () => {
 	}
 };
 
-const gravity = 0.0005;
+const gravity = { x: 0, y: 0.0005 };
 const air_friction_x = 0.001;
 const air_friction_y = 0.001;
 const collision_friction_x = 0.04;
@@ -461,7 +461,8 @@ const outer_wall_x = (right, y) => right * 100 + (right ? -1 : 1) * Math.max(
 );
 const simulate_plinketto = (delta_time, audio_context_time) => {
 	for (const ball of plinketto_balls) {
-		ball.velocity_y += gravity * delta_time;
+		ball.velocity_x += gravity.x * delta_time;
+		ball.velocity_y += gravity.y * delta_time;
 		ball.velocity_x -= ball.velocity_x * air_friction_x * delta_time;
 		ball.velocity_y -= ball.velocity_y * air_friction_y * delta_time;
 		ball.x += ball.velocity_x * delta_time;
@@ -534,7 +535,20 @@ const simulate_plinketto = (delta_time, audio_context_time) => {
 	}
 };
 
+const handle_device_orientation = (event) => {
+	document.body.textContent = event.beta + "    -   " + event.gamma;
+	// gamma is the left-to-right tilt in degrees, where right is positive
+	// beta is the front-to-back tilt in degrees, where front is positive
+	// alpha is the compass direction the device is facing in degrees
+	gravity.y = Math.sin(event.beta * Math.PI / 180) * Math.cos(event.gamma * Math.PI / 180);
+	gravity.x = Math.sin(event.gamma * Math.PI / 180);
+	//ang = -Math.atan(x / y) + (y < 0 ? Math.PI : 0) + Math.PI / 2 // from x axis clockwise
+	//r = Math.sqrt(x * x + y * y)
+};
+
 const cleanup_plinketto = () => {
+	window.removeEventListener("deviceorientation", handle_device_orientation);
+
 	plinketto_container.hidden = true;
 	plinketto_animating = false;
 
@@ -549,6 +563,7 @@ const cleanup_plinketto = () => {
 
 const setup_plinketto = (options) => {
 	cleanup_plinketto();
+	window.addEventListener("deviceorientation", handle_device_orientation, false);
 
 	for (let i = 0; i < options.length; i += 1) {
 		const x = i * 100 / options.length;
