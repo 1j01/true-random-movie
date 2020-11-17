@@ -17,12 +17,6 @@ const close_filters_button = document.getElementById("close-filters");
 const title_filter = document.getElementById("title-filter");
 
 const audio_context = new AudioContext();
-const plink_gain = audio_context.createGain();
-const plink_osc = audio_context.createOscillator();
-plink_gain.gain.setValueAtTime(0, 0);
-plink_gain.connect(audio_context.destination);
-plink_osc.connect(plink_gain);
-plink_osc.start();
 
 const load_sound = async (path) => {
 	const response = await fetch(path);
@@ -34,6 +28,7 @@ const load_sound = async (path) => {
 };
 
 let tick_sound;
+let plink_sound;
 
 function mod(n, m) {
 	return ((n % m) + m) % m;
@@ -502,14 +497,26 @@ const simulate_plinketto = (delta_time, audio_context_time) => {
 		if (ball.y + ball.radius > 90) {
 			ball.velocity_y = -Math.abs(ball.velocity_y) * 0.9;
 			ball.y = Math.min(ball.y, 90 - ball.radius);
-			collision = true;
+			collision = 2;
 		}
 
 		if (collision) {
-			plink_osc.frequency.setTargetAtTime(440 + Math.hypot(ball.velocity_x, ball.velocity_y) * 1005, audio_context_time, 0.01);
-			plink_osc.frequency.setTargetAtTime(44 + Math.hypot(ball.velocity_x, ball.velocity_y) * 105, audio_context_time + 0.1, 0.1);
-			plink_gain.gain.setTargetAtTime(Math.sqrt(Math.hypot(ball.velocity_x, ball.velocity_y)), audio_context_time, 0.01);
-			plink_gain.gain.setTargetAtTime(0, audio_context_time + 0.1, 0.01);
+			const plink_gain = audio_context.createGain();
+			plink_gain.gain.setValueAtTime(0, 0);
+			plink_gain.connect(audio_context.destination);
+
+			const plink_source = audio_context.createBufferSource();
+			plink_source.buffer = plink_sound;
+			plink_source.start(audio_context_time);
+			// plink_source.playbackRate.setTargetAtTime(
+			// 	1 + (Math.abs(prev_ticker_rotation_deg - ticker_rotation_deg) / 15 + Math.abs(spin_velocity)) / 15,
+			// 	audio_context_time + 0.02,
+			// 	0.03
+			// );
+			plink_source.connect(plink_gain);
+			plink_source.playbackRate.setValueAtTime(Math.min(Math.hypot(ball.velocity_x, ball.velocity_y), 3) * 0.4 + (collision === 2 ? 1 : 1.9), audio_context_time);
+			plink_gain.gain.setValueAtTime(Math.min(Math.hypot(ball.velocity_x, ball.velocity_y), 3), audio_context_time);
+			plink_gain.gain.setTargetAtTime(0, audio_context_time + 0.3, 0.01);
 		}
 	}
 };
@@ -997,7 +1004,8 @@ const main = async () => {
 		window.addEventListener("transitionend", on_transition_end);
 	});
 
-	tick_sound = await load_sound("tick.wav");
+	load_sound("tick.wav").then((sound) => { tick_sound = sound; });
+	load_sound("clink.wav").then((sound) => { plink_sound = sound; });
 
 	// TODO: remove duplicate movie listings
 	// window.titles = new Map();
