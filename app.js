@@ -99,14 +99,14 @@ function parse_title_line(title_line) {
 		// "Die Hard with a Vengeance (1998]" (typo'd wikipedia syntax)
 		// "God's Club (2015)[1]" (wikipedia reference)
 		// "Accidentally Engaged" (no parenthetical or dates)
-		// "Alienator (1989) (TV)" (non-distincting indication in separate parenthetical)
-		// "Mermaid's Scar (1993) (OVA)" (non-distincting indication in separate parenthetical)
-		// "Five Children and It (film) (2004)" (useless non-distincting indication in separate parenthetical)
-		// "Lincoln: Trial by Fire (TV, 1974)" (non-distincting indication separated by comma)
-		// "Satyricon (Polidoro, 1969)" (non-distincting indication separated by comma)
+		// "Alienator (1989) (TV)" (non-separating indication in separate parenthetical)
+		// "Mermaid's Scar (1993) (OVA)" (non-separating indication in separate parenthetical)
+		// "Five Children and It (film) (2004)" (useless non-separating indication in separate parenthetical)
+		// "Lincoln: Trial by Fire (TV, 1974)" (non-separating indication separated by comma)
+		// "Satyricon (Polidoro, 1969)" (non-separating indication separated by comma)
 		// "Death on the Nile (1978 and 2004 television movie)" (and instead of &)
 		// "Le Diable boiteux (1948; tr. The Lame Devil) (translated title in date parenthetical)
-		// "Exponát roku 1827 (2008) Czech" (non-distincting indication after parenthetical)
+		// "Exponát roku 1827 (2008) Czech" (non-separating indication after parenthetical)
 		// "Nation and Destiny series (1992: 2002)" (I think this one's my fault)
 		// "Jagadamba (TBD)" (no date)
 		// "Kuni Mulgi Deta Ka Mulgi (TBA)" (no date)
@@ -886,7 +886,7 @@ const apply_filters = () => {
 		return;
 	}
 	const search = title_filter.value;
-	// const normlized_search = normalize_title(search); // might want something like this as an optimization
+	// const normalized_search = normalize_title(search); // might want something like this as an optimization
 	title_line_indexes = title_line_indexes.filter((title_line_index) => {
 		const normalized_title_line = normalized_unfiltered_title_lines[title_line_index];
 		return search_matches_normalized_title(search, normalized_title_line);
