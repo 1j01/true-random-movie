@@ -246,6 +246,30 @@ const quick_pick = (title_line) => {
 
 fitty("#go", { maxSize: 30 });
 
+function polarToCartesian(centerX, centerY, radius, angleInDegrees) {
+	var angleInRadians = (angleInDegrees - 90) * Math.PI / 180.0;
+
+	return {
+		x: centerX + (radius * Math.cos(angleInRadians)),
+		y: centerY + (radius * Math.sin(angleInRadians))
+	};
+}
+
+function describeArc(x, y, radius, startAngle, endAngle, oppositeSweep=false) {
+	var start = polarToCartesian(x, y, radius, endAngle);
+	var end = polarToCartesian(x, y, radius, startAngle);
+
+	var largeArcFlag = endAngle - startAngle > 180 ? "1" : "0";
+	var sweepFlag = oppositeSweep ? "1" : "0";
+
+	var d = [
+		"M", start.x, start.y,
+		"A", radius, radius, 0, largeArcFlag, sweepFlag, end.x, end.y
+	].join(" ");
+
+	return d;
+}
+
 let unfiltered_title_lines;
 let normalized_unfiltered_title_lines; // for loose string comparison
 let title_line_indexes; // can be a sorted/shuffled/filtered/wrapped list of indexes into unfiltered_title_lines
@@ -293,15 +317,20 @@ const render_mega_spinner = () => {
 			item_el = null;
 		}
 
+		// item_el.style.transform = `translateY(${(y - 1 / 2).toFixed(5) * item_height}px)`;
+		const circumference = item_height * title_line_indexes.length;
+		const radius = circumference / (2 * Math.PI);
+		const innerRadius = Math.max(50, radius - 500)
+
 		if (!item_el) {
 			item_el = document.createElementNS("http://www.w3.org/2000/svg", "g");
 			item_el.setAttribute("class", "mega-spinner-item");
-			const rect_el = document.createElementNS("http://www.w3.org/2000/svg", "rect");
-			rect_el.setAttribute("fill", `hsl(${title_line_index / unfiltered_title_lines.length}turn, 80%, 50%)`);
-			rect_el.setAttribute("x", 0);
-			rect_el.setAttribute("y", 0);
-			rect_el.setAttribute("width", "100%");
-			rect_el.setAttribute("height", item_height);
+			const path_el = document.createElementNS("http://www.w3.org/2000/svg", "path");
+			path_el.setAttribute("fill", `hsl(${title_line_index / unfiltered_title_lines.length}turn, 80%, 50%)`);
+			const angle_1 = 270 - 180 / title_line_indexes.length;
+			const angle_2 = 270 + 180 / title_line_indexes.length;
+			path_el.setAttribute("d", `${describeArc(0, 0, radius, angle_1, angle_2)} ${describeArc(0, 0, innerRadius, angle_2, angle_1, true).replace("M","L")} z`);
+			// path_el.setAttribute("height", item_height);
 			const text_el = document.createElementNS("http://www.w3.org/2000/svg", "text");
 			text_el.setAttribute("dominant-baseline", "middle");
 			text_el.setAttribute("x", 15);
@@ -312,14 +341,16 @@ const render_mega_spinner = () => {
 			peg_el.setAttribute("cx", peg_size_px / 2);
 			peg_el.setAttribute("cy", item_height);
 			peg_el.setAttribute("r", peg_size_px / 2);
-			item_el.appendChild(rect_el);
+			item_el.appendChild(path_el);
 			item_el.appendChild(text_el);
 			item_el.appendChild(peg_el);
 			mega_spinner_items.appendChild(item_el);
 			new_item_els_list.push(item_el);
 		}
 
-		item_el.style.transform = `translateY(${(y - 1 / 2).toFixed(5) * item_height}px)`;
+		item_el.style.transform = `rotate(${-y / title_line_indexes.length}turn) translateY(${Math.sin(y/50)*200}px) translateX(${Math.cos(y/50)*200}px) `;
+		// item_el.style.transform = `translateY(${Math.sin(y/50)*radius}px) translateX(${Math.cos(y/50)*radius}px) rotate(${-y / title_line_indexes.length}turn)`;
+		// item_el.style.transformOrigin = "right center";
 
 		item_el_index += 1;
 	}
