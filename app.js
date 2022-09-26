@@ -690,7 +690,7 @@ const animate = (start_animating_what) => {
 		audio_context_time += sub_time_step / 1000;
 	}
 
-	const title_line = unfiltered_title_lines[title_line_indexes[mod(ticker_index_attachment, title_line_indexes.length)]];
+	const title_line = unfiltered_title_lines[title_line_indexes[mod(~~ticker_index_attachment, title_line_indexes.length)]];
 	const { title } = parse_title_line(title_line);
 	const moved_away_from_displayed_title = title !== displayed_title;
 	if (mega_spinner_animating) {
