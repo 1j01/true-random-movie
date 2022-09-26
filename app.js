@@ -319,7 +319,7 @@ const render_mega_spinner = () => {
 
 		// item_el.style.transform = `translateY(${(y - 1 / 2).toFixed(5) * item_height}px)`;
 		const circumference = item_height * title_line_indexes.length;
-		const radius = circumference / (2 * Math.PI);
+		const radius = Math.max(circumference / (2 * Math.PI), 500);
 		const innerRadius = Math.max(50, radius - 500)
 
 		if (!item_el) {
@@ -327,8 +327,10 @@ const render_mega_spinner = () => {
 			item_el.setAttribute("class", "mega-spinner-item");
 			const path_el = document.createElementNS("http://www.w3.org/2000/svg", "path");
 			path_el.setAttribute("fill", `hsl(${title_line_index / unfiltered_title_lines.length}turn, 80%, 50%)`);
-			const angle_1 = 270 - 180 / title_line_indexes.length;
-			const angle_2 = 270 + 180 / title_line_indexes.length;
+			const angle_1 = 90 - 180 / title_line_indexes.length;
+			const angle_2 = 90 + 180 / title_line_indexes.length;
+			// const angle_1 = 90;
+			// const angle_2 = 90 + 360 / title_line_indexes.length;
 			path_el.setAttribute("d", `${describeArc(0, 0, radius, angle_1, angle_2)} ${describeArc(0, 0, innerRadius, angle_2, angle_1, true).replace("M","L")} z`);
 			// path_el.setAttribute("height", item_height);
 			const text_el = document.createElementNS("http://www.w3.org/2000/svg", "text");
@@ -348,8 +350,12 @@ const render_mega_spinner = () => {
 			new_item_els_list.push(item_el);
 		}
 
+		// Originally, for a linear spinner (repeating items when the list is short):
+		// item_el.style.transform = `translateY(${(y - 1 / 2).toFixed(5) * item_height}px)`;
+
+		// Donut chart style:
 		// item_el.style.transform = `rotate(${-y / title_line_indexes.length}turn) translateY(${Math.sin(y/50)*200}px) translateX(${Math.cos(y/50)*200}px) `;
-		item_el.style.transform = `translateX(200px) rotate(${-y / title_line_indexes.length}turn)`;
+		item_el.style.transform = `translateX(${radius}px) rotate(${-y / title_line_indexes.length + 0.5}turn)`;
 		// item_el.style.transform = `translateY(${Math.sin(y/50)*radius}px) translateX(${Math.cos(y/50)*radius}px) rotate(${-y / title_line_indexes.length}turn)`;
 		// item_el.style.transformOrigin = "right center";
 
