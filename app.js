@@ -955,6 +955,8 @@ const main = async () => {
 	spin_position = Math.random() * title_line_indexes.length;
 	ticker_index_attachment = spin_position;
 
+	apply_filters();
+	
 	parse_from_location_hash();
 
 	window.addEventListener("hashchange", parse_from_location_hash);
