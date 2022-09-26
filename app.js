@@ -172,7 +172,31 @@ const display_result = (title, instance_text) => {
 	)}`;
 
 	copy_to_clipboard_button.onclick = async () => {
-		await navigator.clipboard.writeText(`${title} (${instance_text.replace(/\sTV$/, "")})`);
+		const toast = document.createElement("div");
+		toast.setAttribute("role", "alert");
+		toast.className = "clipboard-toast";
+		try {
+			await navigator.clipboard.writeText(`${title} (${instance_text.replace(/\sTV$/, "")})`);
+			toast.textContent = "Copied!";
+		} catch (error) {
+			console.error("Failed to copy to clipboard:", error);
+			toast.classList.add("error");
+			toast.textContent = "Couldn't copy";
+		}
+		const rect = copy_to_clipboard_button.getBoundingClientRect();
+		toast.style.position = "fixed";
+		toast.style.left = rect.left + "px";
+		toast.style.top = rect.top - 30 + "px";
+		document.body.append(toast);
+		setTimeout(() => {
+			toast.style.opacity = 0;
+			toast.style.transform = "translateY(-8px)";
+			// remove some time after exit transition
+			// (don't need to bother with transitionend event)
+			setTimeout(() => {
+				toast.remove();
+			}, 1000);
+		}, 1000);
 	};
 
 	result_container.hidden = false;

@@ -260,6 +260,19 @@
 		.close::after {
 			transform: translate(-50%, -50%) rotate(-45deg);
 		}
+
+		.clipboard-toast {
+			background-color: rgb(0, 183, 0);
+			color: white;
+			transition: opacity .2s ease, transform .2s ease;
+			border-radius: 5px;
+			padding: 5px;
+			font-family: sans-serif;
+		}
+		.clipboard-toast.error {
+			background-color: rgb(171, 17, 0);
+			color: white;
+		}
 	</style>
 </head>
 
