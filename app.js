@@ -13,6 +13,7 @@ const mega_spinner_items = document.getElementById("mega-spinner-items");
 const plinketto_container = document.getElementById("plinketto");
 const plinketto_svg = document.getElementById("plinketto-svg");
 const filters = document.getElementById("filters");
+const open_filters_button_link = document.getElementById("open-filters");
 const close_filters_button = document.getElementById("close-filters");
 const title_filter = document.getElementById("title-filter");
 
@@ -1017,6 +1018,13 @@ const main = async () => {
 
 	close_filters_button.addEventListener("click", () => {
 		filters.hidden = true;
+	});
+
+	open_filters_button_link.addEventListener("click", (event) => {
+		event.preventDefault(); // It's actually a link (<a> element)
+		filters.hidden = false;
+		title_filter.focus();
+		title_filter.select();
 	});
 
 	title_filter.addEventListener("input", apply_filters);
