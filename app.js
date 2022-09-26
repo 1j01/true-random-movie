@@ -536,6 +536,11 @@ const simulate_plinketto = (delta_time, audio_context_time) => {
 };
 
 const handle_device_orientation = (event) => {
+	if (typeof event.beta != "number" || typeof event.gamma != "number") {
+		// Chrome seems to fire one bogus deviceorientation event
+		// with null properties, on desktop.
+		return;
+	}
 	// gamma is the left-to-right tilt in degrees, where right is positive
 	// beta is the front-to-back tilt in degrees, where front is positive
 	// alpha is the compass direction the device is facing in degrees
