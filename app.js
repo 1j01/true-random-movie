@@ -348,7 +348,8 @@ const render_mega_spinner = () => {
 			new_item_els_list.push(item_el);
 		}
 
-		item_el.style.transform = `rotate(${-y / title_line_indexes.length}turn) translateY(${Math.sin(y/50)*200}px) translateX(${Math.cos(y/50)*200}px) `;
+		// item_el.style.transform = `rotate(${-y / title_line_indexes.length}turn) translateY(${Math.sin(y/50)*200}px) translateX(${Math.cos(y/50)*200}px) `;
+		item_el.style.transform = `translateX(200px) rotate(${-y / title_line_indexes.length}turn)`;
 		// item_el.style.transform = `translateY(${Math.sin(y/50)*radius}px) translateX(${Math.cos(y/50)*radius}px) rotate(${-y / title_line_indexes.length}turn)`;
 		// item_el.style.transformOrigin = "right center";
 
