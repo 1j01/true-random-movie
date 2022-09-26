@@ -336,7 +336,8 @@ const render_mega_spinner = () => {
 			const text_el = document.createElementNS("http://www.w3.org/2000/svg", "text");
 			text_el.setAttribute("dominant-baseline", "middle");
 			text_el.setAttribute("x", 15);
-			text_el.setAttribute("y", item_height / 2);
+			// text_el.setAttribute("y", item_height / 2);
+			text_el.setAttribute("y", 0);
 			text_el.textContent = title_line.replace(/([!?.,]):/g, "$1");
 			item_el.title_line_index_index = title_line_index_index;
 			const peg_el = document.createElementNS("http://www.w3.org/2000/svg", "circle");
